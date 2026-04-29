@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PH360 - Common Areas Reservation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "primary-fixed": "#d8e2ff",
+                "secondary": "#006b5f",
+                "on-primary": "#ffffff",
+                "on-secondary-fixed": "#00201c",
+                "tertiary": "#380500",
+                "surface-container-low": "#f2f4f7",
+                "surface-tint": "#445e93",
+                "outline": "#747780",
+                "inverse-primary": "#aec6ff",
+                "error": "#ba1a1a",
+                "secondary-fixed": "#99f3e3",
+                "surface-container-high": "#e6e8eb",
+                "on-error-container": "#93000a",
+                "surface": "#f7f9fc",
+                "error-container": "#ffdad6",
+                "surface-container-highest": "#e0e3e6",
+                "on-background": "#191c1e",
+                "inverse-on-surface": "#eff1f4",
+                "on-secondary-fixed-variant": "#005047",
+                "primary": "#00173c",
+                "tertiary-container": "#5d0d00",
+                "surface-bright": "#f7f9fc",
+                "on-tertiary": "#ffffff",
+                "on-primary-container": "#7a94cd",
+                "on-primary-fixed-variant": "#2b467a",
+                "surface-container": "#eceef1",
+                "on-surface": "#191c1e",
+                "tertiary-fixed": "#ffdad2",
+                "on-tertiary-container": "#f86645",
+                "background": "#f7f9fc",
+                "outline-variant": "#c4c6d1",
+                "on-secondary": "#ffffff",
+                "surface-container-lowest": "#ffffff",
+                "on-error": "#ffffff",
+                "on-surface-variant": "#44474f",
+                "primary-fixed-dim": "#aec6ff",
+                "on-secondary-container": "#006f63",
+                "primary-container": "#0a2b5e",
+                "inverse-surface": "#2d3133",
+                "on-tertiary-fixed-variant": "#8c1900",
+                "secondary-container": "#96f0e0",
+                "on-tertiary-fixed": "#3d0600",
+                "tertiary-fixed-dim": "#ffb4a3",
+                "surface-dim": "#d8dadd",
+                "surface-variant": "#e0e3e6",
+                "on-primary-fixed": "#001a42",
+                "secondary-fixed-dim": "#7cd6c7"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "2xl": "1rem",
+                "3xl": "1.5rem",
+                "full": "9999px"
+            },
+            "fontFamily": {
+                "headline": ["Inter"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- Top Navigation Bar -->
+<header class="bg-slate-50/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
+<h1 class="text-xl font-bold tracking-tight text-blue-900">PH360</h1>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-slate-200/50 rounded-lg transition-transform active:scale-95">
+<span class="material-symbols-outlined text-blue-900">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="close up portrait of a professional woman with a friendly smile, clean studio lighting, high-end editorial photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG_CbW_BBEFvlQO3MghwkaV3xLA7kTOdBp9QfXn3KdbUQxATVimjAVxYB1IFATvhhqJazhS4SFL6z8ALTkJTUYuovlZtd3_3RwddCDxSfWwCAxEaQnZkAlC9rvjnyU5-VjChtcomPQdL73yIi_GhBClv9j7optJ1_XMua68I6tgXlOXE90bfP9hk2duyTp_3uiKtdRco4ZxN64mS1lhnbklD08J-I-n2757kEt9AMr-KoRxKTXpbYpt4GBd6OzqlEogXBOYzmmS7c"/>
+</div>
+</div>
+</div>
+</header>
+<main class="px-6 py-6 space-y-8 max-w-lg mx-auto">
+<!-- Progress Indicator -->
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">1</div>
+<div class="w-8 h-px bg-primary-fixed"></div>
+<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">2</div>
+<div class="w-8 h-px bg-primary-fixed"></div>
+<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">3</div>
+</div>
+<span class="text-label-md font-medium text-on-surface-variant">Step 3 of 3</span>
+</div>
+<!-- Section: Monthly Availability -->
+<section class="space-y-4">
+<div class="flex justify-between items-center">
+<h2 class="text-headline-sm font-semibold text-primary">Select Date</h2>
+<span class="text-body-lg font-medium">October 2024</span>
+</div>
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_4px_20px_rgba(10,43,94,0.04)]">
+<div class="grid grid-cols-7 gap-2 text-center mb-4">
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Mo</span>
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Tu</span>
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">We</span>
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Th</span>
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Fr</span>
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Sa</span>
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Su</span>
+</div>
+<div class="grid grid-cols-7 gap-y-3 gap-x-2">
+<!-- Placeholder calendar days with color indicators -->
+<div class="h-10 flex flex-col items-center justify-center opacity-30 text-sm">26</div>
+<div class="h-10 flex flex-col items-center justify-center opacity-30 text-sm">27</div>
+<div class="h-10 flex flex-col items-center justify-center opacity-30 text-sm">28</div>
+<div class="h-10 flex flex-col items-center justify-center opacity-30 text-sm">29</div>
+<div class="h-10 flex flex-col items-center justify-center opacity-30 text-sm">30</div>
+<div class="h-10 flex flex-col items-center justify-center rounded-xl bg-surface-container text-sm font-medium">1</div>
+<div class="h-10 flex flex-col items-center justify-center rounded-xl bg-surface-container text-sm font-medium">2</div>
+<button class="h-10 flex flex-col items-center justify-center rounded-xl bg-secondary/10 text-secondary border border-secondary/20 relative">
+<span class="text-sm font-bold">3</span>
+<span class="absolute bottom-1 w-1 h-1 rounded-full bg-secondary"></span>
+</button>
+<button class="h-10 flex flex-col items-center justify-center rounded-xl bg-error/10 text-error relative">
+<span class="text-sm font-bold">4</span>
+<span class="absolute bottom-1 w-1 h-1 rounded-full bg-error"></span>
+</button>
+<button class="h-10 flex flex-col items-center justify-center rounded-xl bg-tertiary-container/20 text-on-tertiary-container relative">
+<span class="text-sm font-bold">5</span>
+<span class="absolute bottom-1 w-1 h-1 rounded-full bg-on-tertiary-container"></span>
+</button>
+<!-- Current Selection -->
+<button class="h-10 flex flex-col items-center justify-center rounded-xl bg-primary text-white shadow-lg ring-4 ring-primary-fixed/30 relative">
+<span class="text-sm font-bold">6</span>
+</button>
+<!-- Rest of month -->
+<div class="h-10 flex flex-col items-center justify-center rounded-xl bg-secondary/10 text-secondary text-sm">7</div>
+<div class="h-10 flex flex-col items-center justify-center rounded-xl bg-secondary/10 text-secondary text-sm">8</div>
+<div class="h-10 flex flex-col items-center justify-center rounded-xl bg-secondary/10 text-secondary text-sm">9</div>
+</div>
+<!-- Legend -->
+<div class="mt-6 flex justify-around border-t border-outline-variant/10 pt-4">
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="text-[10px] font-medium text-on-surface-variant">Available</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-error"></div>
+<span class="text-[10px] font-medium text-on-surface-variant">Occupied</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-on-tertiary-container"></div>
+<span class="text-[10px] font-medium text-on-surface-variant">Pending</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Area & Slot Selection -->
+<section class="space-y-4">
+<h2 class="text-headline-sm font-semibold text-primary">Common Areas</h2>
+<div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar -mx-6 px-6">
+<!-- Pool Card -->
+<div class="min-w-[160px] bg-surface-container-lowest rounded-2xl p-4 shadow-sm border-l-4 border-secondary-fixed flex flex-col gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-600">pool</span>
+</div>
+<div>
+<p class="text-title-md font-semibold">Pool</p>
+<p class="text-[10px] text-on-surface-variant">Max 12 people</p>
+</div>
+</div>
+<!-- Social Room (Selected) -->
+<div class="min-w-[160px] bg-primary-container text-white rounded-2xl p-4 shadow-lg border-l-4 border-secondary-fixed flex flex-col gap-3">
+<div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">meeting_room</span>
+</div>
+<div>
+<p class="text-title-md font-semibold">Social Room</p>
+<p class="text-[10px] text-primary-fixed">Max 40 people</p>
+</div>
+</div>
+<!-- Gym -->
+<div class="min-w-[160px] bg-surface-container-lowest rounded-2xl p-4 shadow-sm border-l-4 border-secondary-fixed flex flex-col gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-600">fitness_center</span>
+</div>
+<div>
+<p class="text-title-md font-semibold">Gym</p>
+<p class="text-[10px] text-on-surface-variant">Max 8 people</p>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<p class="text-label-md font-semibold uppercase tracking-wider text-on-surface-variant">Available Slots (1 hour)</p>
+<div class="grid grid-cols-2 gap-3">
+<button class="py-3 px-4 rounded-xl bg-surface-container-low border border-outline-variant/10 text-on-surface-variant font-medium text-sm text-center active:bg-primary active:text-white transition-all">09:00 - 10:00</button>
+<button class="py-3 px-4 rounded-xl bg-primary text-white shadow-md font-semibold text-sm text-center">10:00 - 11:00</button>
+<button class="py-3 px-4 rounded-xl bg-surface-container-low border border-outline-variant/10 text-on-surface-variant font-medium text-sm text-center opacity-50 cursor-not-allowed">11:00 - 12:00</button>
+<button class="py-3 px-4 rounded-xl bg-surface-container-low border border-outline-variant/10 text-on-surface-variant font-medium text-sm text-center">12:00 - 13:00</button>
+</div>
+</div>
+</section>
+<!-- Wizard Confirmation Modal (Simulated as content for Step 3) -->
+<section class="bg-primary text-white rounded-3xl p-8 space-y-6 shadow-2xl relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-9xl">verified</span>
+</div>
+<div class="space-y-1">
+<h3 class="text-headline-sm font-bold">Booking Summary</h3>
+<p class="text-on-primary-container text-sm">Review your reservation details</p>
+</div>
+<div class="space-y-4 relative z-10">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div>
+<p class="text-[10px] text-on-primary-container font-medium uppercase">Date &amp; Time</p>
+<p class="text-body-lg font-semibold">Sunday, Oct 6th • 10:00 AM</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center">
+<span class="material-symbols-outlined">location_on</span>
+</div>
+<div>
+<p class="text-[10px] text-on-primary-container font-medium uppercase">Area</p>
+<p class="text-body-lg font-semibold">Social Room • Floor 2</p>
+</div>
+</div>
+<div class="pt-4 border-t border-white/10 space-y-2">
+<p class="text-label-md font-bold text-secondary-fixed">House Rules:</p>
+<ul class="text-xs space-y-2 text-primary-fixed">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-xs mt-0.5">check_circle</span>
+                            Clean up after usage
+                        </li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-xs mt-0.5">check_circle</span>
+                            Max capacity: 40 people
+                        </li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-xs mt-0.5">check_circle</span>
+                            No loud music after 10:00 PM
+                        </li>
+</ul>
+</div>
+</div>
+<div class="flex flex-col gap-3 pt-4">
+<button class="w-full py-4 bg-secondary text-white rounded-2xl font-bold tracking-wide shadow-xl active:scale-[0.98] transition-all bg-gradient-to-br from-secondary to-[#004d45]">
+                    Confirmar reserva
+                </button>
+<button class="w-full py-4 text-white/70 font-semibold hover:text-white transition-colors">
+                    Cancelar reserva
+                </button>
+</div>
+</section>
+<!-- Empty State Illustration (Hidden by default but provided for the task) -->
+<section class="hidden flex flex-col items-center justify-center py-12 text-center space-y-4">
+<div class="w-48 h-48 bg-surface-container rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-6xl text-outline-variant">event_busy</span>
+</div>
+<div class="space-y-2 px-8">
+<h3 class="text-title-md font-bold text-primary">No reservations found</h3>
+<p class="text-body-lg text-on-surface-variant">It looks like you haven't booked any common areas yet. Start planning your event!</p>
+</div>
+<button class="mt-4 px-8 py-3 bg-primary text-white rounded-full font-semibold shadow-lg">Make a Reservation</button>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 pb-8 bg-white/90 dark:bg-slate-950/90 backdrop-blur-lg z-50 rounded-t-3xl shadow-[0_-10px_20px_rgba(10,43,94,0.05)] border-t border-slate-200/20">
+<button class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 active:scale-90 transition-all">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[0.75rem] font-medium mt-1">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-blue-50 text-blue-900 rounded-2xl px-5 py-2 active:scale-90 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">apartment</span>
+<span class="text-[0.75rem] font-medium mt-1">My Units</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 active:scale-90 transition-all">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-[0.75rem] font-medium mt-1">Payments</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 active:scale-90 transition-all">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[0.75rem] font-medium mt-1">Profile</span>
+</button>
+</nav>
+</body></html>

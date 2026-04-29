@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PH360 – Gestión inteligente de tu copropiedad</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#d8e2ff",
+                        "secondary": "#006b5f",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#00201c",
+                        "tertiary": "#380500",
+                        "surface-container-low": "#f2f4f7",
+                        "surface-tint": "#445e93",
+                        "outline": "#747780",
+                        "inverse-primary": "#aec6ff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#99f3e3",
+                        "surface-container-high": "#e6e8eb",
+                        "on-error-container": "#93000a",
+                        "surface": "#f7f9fc",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e0e3e6",
+                        "on-background": "#191c1e",
+                        "inverse-on-surface": "#eff1f4",
+                        "on-secondary-fixed-variant": "#005047",
+                        "primary": "#00173c",
+                        "tertiary-container": "#5d0d00",
+                        "surface-bright": "#f7f9fc",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#7a94cd",
+                        "on-primary-fixed-variant": "#2b467a",
+                        "surface-container": "#eceef1",
+                        "on-surface": "#191c1e",
+                        "tertiary-fixed": "#ffdad2",
+                        "on-tertiary-container": "#f86645",
+                        "background": "#f7f9fc",
+                        "outline-variant": "#c4c6d1",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#44474f",
+                        "primary-fixed-dim": "#aec6ff",
+                        "on-secondary-container": "#006f63",
+                        "primary-container": "#0a2b5e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#8c1900",
+                        "secondary-container": "#96f0e0",
+                        "on-tertiary-fixed": "#3d0600",
+                        "tertiary-fixed-dim": "#ffb4a3",
+                        "surface-dim": "#d8dadd",
+                        "surface-variant": "#e0e3e6",
+                        "on-primary-fixed": "#001a42",
+                        "secondary-fixed-dim": "#7cd6c7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9fc; color: #191c1e; }
+        .glass-panel {
+            background: rgba(247, 249, 252, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .cta-gradient {
+            background: linear-gradient(135deg, #00173c 0%, #0a2b5e 100%);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- TopAppBar Shell -->
+<header class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-sm dark:shadow-none fixed top-0 sticky z-50 w-full">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-blue-900 dark:text-blue-50">PH360</span>
+<nav class="hidden md:flex items-center space-x-8">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors text-sm font-medium" href="#">Solutions</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors text-sm font-medium" href="#">Pricing</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors text-sm font-medium" href="#">Resources</a>
+</nav>
+</div>
+<div class="flex items-center space-x-6">
+<div class="hidden md:flex items-center space-x-4 text-slate-500">
+<span class="material-symbols-outlined hover:bg-slate-200/50 p-2 rounded-lg cursor-pointer">notifications</span>
+<span class="material-symbols-outlined hover:bg-slate-200/50 p-2 rounded-lg cursor-pointer">help_outline</span>
+</div>
+<button class="bg-primary text-on-primary px-5 py-2 rounded-lg font-semibold hover:scale-95 transition-transform duration-200">Login</button>
+</div>
+</div>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="relative pt-20 pb-32 overflow-hidden">
+<div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<div class="z-10">
+<h1 class="text-5xl md:text-6xl font-bold text-primary leading-tight tracking-tight mb-6">
+                        PH360 – Gestión inteligente de tu copropiedad
+                    </h1>
+<p class="text-xl text-on-surface-variant mb-10 max-w-lg leading-relaxed">
+                        Automatiza el recaudo, las asambleas y el mantenimiento en una sola plataforma con tecnología de vanguardia.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="cta-gradient text-on-primary px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:opacity-90 transition-all">Solicitar demo</button>
+<button class="bg-surface-container-low text-primary px-8 py-4 rounded-xl font-semibold text-lg border border-outline-variant/20 hover:bg-surface-container-high transition-all">Ver planes</button>
+</div>
+</div>
+<div class="relative lg:h-[600px] flex items-center justify-center">
+<!-- Subtle Dashboard Mockup Background -->
+<div class="absolute inset-0 bg-primary-fixed/20 rounded-3xl blur-3xl -z-10 transform rotate-3"></div>
+<div class="bg-surface-container-lowest p-4 rounded-3xl shadow-[0_20px_50px_rgba(10,43,94,0.12)] border border-white transform lg:translate-x-10">
+<img alt="Dashboard interface" class="rounded-2xl w-full h-auto object-cover border border-slate-100" data-alt="Modern clean software dashboard interface with financial charts, property metrics, and sleek dark blue accents on a white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_zoUO1kJOaINyMEpWiVVWnb-6fPd76InFRzvkDLhKfgKpD76fbA7fDj7IZVI0G73PDdtTMtIPf-jlsvFfADUqzgJCRlOisaMqQbyQpuuGwyQ1EHQAwjlR9PPUnLVDtXPSXX2xv60uL5LQIkDt_CmLbRJJNzk3J3O6ZNQfEfip35npZ5VWSJ9JUdcYlZcjlP1Ur2rr7j94gy6RTcWv4-b7ifW3BNRhqVEiXPwEXNDghIBWHgv-U1qS76ef2jl9myFp-0KY38Yn0gY"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Section -->
+<section class="py-24 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-6">
+<div class="text-center mb-16">
+<h2 class="text-3xl font-bold text-primary mb-4 tracking-tight">Soluciones diseñadas para la excelencia</h2>
+<div class="w-20 h-1 bg-secondary mx-auto rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Feature Card 1 -->
+<div class="bg-surface-container-lowest p-10 rounded-3xl group hover:translate-y-[-8px] transition-all duration-300">
+<div class="w-14 h-14 bg-primary-fixed/30 rounded-2xl flex items-center justify-center mb-8 text-primary">
+<span class="material-symbols-outlined text-3xl">payments</span>
+</div>
+<h3 class="text-xl font-bold mb-4 text-primary">Recaudo automatizado</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                            Simplifica la cobranza con conciliación automática y múltiples canales de pago seguros para tus residentes.
+                        </p>
+</div>
+<!-- Feature Card 2 -->
+<div class="bg-surface-container-lowest p-10 rounded-3xl group hover:translate-y-[-8px] transition-all duration-300">
+<div class="w-14 h-14 bg-secondary-fixed/40 rounded-2xl flex items-center justify-center mb-8 text-secondary">
+<span class="material-symbols-outlined text-3xl">groups</span>
+</div>
+<h3 class="text-xl font-bold mb-4 text-primary">Asambleas virtuales</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                            Votaciones en tiempo real, quórum automático y actas digitales con validez legal garantizada.
+                        </p>
+</div>
+<!-- Feature Card 3 -->
+<div class="bg-surface-container-lowest p-10 rounded-3xl group hover:translate-y-[-8px] transition-all duration-300">
+<div class="w-14 h-14 bg-tertiary-fixed/30 rounded-2xl flex items-center justify-center mb-8 text-tertiary-fixed-variant">
+<span class="material-symbols-outlined text-3xl">engineering</span>
+</div>
+<h3 class="text-xl font-bold mb-4 text-primary">Mantenimiento predictivo</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                            Anticípate a los fallos con nuestra gestión inteligente de activos y programación de visitas técnicas preventivas.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Pricing Section -->
+<section class="py-24">
+<div class="max-w-7xl mx-auto px-6">
+<div class="text-center mb-16">
+<h2 class="text-3xl font-bold text-primary mb-4">Planes flexibles para cada edificio</h2>
+<p class="text-on-surface-variant">Escala tu gestión sin complicaciones operativas.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
+<!-- Basic -->
+<div class="bg-surface-container-low p-8 rounded-3xl border border-transparent">
+<h4 class="text-lg font-bold text-primary mb-2">Basic</h4>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-bold text-primary">$199</span>
+<span class="text-on-surface-variant text-sm">/mes</span>
+</div>
+<ul class="space-y-4 mb-8 text-sm">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-lg">check_circle</span> Gestión de hasta 50 unidades</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-lg">check_circle</span> Recaudo básico</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-lg">check_circle</span> App para residentes</li>
+</ul>
+<button class="w-full py-3 rounded-xl border border-primary text-primary font-bold hover:bg-primary hover:text-on-primary transition-all">Elegir plan</button>
+</div>
+<!-- Pro (Highlighted) -->
+<div class="bg-surface-container-lowest p-10 rounded-3xl shadow-2xl border-2 border-primary relative transform scale-105 z-10">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-secondary text-on-secondary px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Recomendado</div>
+<h4 class="text-xl font-bold text-primary mb-2">Pro</h4>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-5xl font-bold text-primary">$399</span>
+<span class="text-on-surface-variant text-sm">/mes</span>
+</div>
+<ul class="space-y-4 mb-8">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">check_circle</span> Unidades ilimitadas</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">check_circle</span> Asambleas virtuales ilimitadas</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">check_circle</span> Soporte prioritario 24/7</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">check_circle</span> Reportes financieros avanzados</li>
+</ul>
+<button class="w-full py-4 rounded-xl cta-gradient text-on-primary font-bold shadow-lg hover:scale-105 transition-all">Empezar ahora</button>
+</div>
+<!-- Enterprise -->
+<div class="bg-surface-container-low p-8 rounded-3xl">
+<h4 class="text-lg font-bold text-primary mb-2">Enterprise</h4>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-bold text-primary">Custom</span>
+</div>
+<p class="text-on-surface-variant text-sm mb-8">Soluciones personalizadas para constructoras y grandes fondos inmobiliarios.</p>
+<ul class="space-y-4 mb-8 text-sm">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-lg">check_circle</span> API Access &amp; Integraciones</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-lg">check_circle</span> Account Manager dedicado</li>
+</ul>
+<button class="w-full py-3 rounded-xl border border-primary text-primary font-bold hover:bg-primary hover:text-on-primary transition-all">Contactar ventas</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Contact Section -->
+<section class="py-24 bg-surface-container-highest/30">
+<div class="max-w-4xl mx-auto px-6">
+<div class="bg-surface-container-lowest p-12 rounded-3xl shadow-xl">
+<h2 class="text-3xl font-bold text-primary mb-8 text-center">Inicia tu transformación hoy</h2>
+<form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-on-surface-variant ml-1">Nombre completo</label>
+<input class="bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary-fixed outline-none transition-all" placeholder="Ej. Juan Pérez" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-on-surface-variant ml-1">Correo electrónico</label>
+<input class="bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary-fixed outline-none transition-all" placeholder="juan@edificio.com" type="email"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-on-surface-variant ml-1">Teléfono</label>
+<input class="bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary-fixed outline-none transition-all" placeholder="+57 300..." type="tel"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-on-surface-variant ml-1">Nombre del edificio</label>
+<input class="bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary-fixed outline-none transition-all" placeholder="Ej. Residencial Las Acacias" type="text"/>
+</div>
+<div class="md:col-span-2 mt-4">
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-4 border border-outline-variant/30 w-fit">
+<input class="w-6 h-6 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-on-surface-variant font-medium">No soy un robot</span>
+<div class="ml-4 flex flex-col items-center">
+<span class="material-symbols-outlined text-blue-500">authenticator</span>
+<span class="text-[10px] text-slate-400">reCAPTCHA</span>
+</div>
+</div>
+</div>
+<div class="md:col-span-2 mt-6">
+<button class="w-full cta-gradient text-on-primary py-5 rounded-2xl font-black text-xl hover:shadow-2xl transition-all tracking-wide uppercase">Enviar</button>
+</div>
+</form>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Shell -->
+<footer class="bg-slate-50 dark:bg-slate-950 full-width py-12 px-6 border-t border-slate-100 dark:border-slate-900">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+<div class="flex flex-col gap-1">
+<span class="text-sm font-bold text-blue-900 uppercase tracking-tighter">PH360 PropTech</span>
+<p class="text-slate-500 dark:text-slate-400 text-xs">© 2024 PH360 PropTech Premium. All rights reserved.</p>
+</div>
+<div class="flex space-x-8">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 text-xs font-medium" href="#">Privacy Policy</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 text-xs font-medium" href="#">Terms of Service</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 text-xs font-medium" href="#">Cookies</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 text-xs font-medium" href="#">Contact</a>
+</div>
+</div>
+</footer>
+</body></html>

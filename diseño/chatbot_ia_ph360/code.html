@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed": "#d8e2ff",
+                    "secondary": "#006b5f",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed": "#00201c",
+                    "tertiary": "#380500",
+                    "surface-container-low": "#f2f4f7",
+                    "surface-tint": "#445e93",
+                    "outline": "#747780",
+                    "inverse-primary": "#aec6ff",
+                    "error": "#ba1a1a",
+                    "secondary-fixed": "#99f3e3",
+                    "surface-container-high": "#e6e8eb",
+                    "on-error-container": "#93000a",
+                    "surface": "#f7f9fc",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e0e3e6",
+                    "on-background": "#191c1e",
+                    "inverse-on-surface": "#eff1f4",
+                    "on-secondary-fixed-variant": "#005047",
+                    "primary": "#00173c",
+                    "tertiary-container": "#5d0d00",
+                    "surface-bright": "#f7f9fc",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#7a94cd",
+                    "on-primary-fixed-variant": "#2b467a",
+                    "surface-container": "#eceef1",
+                    "on-surface": "#191c1e",
+                    "tertiary-fixed": "#ffdad2",
+                    "on-tertiary-container": "#f86645",
+                    "background": "#f7f9fc",
+                    "outline-variant": "#c4c6d1",
+                    "on-secondary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#44474f",
+                    "primary-fixed-dim": "#aec6ff",
+                    "on-secondary-container": "#006f63",
+                    "primary-container": "#0a2b5e",
+                    "inverse-surface": "#2d3133",
+                    "on-tertiary-fixed-variant": "#8c1900",
+                    "secondary-container": "#96f0e0",
+                    "on-tertiary-fixed": "#3d0600",
+                    "tertiary-fixed-dim": "#ffb4a3",
+                    "surface-dim": "#d8dadd",
+                    "surface-variant": "#e0e3e6",
+                    "on-primary-fixed": "#001a42",
+                    "secondary-fixed-dim": "#7cd6c7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "1rem",
+                    "3xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-effect {
+            background: rgba(247, 249, 252, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- Top Navigation Anchor -->
+<nav class="bg-slate-50/80 backdrop-blur-xl shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-blue-900">PH360</span>
+<div class="hidden md:flex gap-6">
+<a class="text-slate-500 hover:text-blue-800 transition-colors" href="#">Solutions</a>
+<a class="text-slate-500 hover:text-blue-800 transition-colors" href="#">Pricing</a>
+<a class="text-slate-500 hover:text-blue-800 transition-colors" href="#">Resources</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer p-2 hover:bg-slate-200/50 rounded-lg">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer p-2 hover:bg-slate-200/50 rounded-lg">help_outline</span>
+<div class="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
+<img alt="User profile" class="h-full w-full object-cover" data-alt="professional portrait of a property manager in a modern office setting with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4Gmz5DZQ0rnLQzrnzr61DcF6Dx7Cm8hj55TBRotlQ4NvKponedKO__8ca-iTCoTCm4tKnGtmNrCyCJrE6MQw5uz63cDZopLQUvFuF5V2qM11PI2DWX467j3LfFtIwp6jXQmHSDVHZzzwo3rkfPJ2Kf-407IokfyvhXkR4N8SqfMy5sdc6dPVLwz5sPm-wQlagSx5lXnrpc47eKORIlZH8j9xZo6h7I5qJ1L0TBYrH8pXC5qNrZ7APQHGdyIepIOvIaDQAddsC3xQ"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="max-w-7xl mx-auto px-6 py-12 pb-32">
+<header class="mb-12">
+<h1 class="text-4xl font-semibold tracking-tight text-primary mb-2">Panel de Propietario</h1>
+<p class="text-on-surface-variant text-lg">Bienvenido de nuevo a su residencia PH360.</p>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Main Metric: Revenue/Payment -->
+<div class="md:col-span-2 bg-surface-container-lowest p-8 rounded-3xl relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary-fixed"></div>
+<div class="flex justify-between items-start mb-8">
+<div>
+<span class="text-sm font-medium text-secondary bg-secondary-container px-3 py-1 rounded-full">Estado: Al día</span>
+<h2 class="text-on-surface-variant font-medium mt-4">Próximo Pago Estimado</h2>
+<div class="text-[3.5rem] font-semibold tracking-tighter text-primary leading-tight">$450.000 <span class="text-xl font-normal text-on-surface-variant">COP</span></div>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-3 rounded-xl font-medium flex items-center gap-2 hover:scale-95 transition-transform">
+                        Pagar ahora
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-3 gap-4 pt-6 border-t border-surface-container-low">
+<div>
+<p class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Vencimiento</p>
+<p class="text-lg font-medium">30 Jun 2025</p>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Unidad</p>
+<p class="text-lg font-medium">Torre A - 1204</p>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Referencia</p>
+<p class="text-lg font-medium">#PH-99281</p>
+</div>
+</div>
+</div>
+<!-- Side Card: Amenities -->
+<div class="bg-surface-container-lowest p-8 rounded-3xl flex flex-col justify-between">
+<div>
+<h3 class="text-xl font-semibold text-primary mb-6">Amenidades Hoy</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-4 p-3 bg-surface-container-low rounded-2xl">
+<div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">pool</span>
+</div>
+<div>
+<p class="text-sm font-semibold">Piscina Climatizada</p>
+<p class="text-xs text-secondary">Abierto hasta 21:00</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 bg-surface-container-low rounded-2xl">
+<div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">fitness_center</span>
+</div>
+<div>
+<p class="text-sm font-semibold">Gimnasio Nivel 2</p>
+<p class="text-xs text-secondary">Abierto 24/7</p>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full text-center py-4 text-primary font-medium hover:bg-surface-container-low rounded-xl transition-colors">
+                    Ver todas las reservas
+                </button>
+</div>
+</div>
+</main>
+<!-- CHATBOT WIDGET SECTION -->
+<div class="fixed bottom-8 right-8 z-[100] flex flex-col items-end">
+<!-- Chat Window -->
+<div class="mb-6 w-[400px] max-w-[90vw] h-[600px] bg-surface-container-lowest rounded-3xl flex flex-col shadow-[0_20px_25px_-5px_rgba(10,43,94,0.08)] overflow-hidden border border-surface-container" id="chat-window">
+<!-- Header -->
+<div class="bg-gradient-to-br from-primary to-primary-container p-6 flex justify-between items-center text-white">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-on-primary-container/20 rounded-full flex items-center justify-center backdrop-blur-md">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<div>
+<p class="font-bold tracking-tight">PH360 Asistente</p>
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 bg-secondary-fixed rounded-full"></div>
+<p class="text-[10px] text-primary-fixed uppercase tracking-widest font-bold">En línea</p>
+</div>
+</div>
+</div>
+<button class="text-on-primary/60 hover:text-white transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Chat Content -->
+<div class="flex-1 overflow-y-auto p-6 space-y-6 bg-surface-bright">
+<!-- Bot Welcome Message -->
+<div class="flex gap-3 max-w-[85%]">
+<div class="w-8 h-8 rounded-full bg-primary-container shrink-0 flex items-center justify-center text-[16px] text-white">
+<span class="material-symbols-outlined text-sm">smart_toy</span>
+</div>
+<div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed text-on-surface">
+                        Hola, soy el asistente de PH360. ¿En qué puedo ayudarte?
+                    </div>
+</div>
+<!-- Suggested Chips -->
+<div class="flex flex-wrap gap-2 pl-11">
+<button class="bg-surface-container-high hover:bg-primary hover:text-white transition-all text-xs font-medium px-4 py-2.5 rounded-full text-primary border border-outline-variant/10">
+                        ¿Cuánto debo?
+                    </button>
+<button class="bg-surface-container-high hover:bg-primary hover:text-white transition-all text-xs font-medium px-4 py-2.5 rounded-full text-primary border border-outline-variant/10">
+                        Horario de la piscina
+                    </button>
+<button class="bg-surface-container-high hover:bg-primary hover:text-white transition-all text-xs font-medium px-4 py-2.5 rounded-full text-primary border border-outline-variant/10">
+                        ¿Cómo reservo el salón?
+                    </button>
+</div>
+<!-- Bot Example Response -->
+<div class="flex gap-3 max-w-[85%]">
+<div class="w-8 h-8 rounded-full bg-primary-container shrink-0 flex items-center justify-center text-[16px] text-white">
+<span class="material-symbols-outlined text-sm">smart_toy</span>
+</div>
+<div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border-l-4 border-secondary">
+<p class="text-sm mb-2">Tu saldo actual es de <span class="font-bold text-primary">$450.000 COP</span>.</p>
+<div class="flex items-center gap-2 text-[11px] text-on-surface-variant bg-surface-container-low p-2 rounded-lg">
+<span class="material-symbols-outlined text-sm">event</span>
+                            Vence el 30/06/2025
+                        </div>
+</div>
+</div>
+<!-- User Message Placeholder -->
+<div class="flex justify-end">
+<div class="bg-primary text-on-primary p-4 rounded-2xl rounded-tr-none shadow-sm text-sm max-w-[85%]">
+                        Quiero pagar mi factura actual.
+                    </div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="p-4 bg-white border-t border-surface-container-low">
+<div class="relative flex items-center bg-surface-container-low rounded-2xl px-4 py-2 group transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-primary-fixed">
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-sm text-on-surface placeholder:text-on-surface-variant" placeholder="Escribe un mensaje..." type="text"/>
+<button class="w-10 h-10 bg-primary text-on-primary rounded-xl flex items-center justify-center hover:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg">send</span>
+</button>
+</div>
+<p class="text-[10px] text-center text-on-surface-variant mt-3 uppercase tracking-tighter font-semibold">Desarrollado por PH360 PropTech AI</p>
+</div>
+</div>
+<!-- Floating Chat Bubble -->
+<button class="w-16 h-16 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-full flex items-center justify-center shadow-[0_15px_30px_rgba(0,23,60,0.3)] hover:scale-110 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+</button>
+</div>
+<!-- Footer Anchor -->
+<footer class="bg-slate-50 py-12 px-6 border-t border-slate-100">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="text-sm font-bold text-blue-900">PH360</span>
+<p class="text-slate-500 text-[0.75rem] font-medium">© 2024 PH360 PropTech Premium. All rights reserved.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-slate-500 text-[0.75rem] font-medium hover:text-blue-800 transition-colors" href="#">Privacy Policy</a>
+<a class="text-slate-500 text-[0.75rem] font-medium hover:text-blue-800 transition-colors" href="#">Terms of Service</a>
+<a class="text-slate-500 text-[0.75rem] font-medium hover:text-blue-800 transition-colors" href="#">Contact</a>
+</div>
+</div>
+</footer>
+<!-- Bottom Navigation for Mobile -->
+<div class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 pb-8 bg-white/90 backdrop-blur-lg rounded-t-3xl border-t border-slate-200/20 z-[90] shadow-[0_-10px_20px_rgba(10,43,94,0.05)]">
+<div class="flex flex-col items-center justify-center bg-blue-50 text-blue-900 rounded-2xl px-5 py-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-[0.75rem] font-medium mt-1">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2">
+<span class="material-symbols-outlined">apartment</span>
+<span class="text-[0.75rem] font-medium mt-1">My Units</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-[0.75rem] font-medium mt-1">Payments</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[0.75rem] font-medium mt-1">Profile</span>
+</div>
+</div>
+</body></html>

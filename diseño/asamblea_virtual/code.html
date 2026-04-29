@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PH360 - Virtual Assembly</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#d8e2ff",
+                        "secondary": "#006b5f",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#00201c",
+                        "tertiary": "#380500",
+                        "surface-container-low": "#f2f4f7",
+                        "surface-tint": "#445e93",
+                        "outline": "#747780",
+                        "inverse-primary": "#aec6ff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#99f3e3",
+                        "surface-container-high": "#e6e8eb",
+                        "on-error-container": "#93000a",
+                        "surface": "#f7f9fc",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e0e3e6",
+                        "on-background": "#191c1e",
+                        "inverse-on-surface": "#eff1f4",
+                        "on-secondary-fixed-variant": "#005047",
+                        "primary": "#00173c",
+                        "tertiary-container": "#5d0d00",
+                        "surface-bright": "#f7f9fc",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#7a94cd",
+                        "on-primary-fixed-variant": "#2b467a",
+                        "surface-container": "#eceef1",
+                        "on-surface": "#191c1e",
+                        "tertiary-fixed": "#ffdad2",
+                        "on-tertiary-container": "#f86645",
+                        "background": "#f7f9fc",
+                        "outline-variant": "#c4c6d1",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#44474f",
+                        "primary-fixed-dim": "#aec6ff",
+                        "on-secondary-container": "#006f63",
+                        "primary-container": "#0a2b5e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#8c1900",
+                        "secondary-container": "#96f0e0",
+                        "on-tertiary-fixed": "#3d0600",
+                        "tertiary-fixed-dim": "#ffb4a3",
+                        "surface-dim": "#d8dadd",
+                        "surface-variant": "#e0e3e6",
+                        "on-primary-fixed": "#001a42",
+                        "secondary-fixed-dim": "#7cd6c7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-sm dark:shadow-none docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold tracking-tight text-blue-900 dark:text-blue-50">PH360</span>
+<div class="h-6 w-px bg-outline-variant/30"></div>
+<h1 class="text-blue-900 dark:text-blue-100 font-semibold text-lg">Asamblea Extraordinaria 15/06/2025</h1>
+</div>
+<div class="hidden md:flex items-center space-x-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Solutions</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Pricing</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Resources</a>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg cursor-pointer" data-icon="help_outline">help_outline</span>
+<img alt="User profile" class="w-10 h-10 rounded-full border-2 border-primary-fixed shadow-sm object-cover" data-alt="professional male property manager in business attire with soft corporate office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9lyRZhE6tBH_R4woC6KWH_suY1huDBjcV6NWHCsEznCgEzLOJDr1Mi7wuwcfJNI0M5Gg07C07s5tYbn3zi8AzYlyt_a2Yv67dGK2lJ4_HN9zv2UNaVHnnu2r4kNcB73x3AXDluccGQ3k5SRSoqmh1O_cK6hD-7CVY0cPLN33xTOQ_c9JEGOdA71ELzuRCi1A_u6XnkGIVLx1r65UQ6ruIrZqNcXEx9QEIDiOtBMzxK5_zsvbW_BPl9ScTfOuEcneAY883nWMbxRs"/>
+</div>
+</div>
+</header>
+<main class="max-w-screen-2xl mx-auto flex flex-col md:flex-row min-h-[calc(100vh-76px)]">
+<!-- Main Assembly Content -->
+<div class="flex-1 p-6 md:p-8 space-y-8">
+<!-- Hero Stats / Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Quorum Circle Card -->
+<div class="md:col-span-1 bg-surface-container-lowest rounded-[1.5rem] p-6 shadow-sm flex flex-col items-center justify-center relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary-fixed"></div>
+<span class="text-on-surface-variant text-sm font-medium uppercase tracking-wider mb-4">Quorum Actual</span>
+<div class="relative w-40 h-40 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90">
+<circle class="text-surface-container-high" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-secondary" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-dasharray="440" stroke-dashoffset="154" stroke-linecap="round" stroke-width="12"></circle>
+<!-- Threshold Marker (50%) -->
+<rect fill="#ba1a1a" height="15" rx="2" transform="rotate(90, 80, 80)" width="4" x="78" y="5"></rect>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-4xl font-bold text-primary">65%</span>
+<span class="text-[0.65rem] text-on-surface-variant uppercase">Mín. 50%</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-2 text-secondary font-medium">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+<span>Quorum Alcanzado</span>
+</div>
+</div>
+<!-- Live Topic Card -->
+<div class="md:col-span-2 bg-surface-container-lowest rounded-[1.5rem] p-8 shadow-sm flex flex-col justify-between relative">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-[0.75rem] font-semibold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                                VOTACIÓN EN CURSO
+                            </span>
+</div>
+<h2 class="text-2xl font-semibold text-primary leading-tight">Punto 4: Aprobación de presupuesto para impermeabilización de azoteas y fachadas norte.</h2>
+<p class="text-on-surface-variant mt-3 leading-relaxed">Se somete a votación la propuesta técnica 'Arquitectura Siglo XXI' por un monto total de $2.450.000 pagaderos en 12 cuotas.</p>
+</div>
+<div class="flex flex-wrap gap-4 mt-8">
+<div class="flex flex-col">
+<span class="text-[0.75rem] text-on-surface-variant font-medium">MODALIDAD</span>
+<div class="flex items-center gap-1 text-primary font-semibold">
+<span class="material-symbols-outlined text-sm" data-icon="hub">hub</span>
+                                Híbrida (Virtual/Presencial)
+                            </div>
+</div>
+<div class="flex flex-col ml-8">
+<span class="text-[0.75rem] text-on-surface-variant font-medium">PESO TOTAL</span>
+<div class="flex items-center gap-1 text-primary font-semibold">
+<span class="material-symbols-outlined text-sm" data-icon="percent">percent</span>
+                                Coeficiente 100%
+                            </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Voting Interface -->
+<div class="bg-surface-container-low rounded-[1.5rem] p-8 space-y-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- A Favor -->
+<button class="group bg-surface-container-lowest hover:bg-secondary-fixed/20 p-8 rounded-xl flex flex-col items-center gap-4 transition-all active:scale-[0.98]">
+<div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl" data-icon="thumb_up" data-weight="fill">thumb_up</span>
+</div>
+<span class="text-lg font-bold text-primary">A favor</span>
+</button>
+<!-- En Contra -->
+<button class="group bg-surface-container-lowest hover:bg-error-container/20 p-8 rounded-xl flex flex-col items-center gap-4 transition-all active:scale-[0.98]">
+<div class="w-16 h-16 rounded-full bg-error-container flex items-center justify-center text-on-error-container group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl" data-icon="thumb_down" data-weight="fill">thumb_down</span>
+</div>
+<span class="text-lg font-bold text-primary">En contra</span>
+</button>
+<!-- Abstención -->
+<button class="group bg-surface-container-lowest hover:bg-surface-container-high p-8 rounded-xl flex flex-col items-center gap-4 transition-all active:scale-[0.98]">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl" data-icon="remove_circle">remove_circle</span>
+</div>
+<span class="text-lg font-bold text-primary">Abstención</span>
+</button>
+</div>
+<!-- Real-time Results Progress -->
+<div class="space-y-6 bg-surface-container-lowest p-8 rounded-xl">
+<div class="flex justify-between items-center">
+<h3 class="text-lg font-semibold text-primary">Resultados Provisionales</h3>
+<span class="text-on-surface-variant text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm animate-spin" data-icon="sync">sync</span> Actualizando en tiempo real
+                        </span>
+</div>
+<div class="space-y-4">
+<!-- Progress Row -->
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-medium">
+<span class="text-secondary flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> A Favor
+                                </span>
+<span class="text-primary">45.2% (Coef: 0.452)</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[45.2%] transition-all duration-1000"></div>
+</div>
+</div>
+<!-- Progress Row -->
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-medium">
+<span class="text-error flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error"></span> En Contra
+                                </span>
+<span class="text-primary">12.8% (Coef: 0.128)</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-error w-[12.8%] transition-all duration-1000"></div>
+</div>
+</div>
+<!-- Progress Row -->
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-medium">
+<span class="text-on-surface-variant flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-surface-variant"></span> Abstención
+                                </span>
+<span class="text-primary">7.0% (Coef: 0.070)</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-surface-variant w-[7%] transition-all duration-1000"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Admin Actions -->
+<div class="flex justify-end pt-4">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-colors shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+                    Cerrar votación
+                </button>
+</div>
+</div>
+<!-- Participant Sidebar -->
+<aside class="w-full md:w-80 bg-slate-100 dark:bg-slate-900 flex flex-col h-auto md:h-[calc(100vh-76px)] border-l border-slate-200/50">
+<div class="p-6">
+<h3 class="text-primary font-black text-lg flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+                    Participantes
+                </h3>
+<p class="text-on-surface-variant text-xs mt-1">124 presentes / 48 delegados</p>
+<div class="mt-6 relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg" data-icon="search">search</span>
+<input class="w-full bg-surface-container-highest border-none rounded-lg pl-10 text-sm focus:ring-2 focus:ring-primary-fixed" placeholder="Buscar vecino..." type="text"/>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-4 space-y-1">
+<!-- User Item -->
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-primary font-bold text-xs">RM</div>
+<div>
+<p class="text-xs font-bold text-primary">Ricardo Mendoza</p>
+<p class="text-[10px] text-on-surface-variant">Unidad 12-A</p>
+</div>
+</div>
+<span class="bg-secondary-container text-on-secondary-container text-[9px] px-2 py-0.5 rounded-full font-bold">TITULAR</span>
+</div>
+<!-- User Item Delegado -->
+<div class="flex items-center justify-between p-3 hover:bg-slate-200/50 transition-colors rounded-xl group">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-xs">AV</div>
+<div>
+<p class="text-xs font-bold text-primary">Ana Valenzuela</p>
+<p class="text-[10px] text-on-surface-variant">Unidad 4-C</p>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-on-primary-container" data-icon="account_tree">account_tree</span>
+<span class="text-[9px] text-on-primary-container font-bold">DELEGADO</span>
+</div>
+</div>
+<!-- User Item -->
+<div class="flex items-center justify-between p-3 hover:bg-slate-200/50 transition-colors rounded-xl group">
+<div class="flex items-center gap-3">
+<img alt="User" class="w-8 h-8 rounded-full object-cover" data-alt="portrait of a young adult woman with smiling expression, warm lighting, outdoor blurred background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmly6KOJCpdIj-yoigeM-657cV6rUEId8QPY5si14JOf3sv7SOQXzICmckLdbmMDcOZAlN-SFm-sCW9s2A0TQQMwwP1vOrsy86kjZioyaJF_ES9KmXqqMEJpV8Vh8WNfouX0YUFJtzWd3OjjSonVNJYxkvGxGtW7tXn0SLbgUCFePySSimwfmHoI-_SwYO2ek941l1GYb-GxEEFNyTncmqbKZ-eUSBcbOeMpKhXR8Lkbqh1BKTvjqeDTyYzzX9M0e51P4_tOlDmBE"/>
+<div>
+<p class="text-xs font-bold text-primary">Sofía García</p>
+<p class="text-[10px] text-on-surface-variant">Unidad 8-D</p>
+</div>
+</div>
+<span class="bg-secondary-container text-on-secondary-container text-[9px] px-2 py-0.5 rounded-full font-bold">TITULAR</span>
+</div>
+<!-- More Users... -->
+<div class="flex items-center justify-between p-3 hover:bg-slate-200/50 transition-colors rounded-xl group">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-xs">JL</div>
+<div>
+<p class="text-xs font-bold text-primary">Jorge López</p>
+<p class="text-[10px] text-on-surface-variant">Unidad 2-B</p>
+</div>
+</div>
+<span class="bg-secondary-container text-on-secondary-container text-[9px] px-2 py-0.5 rounded-full font-bold">TITULAR</span>
+</div>
+</div>
+<div class="p-6 bg-slate-200/30 border-t border-slate-200/50">
+<button class="w-full bg-surface-container-lowest text-primary py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:bg-white shadow-sm transition-all">
+<span class="material-symbols-outlined text-lg" data-icon="add_box">add_box</span>
+                    Registrar Poder / Delegación
+                </button>
+</div>
+</aside>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 pb-8 bg-white/90 dark:bg-slate-950/90 backdrop-blur-lg border-t border-slate-200/20 z-50 shadow-[0_-10px_20px_rgba(10,43,94,0.05)]">
+<div class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 rounded-2xl px-5 py-2 scale-90">
+<span class="material-symbols-outlined" data-icon="how_to_vote">how_to_vote</span>
+<span class="text-[0.75rem] font-medium">Asamblea</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+<span class="text-[0.75rem] font-medium">Chat</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="text-[0.75rem] font-medium">Orden</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[0.75rem] font-medium">Perfil</span>
+</div>
+</nav>
+<!-- Footer -->
+<footer class="bg-slate-50 dark:bg-slate-950 py-12 px-6 border-t border-slate-100 dark:border-slate-900">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-blue-900">PH360 PropTech Premium</span>
+<span class="text-slate-400 text-xs">|</span>
+<p class="text-slate-500 dark:text-slate-400 text-[0.75rem] font-medium">© 2024 PH360 PropTech Premium. All rights reserved.</p>
+</div>
+<div class="flex gap-6">
+<a class="text-slate-500 dark:text-slate-400 text-[0.75rem] font-medium hover:text-blue-800 dark:hover:text-blue-200" href="#">Privacy Policy</a>
+<a class="text-slate-500 dark:text-slate-400 text-[0.75rem] font-medium hover:text-blue-800 dark:hover:text-blue-200" href="#">Terms of Service</a>
+<a class="text-slate-500 dark:text-slate-400 text-[0.75rem] font-medium hover:text-blue-800 dark:hover:text-blue-200" href="#">Contact</a>
+</div>
+</div>
+</footer>
+</body></html>

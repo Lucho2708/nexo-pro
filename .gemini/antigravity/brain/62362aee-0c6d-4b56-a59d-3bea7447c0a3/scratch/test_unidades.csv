@@ -1,0 +1,5 @@
+Torre,Nombre,Coeficiente,Propietario,Identificacion,Email,Saldo
+Torre A,101,1.5,Juan Perez,123456,juan@test.com,500000
+Torre A,102,1.2,Maria Garcia,789012,maria@test.com,0
+Torre B,201,1.8,Roberto Sanchez,345678,roberto@test.com,1200000
+Torre C,303,0.9,Ana Moreno,901234,ana@test.com,250000

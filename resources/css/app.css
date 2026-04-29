@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+
+/* Tailwind 4 escanea automáticamente los archivos del proyecto */
+
+@theme {
+    /* Mapeo Semántico NEXO-PRO Premium */
+    --color-primary: var(--color-brand-primary);
+    --color-secondary: var(--color-brand-secondary);
+    
+    /* Variables Base de Superficies */
+    --color-surface: var(--color-bg-main);
+    --color-on-surface: var(--color-text-main);
+    --color-on-surface-variant: var(--color-text-second);
+    
+    --color-surface-container: var(--color-bg-surface);
+    --color-surface-container-low: var(--color-bg-surface-low);
+    --color-surface-container-lowest: var(--color-bg-main);
+    --color-surface-container-high: var(--color-bg-surface-high);
+    --color-surface-container-highest: #E2E8F0;
+    
+    --color-outline-variant: var(--color-border);
+    --color-on-primary: #FFFFFF;
+
+    /* Semantic States */
+    --color-error: #EF4444;    /* red-500 */
+    --color-success: #10B981;  /* emerald-500 */
+    --color-warning: #F59E0B;  /* amber-500 */
+    --color-info: #3B82F6;     /* blue-500 */
+    
+    /* Gradientes */
+    --bg-brand-gradient: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+}
+
+/* Base Variables for Light Mode */
+/* Base Variables for Light Mode - Nexo Steel & Indigo Evolution */
+:root {
+    --color-bg-main: #F4F7FA;         /* Steel Gray/Blue foundation */
+    --color-bg-surface: #FFFFFF;      /* Clean elevation */
+    --color-bg-surface-low: #EBF1F7;  /* Tinted surface for inputs/sections */
+    --color-bg-surface-high: #FFFFFF;
+    --color-bg-surface-highest: #DDE5ED; /* Robust border/divider tint */
+    --color-text-main: #0F172A;       /* Slate-900 absolute darkest */
+    --color-text-second: #334155;     /* Slate-700 */
+    --color-brand-primary: #2563EB;   /* blue-600 Vibrant */
+    --color-brand-secondary: #4F46E5; /* indigo-600 */
+    --color-border: #E2E8F0;          
+    
+    /* Shadow Variables - High Definition */
+    --shadow-premium: 0 4px 25px -5px rgba(37, 99, 235, 0.08), 0 0 5px rgba(37, 99, 235, 0.03);
+    --shadow-elevation: 0 20px 50px -12px rgba(37, 99, 235, 0.12);
+    --border-glow: transparent;
+}
+
+/* Dark Mode Overrides */
+@variant dark (&:where(.dark, .dark *));
+
+.dark {
+    --color-bg-main: #020617;         /* slate-950 deep depth */
+    --color-bg-surface: #0F172A;      /* slate-900 elevated surface */
+    --color-bg-surface-low: #020617;  /* match bg-main */
+    --color-bg-surface-high: #1E293B; /* slate-800 higher elevated */
+    --color-bg-surface-highest: #334155; /* slate-700 dividers */
+    --color-text-main: #F8FAFC;       /* slate-50 */
+    --color-text-second: #94A3B8;     /* slate-400 */
+    --color-brand-primary: #60A5FA;   /* blue-400 for contrast */
+    --color-brand-secondary: #818CF8; /* indigo-400 for contrast */
+    --color-border: #1E293B;          /* slate-800 */
+
+    /* Shadow Variables */
+    --shadow-premium: 0 4px 20px -2px rgba(0, 0, 0, 0.8);
+    --shadow-elevation: 0 20px 40px rgba(0, 0, 0, 0.9);
+    --border-glow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+@layer base {
+    html {
+        @apply antialiased transition-colors duration-300;
+        background-color: var(--color-bg-main);
+        color: var(--color-text-main);
+    }
+    body {
+        font-family: 'Manrope', system-ui, sans-serif;
+    }
+    
+    /* Material Symbols Premium Setup */
+    .material-symbols-rounded {
+        font-family: 'Material Symbols Rounded' !important;
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-smoothing: antialiased;
+        font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+}
+
+@layer utilities {
+    .premium-card {
+        @apply bg-surface border rounded-2xl transition-all duration-300;
+        box-shadow: var(--shadow-premium);
+        border-color: var(--color-border);
+    }
+    
+    .dark .premium-card {
+        box-shadow: var(--border-glow), var(--shadow-premium);
+        border-color: transparent;
+    }
+
+    .premium-elevated {
+        @apply bg-surface-container-high transition-transform duration-300;
+        box-shadow: var(--shadow-elevation);
+    }
+
+    .dark .premium-elevated {
+        box-shadow: var(--border-glow), var(--shadow-elevation);
+    }
+
+    .brand-accent-line {
+        height: 3px;
+        background: var(--bg-brand-gradient);
+        width: 100%;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}

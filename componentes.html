@@ -1,0 +1,1701 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>NEXO-PRO Framework UI - Documentación</title>
+
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <style>
+            :root {
+                /* NEXO Identity Colors */
+                --primary: #101827;
+                --on-primary: #ffffff;
+                --surface: #ffffff;
+                --on-surface: #101827;
+                --secondary: #00d4ff;
+                --error: #ef4444;
+                --surface-low: #f3f4f6;
+                --surface-highest: #d1d5db;
+
+                --brand-gradient: linear-gradient(
+                    90deg,
+                    #00d4ff 0%,
+                    #e11cc8 100%
+                );
+                --dark-cta: linear-gradient(135deg, #00d4ff 0%, #9b24fe 100%);
+            }
+
+            html.dark {
+                --primary: #38bdf8;
+                --on-primary: #0f172a;
+                --surface: #0f172a;
+                --on-surface: #f8fafc;
+                --secondary: #00d4ff;
+                --error: #f87171;
+                --surface-low: #111827;
+                --surface-highest: #1f2937;
+            }
+
+            body {
+                background-color: var(--surface);
+                color: var(--on-surface);
+                font-family:
+                    "Inter",
+                    system-ui,
+                    -apple-system,
+                    sans-serif;
+                scroll-behavior: smooth;
+            }
+
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+            ::-webkit-scrollbar-track {
+                background: var(--surface-low);
+            }
+            ::-webkit-scrollbar-thumb {
+                background: var(--surface-highest);
+                border-radius: 4px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--secondary);
+            }
+
+            /* Transitions */
+            .fade-enter-active,
+            .fade-leave-active {
+                transition: opacity 0.3s ease;
+            }
+            .fade-enter-from,
+            .fade-leave-to {
+                opacity: 0;
+            }
+            .slide-fade-enter-active {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .slide-fade-leave-active {
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .slide-fade-enter-from,
+            .slide-fade-leave-to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            .slide-drawer-enter-active,
+            .slide-drawer-leave-active {
+                transition: transform 0.4s ease;
+            }
+            .slide-drawer-enter-from,
+            .slide-drawer-leave-to {
+                transform: translateX(100%);
+            }
+
+            pre {
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+        </style>
+
+        <script>
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: "var(--primary)",
+                            "on-primary": "var(--on-primary)",
+                            surface: "var(--surface)",
+                            "on-surface": "var(--on-surface)",
+                            secondary: "var(--secondary)",
+                            error: "var(--error)",
+                            "surface-low": "var(--surface-low)",
+                            "surface-highest": "var(--surface-highest)",
+                        },
+                        backgroundImage: {
+                            "brand-gradient": "var(--brand-gradient)",
+                            "dark-cta": "var(--dark-cta)",
+                        },
+                    },
+                },
+            };
+        </script>
+    </head>
+    <body class="transition-colors duration-300 min-h-screen flex flex-col">
+        <div id="app" class="flex-grow flex flex-col">
+            <!-- NAVBAR -->
+            <nexo-navbar
+                title="NEXO-PRO UI"
+                :links="navLinks"
+                @toggle-theme="toggleTheme"
+                :is-dark="isDark"
+            ></nexo-navbar>
+
+            <div class="flex flex-1 overflow-hidden">
+                <!-- SIDEBAR SCROLLSPY -->
+                <aside
+                    class="w-64 hidden lg:flex flex-col bg-surface-low border-r border-surface-highest h-[calc(100vh-70px)] sticky top-[70px] overflow-y-auto p-4"
+                >
+                    <h3
+                        class="text-xs font-black tracking-widest text-on-surface opacity-50 mb-4 px-2"
+                    >
+                        COMPONENTES
+                    </h3>
+                    <nav class="flex flex-col gap-1">
+                        <a
+                            v-for="comp in componentList"
+                            :key="comp"
+                            :href="'#'+comp.toLowerCase().replace(/ /g, '-')"
+                            class="px-3 py-2 text-sm rounded-lg hover:bg-surface-highest transition-colors opacity-80 hover:opacity-100 hover:text-secondary font-medium"
+                        >
+                            {{ comp }}
+                        </a>
+                    </nav>
+                </aside>
+
+                <!-- MAIN DOCS -->
+                <main class="flex-1 overflow-y-auto p-6 lg:p-12 pb-32">
+                    <header class="mb-12">
+                        <nexo-badge
+                            text="v2.0 Framework"
+                            variant="gradient"
+                            class="mb-3"
+                        ></nexo-badge>
+                        <h1
+                            class="text-4xl font-extrabold bg-clip-text text-transparent bg-brand-gradient"
+                        >
+                            Documentación Oficial
+                        </h1>
+                        <p class="text-on-surface opacity-80 mt-2 text-lg">
+                            Guía de implementación de los componentes
+                            interactivos.
+                        </p>
+                    </header>
+
+                    <div class="space-y-16 max-w-5xl">
+                        <!-- 1. Accordion -->
+                        <section id="accordion">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Accordion
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <nexo-accordion
+                                        :items="[{title:'¿Qué es Nexo-Pro?', content:'Es un framework UI Vue 3.'}, {title:'¿Usa dependencias?', content:'No, 100% Tailwind y Vue.'}]"
+                                    ></nexo-accordion>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-accordion :items="[{title:'...',
+                                    content:'...'}]" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 2. Alerts -->
+                        <section id="alerts">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Alerts
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface flex flex-col gap-3">
+                                    <nexo-alert
+                                        variant="success"
+                                        message="Operación completada con éxito."
+                                    ></nexo-alert>
+                                    <nexo-alert
+                                        variant="error"
+                                        message="Ha ocurrido un error en el servidor."
+                                    ></nexo-alert>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-alert variant="success"
+                                    message="Texto" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 3. Badge -->
+                        <section id="badge">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Badge
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface flex gap-3">
+                                    <nexo-badge
+                                        text="Nuevo"
+                                        variant="primary"
+                                    ></nexo-badge>
+                                    <nexo-badge
+                                        text="Premium"
+                                        variant="gradient"
+                                    ></nexo-badge>
+                                    <nexo-badge
+                                        text="Offline"
+                                        variant="outline"
+                                    ></nexo-badge>
+                                    <nexo-badge
+                                        text="Éxito"
+                                        variant="success"
+                                    ></nexo-badge>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-badge text="Premium"
+                                    variant="gradient" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 4. Breadcrumb -->
+                        <section id="breadcrumb">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Breadcrumb
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <nexo-breadcrumb
+                                        :items="['Dashboard', 'Usuarios', 'Perfil']"
+                                    ></nexo-breadcrumb>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-breadcrumb :items="['Home', 'Sub']"
+                                    /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 5. Buttons -->
+                        <section id="buttons">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Buttons
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div
+                                    class="p-6 bg-surface flex flex-wrap gap-4"
+                                >
+                                    <nexo-button
+                                        label="Primario"
+                                        variant="primary"
+                                    ></nexo-button>
+                                    <nexo-button
+                                        label="Secundario"
+                                        variant="secondary"
+                                    ></nexo-button>
+                                    <nexo-button
+                                        label="Gradiente"
+                                        variant="gradient"
+                                    ></nexo-button>
+                                    <nexo-button
+                                        label="Outline"
+                                        variant="outline"
+                                    ></nexo-button>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-button label="Gradiente"
+                                    variant="gradient" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 6. Button Group -->
+                        <section id="button-group">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Button group
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <nexo-button-group
+                                        :buttons="['Izquierda', 'Centro', 'Derecha']"
+                                    ></nexo-button-group>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-button-group :buttons="['A', 'B',
+                                    'C']" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 7. Card -->
+                        <section id="card">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Card
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <div class="max-w-sm">
+                                        <nexo-card
+                                            title="Diseño Modular"
+                                            text="Las tarjetas agrupan contenido de manera limpia."
+                                            img="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&q=80"
+                                        ></nexo-card>
+                                    </div>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-card title="Título"
+                                    text="Contenido" img="url.jpg" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 8. Carousel -->
+                        <section id="carousel">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Carousel
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <nexo-carousel
+                                        :images="['https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80', 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80']"
+                                    ></nexo-carousel>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-carousel :images="['img1.jpg',
+                                    'img2.jpg']" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 9. Close Button -->
+                        <section id="close-button">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Close button
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div
+                                    class="p-6 bg-surface flex items-center gap-4"
+                                >
+                                    <span>Botón de cierre estándar:</span>
+                                    <nexo-close-button></nexo-close-button>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-close-button @click="close" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 10. Collapse -->
+                        <section id="collapse">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Collapse
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <nexo-collapse label="Mostrar más detalles">
+                                        <div
+                                            class="p-4 bg-surface-low rounded-xl mt-2 border border-surface-highest"
+                                        >
+                                            Este es el contenido colapsado que
+                                            se muestra con una suave transición
+                                            CSS.
+                                        </div>
+                                    </nexo-collapse>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-collapse label="Toggle"&gt;
+                                    Contenido &lt;/nexo-collapse&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 11. Dropdowns -->
+                        <section id="dropdowns">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Dropdowns
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface pb-32">
+                                    <nexo-dropdown
+                                        label="Opciones"
+                                        :items="['Editar', 'Duplicar', 'Eliminar']"
+                                    ></nexo-dropdown>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-dropdown label="Menu"
+                                    :items="['Opt1', 'Opt2']" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 12. List Group -->
+                        <section id="list-group">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                List group
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <nexo-list-group
+                                        :items="['Elemento interactivo 1', 'Elemento interactivo 2', 'Elemento inactivo']"
+                                    ></nexo-list-group>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-list-group :items="['A', 'B']"
+                                    /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 13. Modal -->
+                        <section id="modal">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Modal
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <nexo-button
+                                        label="Abrir Modal"
+                                        @click="showModal = true"
+                                    ></nexo-button>
+                                    <nexo-modal
+                                        :is-open="showModal"
+                                        @close="showModal = false"
+                                        title="Modal Interactivo"
+                                        content="Fondo bloqueado (backdrop) con desenfoque."
+                                    ></nexo-modal>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-modal :is-open="val"
+                                    @close="val=false" title="T" content="C"
+                                    /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 14. Navs & Tabs -->
+                        <section id="navs-&-tabs">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Navs & tabs
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <nexo-tabs :tabs="['Vista 1', 'Vista 2']">
+                                        <template #tab-0
+                                            >Contenido exclusivo de la pestaña
+                                            1.</template
+                                        >
+                                        <template #tab-1
+                                            >Información de la pestaña
+                                            2.</template
+                                        >
+                                    </nexo-tabs>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-tabs :tabs="['T1', 'T2']"&gt;
+                                    &lt;template #tab-0&gt;...&lt;/template&gt;
+                                    &lt;/nexo-tabs&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 15. Offcanvas -->
+                        <section id="offcanvas">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Offcanvas
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <nexo-button
+                                        label="Abrir Menú Lateral"
+                                        @click="showOffcanvas = true"
+                                    ></nexo-button>
+                                    <nexo-offcanvas
+                                        :is-open="showOffcanvas"
+                                        @close="showOffcanvas = false"
+                                    >
+                                        <h3 class="text-xl font-bold mb-4">
+                                            Panel Lateral
+                                        </h3>
+                                        <p class="opacity-80">
+                                            Ideal para menús móviles o filtros
+                                            avanzados.
+                                        </p>
+                                    </nexo-offcanvas>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-offcanvas :is-open="val"
+                                    @close="val=false"&gt;...&lt;/nexo-offcanvas&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 16. Pagination -->
+                        <section id="pagination">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Pagination
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <nexo-pagination
+                                        :current-page="2"
+                                        :total-pages="5"
+                                    ></nexo-pagination>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-pagination :current-page="2"
+                                    :total-pages="5" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 17. Placeholders -->
+                        <section id="placeholders">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Placeholders
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <nexo-placeholder></nexo-placeholder>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-placeholder /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 18. Popovers -->
+                        <section id="popovers">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Popovers
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface pb-24">
+                                    <nexo-popover
+                                        text="Click para ver info"
+                                        title="Información Extra"
+                                        content="Este es el cuerpo del popover interactivo."
+                                    ></nexo-popover>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-popover text="Click" title="Title"
+                                    content="Details" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 19. Progress -->
+                        <section id="progress">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Progress
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface flex flex-col gap-4">
+                                    <nexo-progress
+                                        :percentage="45"
+                                    ></nexo-progress>
+                                    <nexo-progress
+                                        :percentage="80"
+                                        variant="success"
+                                    ></nexo-progress>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-progress :percentage="45" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 20. Spinners -->
+                        <section id="spinners">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Spinners
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div
+                                    class="p-6 bg-surface flex gap-6 items-center"
+                                >
+                                    <nexo-spinner></nexo-spinner>
+                                    <nexo-spinner size="lg"></nexo-spinner>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-spinner size="lg" /&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 21. Tables (Datatables) -->
+                        <section id="tables">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Tables
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <!-- DataTables Component -->
+                                    <nexo-table
+                                        :columns="tableColumns"
+                                        :data="tableData"
+                                    >
+                                        <!-- Custom slot for formatting specific column data -->
+                                        <template #cell-status="{ row }">
+                                            <nexo-badge
+                                                :text="row.status"
+                                                :variant="row.status === 'Activo' ? 'success' : (row.status === 'Inactivo' ? 'error' : 'warning')"
+                                            >
+                                            </nexo-badge>
+                                        </template>
+                                    </nexo-table>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-table :columns="cols"
+                                    :data="rows"&gt; <br />
+                                    &nbsp;&nbsp;&lt;template #cell-status="{ row
+                                    }"&gt;...&lt;/template&gt; <br />
+                                    &lt;/nexo-table&gt;
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 22. Toasts -->
+                        <section id="toasts">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Toasts
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface">
+                                    <nexo-button
+                                        label="Notificar Mensaje"
+                                        @click="triggerToast"
+                                    ></nexo-button>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    // Dispara el evento global para mostrar
+                                    toast toastManager.add("¡Hola desde el
+                                    Toast!", "success")
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 23. Tooltips -->
+                        <section id="tooltips">
+                            <h2
+                                class="text-2xl font-bold mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-6 bg-secondary rounded-full"
+                                ></span>
+                                Tooltips
+                            </h2>
+                            <div
+                                class="border border-surface-highest rounded-2xl overflow-hidden shadow-sm"
+                            >
+                                <div class="p-6 bg-surface pt-12">
+                                    <nexo-tooltip
+                                        text="Texto de ayuda al pasar el mouse"
+                                    >
+                                        <span
+                                            class="underline decoration-secondary cursor-help font-medium"
+                                            >Pasa el ratón sobre este
+                                            texto</span
+                                        >
+                                    </nexo-tooltip>
+                                </div>
+                                <div
+                                    class="bg-surface-low p-4 border-t border-surface-highest text-sm font-mono opacity-80"
+                                >
+                                    &lt;nexo-tooltip text="Tooltip Info"&gt;
+                                    Elemento &lt;/nexo-tooltip&gt;
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </main>
+            </div>
+
+            <!-- CONTENEDOR TOAST GLOBAL -->
+            <div
+                class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"
+            >
+                <transition-group name="slide-fade">
+                    <div
+                        v-for="t in toasts"
+                        :key="t.id"
+                        class="pointer-events-auto bg-surface/90 backdrop-blur-xl border border-surface-highest shadow-2xl rounded-xl p-4 flex items-center gap-3 w-80"
+                    >
+                        <div
+                            class="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                            :class="t.variant === 'success' ? 'bg-green-500/20 text-green-500' : 'bg-secondary/20 text-secondary'"
+                        >
+                            <svg
+                                class="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M5 13l4 4L19 7"
+                                ></path>
+                            </svg>
+                        </div>
+                        <p class="text-sm font-bold">{{ t.msg }}</p>
+                    </div>
+                </transition-group>
+            </div>
+        </div>
+
+        <script type="module">
+            import {
+                createApp,
+                ref,
+                reactive,
+                computed,
+                onMounted,
+                onUnmounted,
+                watch,
+            } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
+            /* =========================================================
+       SISTEMA GLOBAL DE TOASTS
+       ========================================================= */
+            const toasts = ref([]);
+            const toastManager = {
+                add(msg, variant = "primary") {
+                    const id = Date.now();
+                    toasts.value.push({ id, msg, variant });
+                    setTimeout(() => {
+                        toasts.value = toasts.value.filter((t) => t.id !== id);
+                    }, 3000);
+                },
+            };
+
+            /* =========================================================
+       1. ACCORDION
+       ========================================================= */
+            const NexoAccordion = {
+                props: ["items"],
+                setup() {
+                    return { active: ref(null) };
+                },
+                template: `
+        <div class="flex flex-col gap-2 w-full text-left">
+          <div v-for="(item, index) in items" :key="index" class="bg-surface-low border border-surface-highest rounded-xl overflow-hidden transition-all duration-300">
+            <button @click="active = active === index ? null : index" class="w-full px-5 py-3.5 flex justify-between items-center text-on-surface focus:outline-none">
+              <span class="font-bold text-sm">{{ item.title }}</span>
+              <svg :class="{'rotate-180 text-secondary': active === index}" class="w-5 h-5 transition-transform opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <transition name="fade">
+              <div v-show="active === index" class="px-5 pb-4 pt-1 text-on-surface opacity-80 text-sm">{{ item.content }}</div>
+            </transition>
+          </div>
+        </div>`,
+            };
+
+            /* =========================================================
+       2. ALERTS
+       ========================================================= */
+            const NexoAlert = {
+                props: { message: String, variant: { default: "info" } },
+                template: `
+        <div class="border rounded-xl p-4 flex gap-3 text-sm font-medium"
+             :class="{
+               'bg-green-500/10 border-green-500/50 text-green-500': variant === 'success',
+               'bg-error/10 border-error/50 text-error': variant === 'error',
+               'bg-secondary/10 border-secondary/50 text-secondary': variant === 'info'
+             }">
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          {{ message }}
+        </div>`,
+            };
+
+            /* =========================================================
+       3. BADGE
+       ========================================================= */
+            const NexoBadge = {
+                props: { text: String, variant: { default: "primary" } },
+                template: `
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold transition-colors"
+          :class="{
+            'bg-brand-gradient text-white shadow-md': variant === 'gradient',
+            'bg-primary text-on-primary': variant === 'primary',
+            'bg-surface-low border border-surface-highest text-on-surface': variant === 'outline',
+            'bg-green-500/10 text-green-500 border border-green-500/50': variant === 'success',
+            'bg-error/10 text-error border border-error/50': variant === 'error',
+            'bg-yellow-500/10 text-yellow-500 border border-yellow-500/50': variant === 'warning'
+          }">{{ text }}</span>`,
+            };
+
+            /* =========================================================
+       4. BREADCRUMB
+       ========================================================= */
+            const NexoBreadcrumb = {
+                props: ["items"],
+                template: `
+        <nav class="flex text-sm font-medium opacity-70">
+          <ol class="flex items-center space-x-2">
+            <li v-for="(item, index) in items" :key="index" class="flex items-center">
+              <a href="#" class="hover:text-secondary transition-colors">{{ item }}</a>
+              <svg v-if="index < items.length - 1" class="w-4 h-4 mx-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </li>
+          </ol>
+        </nav>`,
+            };
+
+            /* =========================================================
+       5. BUTTONS
+       ========================================================= */
+            const NexoButton = {
+                props: { label: String, variant: { default: "primary" } },
+                computed: {
+                    btnClass() {
+                        const base =
+                            "px-6 py-2.5 rounded-lg font-bold text-sm transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-secondary";
+                        if (this.variant === "gradient")
+                            return (
+                                base +
+                                " bg-brand-gradient text-white shadow-lg hover:shadow-cyan-500/40"
+                            );
+                        if (this.variant === "secondary")
+                            return (
+                                base +
+                                " bg-surface-low text-on-surface border border-surface-highest hover:bg-surface-highest"
+                            );
+                        if (this.variant === "outline")
+                            return (
+                                base +
+                                " border-2 border-primary text-primary hover:bg-primary hover:text-on-primary"
+                            );
+                        return (
+                            base +
+                            " bg-primary text-on-primary shadow-md hover:bg-opacity-90"
+                        );
+                    },
+                },
+                template: `<button :class="btnClass">{{ label }}</button>`,
+            };
+
+            /* =========================================================
+       6. BUTTON GROUP
+       ========================================================= */
+            const NexoButtonGroup = {
+                props: ["buttons"],
+                template: `
+        <div class="inline-flex shadow-sm rounded-lg">
+          <button v-for="(btn, i) in buttons" :key="i"
+            class="px-4 py-2 text-sm font-bold bg-surface-low border-y border-surface-highest text-on-surface hover:bg-surface-highest transition-colors focus:outline-none"
+            :class="{
+              'rounded-l-lg border-l': i === 0,
+              'rounded-r-lg border-r': i === buttons.length - 1,
+              'border-l border-surface-highest': i !== 0
+            }">
+            {{ btn }}
+          </button>
+        </div>`,
+            };
+
+            /* =========================================================
+       7. CARD
+       ========================================================= */
+            const NexoCard = {
+                props: ["title", "text", "img"],
+                template: `
+        <div class="bg-surface border border-surface-highest rounded-2xl overflow-hidden shadow-md">
+          <img v-if="img" :src="img" class="w-full h-40 object-cover" />
+          <div class="p-5">
+            <h3 class="text-lg font-bold mb-2">{{ title }}</h3>
+            <p class="text-sm opacity-80 mb-4">{{ text }}</p>
+            <nexo-button label="Acción" variant="secondary" class="w-full"></nexo-button>
+          </div>
+        </div>`,
+            };
+
+            /* =========================================================
+       8. CAROUSEL
+       ========================================================= */
+            const NexoCarousel = {
+                props: ["images"],
+                setup(props) {
+                    const current = ref(0);
+                    const next = () =>
+                        (current.value =
+                            (current.value + 1) % props.images.length);
+                    const prev = () =>
+                        (current.value =
+                            (current.value - 1 + props.images.length) %
+                            props.images.length);
+
+                    // Evitamos uso de backticks anidados para prevenir SyntaxError en diferentes navegadores
+                    const containerStyle = computed(() => {
+                        return {
+                            transform:
+                                "translateX(" + -current.value * 100 + "%)",
+                        };
+                    });
+
+                    return { current, next, prev, containerStyle };
+                },
+                template: `
+        <div class="relative rounded-2xl overflow-hidden group aspect-video">
+          <div class="flex transition-transform duration-500 h-full" :style="containerStyle">
+            <img v-for="img in images" :src="img" class="w-full h-full object-cover shrink-0" />
+          </div>
+          <button @click="prev" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">❮</button>
+          <button @click="next" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">❯</button>
+        </div>`,
+            };
+
+            /* =========================================================
+       9. CLOSE BUTTON
+       ========================================================= */
+            const NexoCloseButton = {
+                template: `
+        <button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface opacity-50 hover:opacity-100 hover:bg-surface-highest transition-all focus:outline-none">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>`,
+            };
+
+            /* =========================================================
+       10. COLLAPSE
+       ========================================================= */
+            const NexoCollapse = {
+                props: ["label"],
+                setup() {
+                    return { isOpen: ref(false) };
+                },
+                template: `
+        <div>
+          <nexo-button :label="label" @click="isOpen = !isOpen" variant="outline"></nexo-button>
+          <transition name="fade">
+            <div v-show="isOpen"><slot></slot></div>
+          </transition>
+        </div>`,
+            };
+
+            /* =========================================================
+       11. DROPDOWNS
+       ========================================================= */
+            const NexoDropdown = {
+                props: ["label", "items"],
+                setup() {
+                    return { isOpen: ref(false) };
+                },
+                template: `
+        <div class="relative inline-block">
+          <button @click="isOpen = !isOpen" class="px-5 py-2.5 bg-surface-low border border-surface-highest rounded-lg font-bold text-sm flex items-center gap-2 focus:outline-none">
+            {{ label }} <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <transition name="slide-fade">
+            <ul v-if="isOpen" class="absolute top-full left-0 mt-2 w-48 bg-surface border border-surface-highest rounded-xl shadow-xl z-50 overflow-hidden py-1">
+              <li v-for="item in items" class="px-4 py-2.5 text-sm hover:bg-surface-highest cursor-pointer font-medium" @click="isOpen = false">{{ item }}</li>
+            </ul>
+          </transition>
+        </div>`,
+            };
+
+            /* =========================================================
+       12. LIST GROUP
+       ========================================================= */
+            const NexoListGroup = {
+                props: ["items"],
+                template: `
+        <ul class="border border-surface-highest rounded-xl overflow-hidden bg-surface-low">
+          <li v-for="(item, i) in items" :key="i" class="px-5 py-3.5 border-b border-surface-highest last:border-b-0 hover:bg-surface transition-colors cursor-pointer text-sm font-medium">
+            {{ item }}
+          </li>
+        </ul>`,
+            };
+
+            /* =========================================================
+       13. MODAL
+       ========================================================= */
+            const NexoModal = {
+                props: ["isOpen", "title", "content"],
+                emits: ["close"],
+                template: `
+        <transition name="fade">
+          <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="$emit('close')"></div>
+            <div class="relative bg-surface rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" @click.stop>
+              <div class="px-6 py-5 border-b border-surface-highest flex justify-between items-center">
+                <h3 class="text-xl font-bold text-primary">{{ title }}</h3>
+                <nexo-close-button @click="$emit('close')"></nexo-close-button>
+              </div>
+              <div class="p-6 text-on-surface opacity-90 text-sm leading-relaxed">{{ content }}</div>
+              <div class="px-6 py-4 bg-surface-low flex justify-end gap-3">
+                <button class="px-4 py-2 rounded-lg font-bold text-sm border-2 border-surface-highest hover:bg-surface-highest transition-colors" @click="$emit('close')">Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </transition>`,
+            };
+
+            /* =========================================================
+       14. NAVBAR
+       ========================================================= */
+            const NexoNavbar = {
+                props: ["title", "links", "isDark"],
+                emits: ["toggle-theme"],
+                template: `
+        <nav class="sticky top-0 z-40 bg-surface/80 backdrop-blur-md border-b border-surface-highest px-6 h-[70px] flex justify-between items-center">
+          <div class="font-black text-xl text-primary flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-brand-gradient flex items-center justify-center text-white text-sm shadow-lg">NX</div>
+            {{ title }}
+          </div>
+          <button @click="$emit('toggle-theme')" class="p-2 bg-surface-low border border-surface-highest rounded-full shadow-sm hover:text-secondary focus:outline-none">
+             <span v-if="isDark">☀️</span><span v-else>🌙</span>
+          </button>
+        </nav>`,
+            };
+
+            /* =========================================================
+       15. NAVS & TABS
+       ========================================================= */
+            const NexoTabs = {
+                props: ["tabs"],
+                setup() {
+                    return { activeTab: ref(0) };
+                },
+                template: `
+        <div>
+          <div class="border-b border-surface-highest flex space-x-6 overflow-x-auto">
+            <button v-for="(tab, index) in tabs" :key="index"
+              @click="activeTab = index"
+              class="pb-3 text-sm font-bold transition-all relative whitespace-nowrap focus:outline-none"
+              :class="activeTab === index ? 'text-secondary' : 'text-on-surface opacity-60 hover:opacity-100'">
+              {{ tab }}
+              <div v-if="activeTab === index" class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-gradient shadow-[0_0_8px_rgba(0,212,255,0.6)]"></div>
+            </button>
+          </div>
+          <div class="pt-6 text-sm opacity-90 min-h-[60px]">
+            <transition name="fade" mode="out-in">
+              <div :key="activeTab"><slot :name="'tab-' + activeTab"></slot></div>
+            </transition>
+          </div>
+        </div>`,
+            };
+
+            /* =========================================================
+       16. OFFCANVAS
+       ========================================================= */
+            const NexoOffcanvas = {
+                props: ["isOpen"],
+                emits: ["close"],
+                template: `
+        <div>
+          <transition name="fade">
+            <div v-if="isOpen" class="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm" @click="$emit('close')"></div>
+          </transition>
+          <transition name="slide-drawer">
+            <div v-if="isOpen" class="fixed top-0 right-0 h-full w-80 bg-surface shadow-2xl z-50 border-l border-surface-highest flex flex-col">
+              <div class="p-6 border-b border-surface-highest flex justify-end"><nexo-close-button @click="$emit('close')"></nexo-close-button></div>
+              <div class="p-6 flex-1 overflow-y-auto"><slot></slot></div>
+            </div>
+          </transition>
+        </div>`,
+            };
+
+            /* =========================================================
+       17. PAGINATION
+       ========================================================= */
+            const NexoPagination = {
+                props: ["currentPage", "totalPages"],
+                template: `
+        <div class="flex items-center gap-2">
+          <button class="w-9 h-9 rounded-lg flex items-center justify-center bg-surface-low border border-surface-highest hover:text-secondary shadow-sm">❮</button>
+          <div class="flex gap-1">
+            <button v-for="p in [1,2,3,'...',totalPages]" :key="p"
+              class="w-9 h-9 rounded-lg text-sm font-bold transition-all focus:outline-none"
+              :class="p === currentPage ? 'bg-primary text-on-primary shadow-md' : 'hover:bg-surface-low border border-transparent'">
+              {{ p }}
+            </button>
+          </div>
+          <button class="w-9 h-9 rounded-lg flex items-center justify-center bg-surface-low border border-surface-highest hover:text-secondary shadow-sm">❯</button>
+        </div>`,
+            };
+
+            /* =========================================================
+       18. PLACEHOLDERS (Skeleton Loader)
+       ========================================================= */
+            const NexoPlaceholder = {
+                template: `
+        <div class="animate-pulse flex flex-col gap-3 w-full max-w-sm">
+          <div class="h-32 bg-surface-highest rounded-xl w-full opacity-50"></div>
+          <div class="h-4 bg-surface-highest rounded w-3/4 opacity-50"></div>
+          <div class="h-4 bg-surface-highest rounded w-1/2 opacity-50"></div>
+        </div>`,
+            };
+
+            /* =========================================================
+       19. POPOVERS
+       ========================================================= */
+            const NexoPopover = {
+                props: ["text", "title", "content"],
+                setup() {
+                    return { show: ref(false) };
+                },
+                template: `
+        <div class="relative inline-block">
+          <nexo-button :label="text" @click="show = !show" variant="outline"></nexo-button>
+          <transition name="slide-fade">
+            <div v-if="show" class="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 w-64 bg-surface border border-surface-highest rounded-xl shadow-2xl p-4 z-50">
+              <h4 class="font-bold text-sm mb-1 text-primary">{{ title }}</h4>
+              <p class="text-xs opacity-80">{{ content }}</p>
+              <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-surface border-b border-r border-surface-highest rotate-45"></div>
+            </div>
+          </transition>
+        </div>`,
+            };
+
+            /* =========================================================
+       20. PROGRESS
+       ========================================================= */
+            const NexoProgress = {
+                props: { percentage: Number, variant: { default: "brand" } },
+                template: `
+        <div class="w-full bg-surface-highest rounded-full h-2.5 overflow-hidden">
+          <div class="h-2.5 rounded-full transition-all duration-1000"
+               :class="variant === 'success' ? 'bg-green-500' : 'bg-brand-gradient'"
+               :style="{ width: percentage + '%' }"></div>
+        </div>`,
+            };
+
+            /* =========================================================
+       21. TABLES (Advanced Datatables)
+       ========================================================= */
+            const NexoTable = {
+                props: {
+                    columns: { type: Array, required: true },
+                    data: { type: Array, required: true },
+                },
+                setup(props) {
+                    const search = ref("");
+                    const sortKey = ref("");
+                    const sortOrder = ref(1); // 1 = ASC, -1 = DESC
+                    const currentPage = ref(1);
+                    const itemsPerPage = ref(5);
+
+                    // Computed: Filtros de Búsqueda y Ordenamiento
+                    const processedData = computed(() => {
+                        let result = props.data;
+
+                        // 1. Buscador global (DataTables style)
+                        if (search.value) {
+                            const q = search.value.toLowerCase();
+                            result = result.filter((row) =>
+                                Object.values(row).some((val) =>
+                                    String(val).toLowerCase().includes(q),
+                                ),
+                            );
+                        }
+
+                        // 2. Ordenamiento al hacer click en las columnas
+                        if (sortKey.value) {
+                            result = result.slice().sort((a, b) => {
+                                let valA = a[sortKey.value];
+                                let valB = b[sortKey.value];
+
+                                if (valA < valB) return -1 * sortOrder.value;
+                                if (valA > valB) return 1 * sortOrder.value;
+                                return 0;
+                            });
+                        }
+                        return result;
+                    });
+
+                    // Computed: Paginación
+                    const totalPages = computed(() =>
+                        Math.ceil(
+                            processedData.value.length / itemsPerPage.value,
+                        ),
+                    );
+
+                    const paginatedData = computed(() => {
+                        const start =
+                            (currentPage.value - 1) * itemsPerPage.value;
+                        return processedData.value.slice(
+                            start,
+                            start + itemsPerPage.value,
+                        );
+                    });
+
+                    // Métodos
+                    const sortBy = (key) => {
+                        if (sortKey.value === key) {
+                            sortOrder.value *= -1; // Invertir orden si clickea de nuevo
+                        } else {
+                            sortKey.value = key;
+                            sortOrder.value = 1;
+                        }
+                    };
+
+                    // Resetear a página 1 si se busca algo
+                    watch(search, () => {
+                        currentPage.value = 1;
+                    });
+                    watch(itemsPerPage, () => {
+                        currentPage.value = 1;
+                    });
+
+                    return {
+                        search,
+                        sortKey,
+                        sortOrder,
+                        currentPage,
+                        itemsPerPage,
+                        totalPages,
+                        paginatedData,
+                        sortBy,
+                        processedData,
+                    };
+                },
+                template: `
+        <div class="bg-surface border border-surface-highest rounded-2xl overflow-hidden flex flex-col w-full text-left">
+
+          <!-- Top Toolbar (Search & Select) -->
+          <div class="p-4 border-b border-surface-highest flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface-low/30">
+            <div class="w-full sm:w-64 relative">
+              <input v-model="search" type="text" placeholder="Buscar registros..." class="w-full pl-10 pr-4 py-2.5 bg-surface border border-surface-highest rounded-xl text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary transition-all" />
+              <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <div class="flex items-center gap-2 text-sm font-medium opacity-80">
+              <span>Mostrar</span>
+              <select v-model.number="itemsPerPage" class="bg-surface border border-surface-highest rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-secondary">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+              </select>
+              <span>filas</span>
+            </div>
+          </div>
+
+          <!-- Tabla Central -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-surface-low border-b border-surface-highest text-left">
+                <tr>
+                  <th v-for="col in columns" :key="col.key"
+                      @click="col.sortable ? sortBy(col.key) : null"
+                      class="px-6 py-4 font-bold text-on-surface opacity-80 whitespace-nowrap transition-colors"
+                      :class="{'cursor-pointer hover:text-secondary select-none': col.sortable}">
+                    <div class="flex items-center gap-2">
+                      {{ col.label }}
+                      <span v-if="col.sortable" class="flex flex-col text-[10px] opacity-40 transition-all" :class="{'text-secondary opacity-100': sortKey === col.key}">
+                        <svg class="w-2.5 h-2.5 -mb-1" :class="{'opacity-30': sortKey === col.key && sortOrder === -1}" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4l-8 8h16z"/></svg>
+                        <svg class="w-2.5 h-2.5" :class="{'opacity-30': sortKey === col.key && sortOrder === 1}" fill="currentColor" viewBox="0 0 24 24"><path d="M12 20l8-8H4z"/></svg>
+                      </span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-surface-highest">
+                <tr v-for="row in paginatedData" :key="row.id" class="hover:bg-surface-low/50 transition-colors">
+                  <td v-for="col in columns" :key="col.key" class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <!-- Uso dinámico de Slots para permitir estilos personalizados (ej: Badges) -->
+                    <slot :name="'cell-' + col.key" :row="row">
+                      {{ row[col.key] }}
+                    </slot>
+                  </td>
+                </tr>
+                <tr v-if="paginatedData.length === 0">
+                  <td :colspan="columns.length" class="px-6 py-12 text-center opacity-50 text-sm font-bold">
+                    No se encontraron resultados coincidentes.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Bottom Toolbar (Pagination) -->
+          <div class="p-4 border-t border-surface-highest flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface-low/30 text-sm font-medium">
+            <div class="opacity-70">
+              Mostrando de {{ paginatedData.length ? (currentPage - 1) * itemsPerPage + 1 : 0 }} a {{ Math.min(currentPage * itemsPerPage, processedData.length) }} de {{ processedData.length }} registros
+            </div>
+            <div class="flex gap-2">
+              <button @click="currentPage--" :disabled="currentPage === 1" class="px-4 py-2 rounded-lg border border-surface-highest bg-surface hover:bg-surface-highest disabled:opacity-40 disabled:cursor-not-allowed transition-all">Anterior</button>
+              <button @click="currentPage++" :disabled="currentPage === totalPages || totalPages === 0" class="px-4 py-2 rounded-lg border border-surface-highest bg-surface hover:bg-surface-highest disabled:opacity-40 disabled:cursor-not-allowed transition-all">Siguiente</button>
+            </div>
+          </div>
+        </div>
+      `,
+            };
+
+            /* =========================================================
+       22. SPINNERS
+       ========================================================= */
+            const NexoSpinner = {
+                props: { size: { default: "md" } },
+                template: `
+        <svg class="animate-spin text-secondary" :class="size === 'lg' ? 'w-8 h-8' : 'w-5 h-5'" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>`,
+            };
+
+            /* =========================================================
+       23. TOOLTIPS
+       ========================================================= */
+            const NexoTooltip = {
+                props: ["text"],
+                template: `
+        <div class="relative inline-block group">
+          <slot></slot>
+          <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-primary text-on-primary text-xs font-bold rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+            {{ text }}
+            <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary rotate-45"></div>
+          </div>
+        </div>`,
+            };
+
+            /* =========================================================
+       MAIN APP
+       ========================================================= */
+            const App = {
+                components: {
+                    NexoAccordion,
+                    NexoAlert,
+                    NexoBadge,
+                    NexoBreadcrumb,
+                    NexoButton,
+                    NexoButtonGroup,
+                    NexoCard,
+                    NexoCarousel,
+                    NexoCloseButton,
+                    NexoCollapse,
+                    NexoDropdown,
+                    NexoListGroup,
+                    NexoModal,
+                    NexoNavbar,
+                    NexoTabs,
+                    NexoOffcanvas,
+                    NexoPagination,
+                    NexoPlaceholder,
+                    NexoPopover,
+                    NexoProgress,
+                    NexoTable,
+                    NexoSpinner,
+                    NexoTooltip,
+                },
+                setup() {
+                    const isDark = ref(false);
+                    const showModal = ref(false);
+                    const showOffcanvas = ref(false);
+
+                    // Menú Lateral
+                    const componentList = [
+                        "Accordion",
+                        "Alerts",
+                        "Badge",
+                        "Breadcrumb",
+                        "Buttons",
+                        "Button group",
+                        "Card",
+                        "Carousel",
+                        "Close button",
+                        "Collapse",
+                        "Dropdowns",
+                        "List group",
+                        "Modal",
+                        "Navs & tabs",
+                        "Offcanvas",
+                        "Pagination",
+                        "Placeholders",
+                        "Popovers",
+                        "Progress",
+                        "Spinners",
+                        "Tables",
+                        "Toasts",
+                        "Tooltips",
+                    ];
+
+                    // Datatable Data Mock
+                    const tableColumns = ref([
+                        { key: "id", label: "ID", sortable: true },
+                        {
+                            key: "name",
+                            label: "Nombre Completo",
+                            sortable: true,
+                        },
+                        {
+                            key: "role",
+                            label: "Rol de Usuario",
+                            sortable: true,
+                        },
+                        { key: "status", label: "Estado", sortable: true },
+                    ]);
+
+                    const tableData = ref([
+                        {
+                            id: "#001",
+                            name: "Ana Martínez",
+                            role: "Administrador",
+                            status: "Activo",
+                        },
+                        {
+                            id: "#002",
+                            name: "Carlos Ruiz",
+                            role: "Editor",
+                            status: "Inactivo",
+                        },
+                        {
+                            id: "#003",
+                            name: "Diana Gómez",
+                            role: "Usuario",
+                            status: "Activo",
+                        },
+                        {
+                            id: "#004",
+                            name: "Eduardo Silva",
+                            role: "Soporte",
+                            status: "Pendiente",
+                        },
+                        {
+                            id: "#005",
+                            name: "Fernanda López",
+                            role: "Administrador",
+                            status: "Activo",
+                        },
+                        {
+                            id: "#006",
+                            name: "Gabriel Torres",
+                            role: "Usuario",
+                            status: "Inactivo",
+                        },
+                        {
+                            id: "#007",
+                            name: "Héctor Jiménez",
+                            role: "Usuario",
+                            status: "Activo",
+                        },
+                        {
+                            id: "#008",
+                            name: "Isabel Ortega",
+                            role: "Soporte",
+                            status: "Pendiente",
+                        },
+                        {
+                            id: "#009",
+                            name: "Jorge Navarro",
+                            role: "Editor",
+                            status: "Activo",
+                        },
+                    ]);
+
+                    const toggleTheme = () => {
+                        isDark.value = !isDark.value;
+                        document.documentElement.classList.toggle(
+                            "dark",
+                            isDark.value,
+                        );
+                    };
+
+                    const triggerToast = () => {
+                        toastManager.add(
+                            "Notificación disparada exitosamente",
+                            "success",
+                        );
+                    };
+
+                    return {
+                        isDark,
+                        showModal,
+                        showOffcanvas,
+                        toggleTheme,
+                        componentList,
+                        toasts,
+                        triggerToast,
+                        tableColumns,
+                        tableData,
+                    };
+                },
+            };
+
+            createApp(App).mount("#app");
+        </script>
+    </body>
+</html>
