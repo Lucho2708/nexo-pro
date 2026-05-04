@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('asambleas', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $column = $table->uuid('id')->primary();
+            if (DB::getDriverName() === 'pgsql') {
+                $column->default(DB::raw('gen_random_uuid()'));
+            }
             $table->foreignUuid('copropiedad_id')->constrained('copropiedades')->onDelete('cascade');
             $table->string('titulo');
             $table->dateTime('fecha');
@@ -21,6 +24,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['copropiedad_id', 'status']);
+            // PostgreSQL Partial Index for active assemblies
+            $table->index(['status'], 'idx_asambleas_active')->where('status', 'in_progress');
         });
     }
 

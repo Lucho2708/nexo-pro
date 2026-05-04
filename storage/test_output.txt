@@ -1,0 +1,83 @@
+PHPUnit 12.5.16 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.1
+Configuration: /home/lsilva/Documentos/Laravel/nexo-pro/phpunit.xml
+
+E                                                                   1 / 1 (100%)
+
+Time: 00:01.750, Memory: 69.00 MB
+
+There was 1 error:
+
+1) Tests\Feature\StandaloneFullFlowTest::test_full_standalone_assembly_flow_from_onboarding_to_voting
+Error: Class "App\Http\Controllers\Schema" not found
+
+/home/lsilva/Documentos/Laravel/nexo-pro/app/Http/Controllers/AsambleaController.php:100
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php:46
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Routing/Route.php:269
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Routing/Route.php:215
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Routing/Router.php:822
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:180
+/home/lsilva/Documentos/Laravel/nexo-pro/app/Http/Middleware/EnsureAsambleaIsActive.php:32
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/app/Http/Middleware/EnsureTwoFactorIsConfigured.php:20
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/app/Http/Middleware/EnsureLegalConsent.php:66
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Auth/Middleware/EnsureEmailIsVerified.php:41
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/app/Http/Middleware/CaptureSystemMetrics.php:19
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/inertiajs/inertia-laravel/src/Middleware.php:122
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php:52
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php:63
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php:202
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php:48
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php:120
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php:63
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php:36
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php:74
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:137
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Routing/Router.php:821
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Routing/Router.php:800
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Routing/Router.php:764
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Routing/Router.php:753
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php:200
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:180
+/home/lsilva/Documentos/Laravel/nexo-pro/app/Http/Middleware/SecurityHeaders.php:16
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php:21
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php:31
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php:21
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php:51
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php:27
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php:109
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php:61
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php:58
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php:22
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php:28
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:219
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php:137
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php:175
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php:144
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php:607
+/home/lsilva/Documentos/Laravel/nexo-pro/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php:368
+/home/lsilva/Documentos/Laravel/nexo-pro/tests/Feature/StandaloneFullFlowTest.php:81
+
+ERRORS!
+Tests: 1, Assertions: 6, Errors: 1.

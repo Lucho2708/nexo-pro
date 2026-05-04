@@ -17,7 +17,7 @@ test('it prevents multiple devices for the same unit in the same assembly', func
     $unidad = Unidad::factory()->create(['copropiedad_id' => $copropiedad->id]);
 
     $asamblea = Asamblea::factory()->create(['copropiedad_id' => $copropiedad->id]);
-    $service = new AsambleaService();
+    $service = app(AsambleaService::class);
 
     // 1. First user joins
     $result1 = $service->canJoin($user1, $unidad);
@@ -36,7 +36,7 @@ test('it allows joining again if the previous session is cleared', function () {
     $unidad = Unidad::factory()->create(['copropiedad_id' => $copropiedad->id]);
 
     $asamblea = Asamblea::factory()->create(['copropiedad_id' => $copropiedad->id]);
-    $service = new AsambleaService();
+    $service = app(AsambleaService::class);
 
     $service->registerConnection($user, $unidad, $asamblea);
     $service->clearConnection($unidad);
@@ -55,7 +55,7 @@ test('it generates a valid livekit token', function () {
     $user = User::factory()->create(['current_copropiedad_id' => $copropiedad->id]);
     $unidad = Unidad::factory()->create(['copropiedad_id' => $copropiedad->id, 'nombre' => '501', 'torre' => 'A']);
 
-    $service = new AsambleaService();
+    $service = app(AsambleaService::class);
     $token = $service->generateToken($user, $unidad);
 
     expect($token)->toBeString()

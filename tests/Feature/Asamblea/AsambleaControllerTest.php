@@ -50,14 +50,15 @@ test('a resident cannot access if another device is connected for the same unit'
     
     $asamblea = Asamblea::factory()->create(['copropiedad_id' => $copropiedad->id, 'status' => 'in_progress']);
 
-    // Simulate another device already connected
-    $service = new \App\Services\AsambleaService();
-    $service->registerConnection($user, $unidad, $asamblea);
+    // Simulate another device already connected (by a different user)
+    $otherUser = User::factory()->create();
+    $service = app(\App\Services\AsambleaService::class);
+    $service->registerConnection($otherUser, $unidad, $asamblea);
 
     $this->actingAs($user);
 
     $response = $this->get(route('asambleas.show', $asamblea));
 
-    $response->assertStatus(403);
-    $response->assertSee('Ya existe un dispositivo conectado');
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page->component('Asamblea/AccessDenied'));
 });

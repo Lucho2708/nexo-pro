@@ -32,10 +32,20 @@ class AsambleaReportService
         $tableName = $asamblea->getLogTableName();
         $this->asambleaService->ensureLogTableExists($tableName);
 
-        // 1. Get unique participants from dynamic logs
+        // 1. Get unique participants from dynamic logs with names and unit details
         $participants = DB::table($tableName)
-            ->where('event_type', 'login')
-            ->select('user_id', 'unidad_id', 'ip_address', 'user_agent', 'created_at')
+            ->join('users', 'users.id', '=', "{$tableName}.user_id")
+            ->join('unidades', 'unidades.id', '=', "{$tableName}.unidad_id")
+            ->where("{$tableName}.event_type", 'login')
+            ->select([
+                "{$tableName}.user_id", 
+                "{$tableName}.unidad_id", 
+                "{$tableName}.ip_address", 
+                "{$tableName}.created_at",
+                'users.name as user_name',
+                'unidades.nombre as unit_name',
+                'unidades.torre as unit_tower'
+            ])
             ->get()
             ->unique('unidad_id');
 

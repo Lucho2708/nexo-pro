@@ -6,6 +6,7 @@ import Logo from '@/Components/UI/Logo.vue';
 import Dropdown from '@/Components/UI/Dropdown.vue';
 import AnnouncementModal from '@/Components/Announcements/AnnouncementModal.vue';
 import NotificationCenter from '@/Components/Nav/NotificationCenter.vue';
+import PropertySwitcher from '@/Components/Nav/PropertySwitcher.vue';
 
 const page = usePage<any>();
 const user = computed(() => page.props.auth?.user);
@@ -51,6 +52,14 @@ const navigationItems = computed(() => {
         ];
     }
 
+    // Si el usuario o el conjunto actual es Standalone (Solo Asamblea), restringimos el menú al MÁXIMO
+    const settings = user.value?.copropiedad_settings;
+    if (user.value?.role === 'admin' && (user.value?.is_standalone || settings?.is_standalone)) {
+        return [
+            { name: 'Asambleas', icon: 'groups', href: route('admin.asambleas.index'), active: isRouteActive('admin.asambleas.*') },
+        ];
+    }
+
     const items = [
         { name: 'Inicio', icon: 'dashboard', href: route('dashboard'), active: isRouteActive('dashboard') },
         { name: 'Cartera', icon: 'payments', href: route('cartera.index'), active: isRouteActive('cartera.*') },
@@ -60,18 +69,30 @@ const navigationItems = computed(() => {
     ];
 
     if (user.value?.role === 'admin') {
-        const settings = user.value.copropiedad_settings;
+        const settings = user.value?.copropiedad_settings;
         if (settings && (settings.asamblea_virtual_enabled == 1 || settings.asamblea_virtual_enabled === true)) {
-            items.push({ name: 'Asambleas', icon: 'groups', href: route('admin.asambleas.index'), active: isRouteActive('admin.asambleas.*') });
+            try {
+                items.push({ name: 'Asambleas', icon: 'groups', href: route('admin.asambleas.index'), active: isRouteActive('admin.asambleas.*') });
+            } catch (e) {}
+        }
+        
+        // Solo mostramos configuración si no es un entorno standalone
+        if (!settings?.is_standalone && !user.value?.is_standalone) {
+            items.push({ name: 'Configuración', icon: 'settings', href: route('admin.settings'), active: isRouteActive('admin.settings') });
         }
     }
-
-    items.push({ name: 'Configuración', icon: 'settings', href: route('admin.settings'), active: isRouteActive('admin.settings') });
 
     return items;
 });
 
 const configItems = computed(() => {
+    const settings = user.value?.copropiedad_settings;
+    const isStandalone = user.value?.is_standalone || settings?.is_standalone;
+
+    if (user.value?.role === 'admin' && isStandalone) {
+        return [];
+    }
+
     const items = [
         { name: 'Mi Perfil', icon: 'manage_accounts', href: route('profile.edit'), active: isRouteActive('profile.edit') },
     ];
@@ -187,7 +208,7 @@ const twoFactorStatus = computed(() => {
                     </button>
                     <div>
                         <h2 class="text-xs md:text-xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic">
-                            HOLA, <span class="text-primary">{{ user?.name.split(' ')[0] }}</span>
+                            HOLA, <span class="text-primary">{{ user?.name?.split(' ')[0] || '...' }}</span>
                         </h2>
                         <div class="flex items-center gap-2 mt-1">
                             <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
@@ -196,6 +217,11 @@ const twoFactorStatus = computed(() => {
                             </p>
                         </div>
                     </div>
+                </div>
+
+                <!-- Multi-Tenant Property Switcher -->
+                <div v-if="user?.role !== 'super_admin'" class="hidden lg:block flex-1 max-w-sm ml-12">
+                    <PropertySwitcher />
                 </div>
 
                 <div class="flex items-center gap-8">

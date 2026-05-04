@@ -4,6 +4,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import createServer from '@inertiajs/vue3/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/index.esm.js';
+import route from '../../vendor/tightenco/ziggy/dist/index.mjs';
 
 createServer((page) =>
     createInertiaApp({
@@ -12,25 +13,26 @@ createServer((page) =>
         title: (title) => `${title} - NEXO-PRO`,
         resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
         setup({ App, props, plugin }) {
-            const vueApp = createSSRApp({ render: () => h(App, props) });
-            
-            vueApp.use(plugin).use(ZiggyVue, {
+            // Configurar route global para SSR
+            const ziggyConfig = {
                 ...(page.props.ziggy || {}),
                 location: page.props.ziggy?.location ? new URL(page.props.ziggy.location) : undefined,
-            });
-
-            vueApp.config.globalProperties.$safeRoute = (name, params = undefined) => {
-                try {
-                    if (route().has(name)) return route(name, params);
-                } catch (e) {}
-                return '#'; 
             };
 
-            vueApp.config.globalProperties.$isRouteActive = (pattern) => {
+            // Inyectar función route global en el entorno de SSR
+            global.route = (name, params, absolute, config = ziggyConfig) => route(name, params, absolute, config);
+
+            const vueApp = createSSRApp({ render: () => h(App, props) });
+            
+            vueApp.use(plugin).use(ZiggyVue, ziggyConfig);
+
+            // Helpers de seguridad para SSR
+            vueApp.config.globalProperties.$safeRoute = (name, params = undefined) => {
                 try {
-                    return route().current(pattern);
+                    return route(name, params, true, ziggyConfig);
                 } catch (e) {
-                    return false;
+                    console.error(`SSR Route Error: ${name}`, e.message);
+                    return '#'; 
                 }
             };
 

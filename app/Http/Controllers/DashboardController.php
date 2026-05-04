@@ -37,6 +37,13 @@ class DashboardController extends Controller
 
         // ── DASHBOARD DE ADMINISTRADOR (Actual) ──────────────────────
         $copropiedadId = $user->current_copropiedad_id;
+        $copropiedad = $user->currentCopropiedad;
+
+        // Redirección Standalone: Si es solo asamblea, no ve el dashboard general
+        $isStandalone = $user->is_standalone || ($copropiedad && ($copropiedad->settings['is_standalone'] ?? false));
+        if ($isStandalone) {
+            return redirect()->route('admin.asambleas.index');
+        }
 
         if (!$copropiedadId) {
             // Si el admin no tiene conjunto activo, redirigir a creación o selección

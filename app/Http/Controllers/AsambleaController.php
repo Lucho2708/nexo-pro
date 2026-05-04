@@ -9,9 +9,15 @@ use App\Models\Opcion;
 use App\Services\AsambleaService;
 use App\Services\AsambleaReportService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * AsambleaController — S: SRP aplicado (solo gestiona la sala y votación básica).
+ * Las intervenciones han sido movidas a IntervencionController.
+ */
 class AsambleaController extends Controller
 {
     public function __construct(
@@ -26,30 +32,38 @@ class AsambleaController extends Controller
     {
         $user = $request->user();
         $isAdmin = $user->isAdmin() || $user->isSuperAdmin();
-        $unidad = $this->asambleaService->getAuthenticatedUnit($user, $asamblea);
+        $unidades = $this->asambleaService->getAuthenticatedUnits($user, $asamblea);
 
-        if (!$isAdmin && !$unidad) {
+        if (!$isAdmin && $unidades->isEmpty()) {
             abort(403, 'No tienes una unidad asociada a esta copropiedad.');
         }
 
-        if ($unidad && !$this->asambleaService->canJoin($user, $unidad)) {
+        // Para simplificar, si hay varias unidades, usamos la primera para la validación de canJoin básica
+        // o podríamos iterar. Por ahora, permitimos entrar si al menos una unidad es válida.
+        $masterUnidad = $unidades->first();
+
+        if ($masterUnidad && !$this->asambleaService->canJoin($user, $masterUnidad)) {
             return Inertia::render('Asamblea/AccessDenied', [
                 'asamblea' => $asamblea,
-                'unidad' => $unidad,
+                'unidad' => $masterUnidad,
                 'message' => 'Ya existe un dispositivo conectado para esta unidad. ¿Deseas cerrar la otra sesión e ingresar desde aquí?',
                 'can_reset' => true
             ]);
         }
 
-        if ($unidad) {
-            $this->asambleaService->registerConnection($user, $unidad, $asamblea);
+        if ($masterUnidad) {
+            foreach ($unidades as $u) {
+                $this->asambleaService->registerConnection($user, $u, $asamblea);
+            }
         }
 
         return Inertia::render('Asamblea/Show', [
             'asamblea' => $asamblea->load('copropiedad'),
-            'token' => $this->asambleaService->generateToken($user, $unidad ?? new Unidad(['torre' => 'MOD', 'nombre' => 'ADMIN'])),
-            'unidad' => $unidad,
+            'preguntas' => $this->asambleaService->getPreguntasWithOpciones($asamblea),
+            'token' => $this->asambleaService->generateToken($user, $masterUnidad ?? new Unidad(['torre' => 'MOD', 'nombre' => 'ADMIN'])),
+            'unidades' => $unidades, 
             'is_admin' => $isAdmin,
+            'user' => $user, 
             'livekit_url' => config('services.livekit.url', 'ws://localhost:7880'),
         ]);
     }
@@ -60,20 +74,55 @@ class AsambleaController extends Controller
     public function votar(Request $request, Pregunta $pregunta)
     {
         $user = $request->user();
-        $unidad = $this->asambleaService->getAuthenticatedUnit($user, $pregunta->asamblea);
+        $unidades = $this->asambleaService->getAuthenticatedUnits($user, $pregunta->asamblea);
 
-        if (!$unidad) {
-            abort(403, 'No tienes una unidad asociada.');
+        if ($unidades->isEmpty()) {
+            abort(403, 'No tienes unidades asociadas.');
         }
 
         try {
             $opcion = Opcion::findOrFail($request->opcion_id);
-            $this->asambleaService->castVote($user, $unidad, $pregunta, $opcion, $pregunta->asamblea);
+            $this->asambleaService->castVote($user, $unidades, $pregunta, $opcion, $pregunta->asamblea);
 
-            return response()->json(['message' => 'Voto registrado correctamente.']);
+            return response()->json(['message' => 'Voto registrado correctamente para todas tus unidades.']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 403);
         }
+    }
+
+    /**
+     * Get live results for a specific question.
+     */
+    public function results(Pregunta $pregunta)
+    {
+        $asamblea = $pregunta->asamblea;
+        $shortId = substr($asamblea->id, 0, 8);
+        $votesTable = "asvotos_{$shortId}";
+
+        if (Schema::hasTable($votesTable)) {
+            $results = DB::table($votesTable)
+                ->where('pregunta_id', $pregunta->id)
+                ->select('opcion_id', DB::raw('SUM(peso) as total_peso'), DB::raw('COUNT(*) as total_votos'))
+                ->groupBy('opcion_id')
+                ->get();
+
+            return response()->json([
+                'results' => $results,
+                'total_participating_units' => DB::table($votesTable)->where('pregunta_id', $pregunta->id)->count(),
+                'total_participating_weight' => DB::table($votesTable)->where('pregunta_id', $pregunta->id)->sum('peso'),
+            ]);
+        }
+
+        $results = $pregunta->votos()
+            ->select('opcion_id', \DB::raw('SUM(peso) as total_peso'), \DB::raw('COUNT(*) as total_votos'))
+            ->groupBy('opcion_id')
+            ->get();
+
+        return response()->json([
+            'results' => $results,
+            'total_participating_units' => $pregunta->votos()->count(),
+            'total_participating_weight' => $pregunta->votos()->sum('peso'),
+        ]);
     }
 
     /**
@@ -81,147 +130,19 @@ class AsambleaController extends Controller
      */
     public function report(Request $request, Asamblea $asamblea)
     {
-        if ($request->user()->role !== 'admin' && $request->user()->role !== 'super_admin') {
-            abort(403);
-        }
-
         return $this->reportService->generatePdf($asamblea)->download("auditoria_asamblea_{$asamblea->id}.pdf");
     }
 
-    public function toggleHand(Request $request, Asamblea $asamblea, AsambleaService $asambleaService)
-    {
-        $user = $request->user();
-        $unidad = $asambleaService->getAuthenticatedUnit($user, $asamblea);
-        $isRaised = $request->is_raised;
-
-        broadcast(new \App\Events\HandRaised($asamblea->id, [
-            'user_id' => $user->id,
-            'name' => $user->name,
-            'unidad' => $unidad ? "{$unidad->torre}-{$unidad->nombre}" : 'Admin',
-            'is_raised' => $isRaised
-        ]))->toOthers();
-
-        return response()->json(['status' => 'ok']);
-    }
-
-    public function requestIntervencion(Request $request, Asamblea $asamblea)
-    {
-        try {
-            if ($asamblea->status !== 'in_progress') {
-                return response()->json(['message' => 'La asamblea debe estar en curso para solicitar la palabra.'], 403);
-            }
-
-            $intervencion = \App\Models\Intervencion::create([
-                'asamblea_id' => $asamblea->id,
-                'user_id' => $request->user()->id,
-                'status' => 'pending',
-                'requested_at' => now(),
-            ]);
-
-            $intervencion->load('user.unidades'); // Cargar unidades para el broadcast
-
-            broadcast(new \App\Events\IntervencionUpdated($asamblea->id, $intervencion->toArray()))->toOthers();
-
-            return response()->json($intervencion, 201);
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("Error al solicitar intervención: " . $e->getMessage(), [
-                'user_id' => $request->user()->id,
-                'asamblea_id' => $asamblea->id,
-                'trace' => $e->getTraceAsString()
-            ]);
-            return response()->json(['message' => 'Error interno al procesar la solicitud.'], 500);
-        }
-    }
-
-    public function cancelIntervencion(Request $request, \App\Models\Intervencion $intervencion)
-    {
-        if ($intervencion->user_id !== $request->user()->id || $intervencion->status !== 'pending') {
-            return response()->json(['message' => 'No autorizado o la petición no está pendiente.'], 403);
-        }
-
-        $intervencion->update(['status' => 'cancelled']);
-        broadcast(new \App\Events\IntervencionUpdated($intervencion->asamblea_id, $intervencion->toArray()))->toOthers();
-
-        return response()->json($intervencion);
-    }
-
-    public function grantIntervencion(Request $request, \App\Models\Intervencion $intervencion)
-    {
-        $anyActive = \App\Models\Intervencion::where('asamblea_id', $intervencion->asamblea_id)
-            ->where('status', 'active')
-            ->exists();
-
-        if ($anyActive) {
-            return response()->json(['message' => 'Ya hay una intervención activa. Debe finalizarla primero.'], 422);
-        }
-
-        $intervencion->update([
-            'status' => 'active',
-            'started_at' => now(),
-            'duration_seconds' => 180, // 3 min por defecto al empezar
-        ]);
-
-        broadcast(new \App\Events\IntervencionUpdated($intervencion->asamblea_id, $intervencion->toArray()))->toOthers();
-
-        return response()->json($intervencion);
-    }
-
-    public function closeIntervencion(Request $request, \App\Models\Intervencion $intervencion, AsambleaService $asambleaService)
-    {
-        $finishedAt = now();
-        $startedAt = $intervencion->started_at ?? $finishedAt;
-        $duration = (int) abs($finishedAt->diffInSeconds($startedAt));
-
-        $status = $request->force ? 'forced_close' : 'completed';
-        $notes = $request->notes ?? $intervencion->notes;
-
-        $intervencion->update([
-            'status' => $status,
-            'finished_at' => $finishedAt,
-            'duration_seconds' => $duration,
-            'notes' => $notes,
-        ]);
-
-        broadcast(new \App\Events\IntervencionUpdated($intervencion->asamblea_id, $intervencion->toArray()))->toOthers();
-
-        // Log legal
-        $user = $intervencion->user;
-        $unidad = $asambleaService->getAuthenticatedUnit($user, $intervencion->asamblea);
-        
-        $asambleaService->logEvent($intervencion->asamblea, $user, $unidad ?? new \App\Models\Unidad(), 'intervention_completed', [
-            'status' => $status,
-            'duration' => $duration,
-            'notes' => $notes,
-            'started_at' => $startedAt->toIso8601String(),
-            'finished_at' => $finishedAt->toIso8601String(),
-        ]);
-
-        return response()->json($intervencion);
-    }
-
-    public function extendIntervencion(Request $request, \App\Models\Intervencion $intervencion, AsambleaService $asambleaService)
-    {
-        $seconds = $request->seconds ?? 60;
-        $intervencion->increment('duration_seconds', $seconds);
-
-        broadcast(new \App\Events\IntervencionUpdated($intervencion->asamblea_id, $intervencion->toArray()))->toOthers();
-
-        // Log legal
-        $asambleaService->logEvent($intervencion->asamblea, $intervencion->user, $asambleaService->getAuthenticatedUnit($intervencion->user, $intervencion->asamblea) ?? new \App\Models\Unidad(), 'intervention_extended', [
-            'added_seconds' => $seconds,
-            'new_total_limit' => $intervencion->duration_seconds
-        ]);
-
-        return response()->json($intervencion);
-    }
-
+    /**
+     * Force reset a connection for a unit.
+     */
     public function resetConnection(Asamblea $asamblea, AsambleaService $asambleaService)
     {
         $user = auth()->user();
-        $unidad = $asambleaService->getAuthenticatedUnit($user, $asamblea);
+        $unidades = $asambleaService->getAuthenticatedUnits($user, $asamblea);
 
-        if ($unidad) {
-            $asambleaService->clearConnection($unidad);
+        foreach ($unidades as $u) {
+            $asambleaService->clearConnection($u);
         }
 
         return back()->with('success', 'Conexión reseteada correctamente.');

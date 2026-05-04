@@ -8,6 +8,7 @@ import Dropdown from '@/Components/UI/Dropdown.vue';
 const page = usePage();
 // @ts-ignore
 const user = computed(() => page.props.auth?.user);
+const twoFactorEnabled = computed(() => !!page.props.features?.two_factor_enabled);
 // @ts-ignore
 const notifications = computed(() => page.props.notifications || []);
 const unreadCount = computed(() => notifications.value.length);
@@ -79,7 +80,31 @@ const logout = () => {
                 </Link>
             </nav>
 
-            <div class="p-4 border-t border-outline-variant/20 space-y-2">
+            <div class="p-4 border-t border-outline-variant/20 space-y-4">
+                <!-- 2FA Security Block (Admin Style) -->
+                <div v-if="isSidebarExpanded" class="relative group cursor-help px-1">
+                    <div class="absolute inset-0 blur-xl opacity-20 transition-all group-hover:opacity-40" :class="twoFactorEnabled ? 'bg-emerald-500' : 'bg-rose-500'"></div>
+                    <div class="relative p-3 rounded-2xl flex items-center gap-3 border transition-all" :class="twoFactorEnabled ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-rose-500/10 border-rose-500/20'">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-inner shrink-0" :class="twoFactorEnabled ? 'bg-emerald-500/20' : 'bg-rose-500/20'">
+                             <span class="material-symbols-rounded !text-[16px]" :class="twoFactorEnabled ? 'text-emerald-500' : 'text-rose-500'">{{ twoFactorEnabled ? 'verified_user' : 'gpp_maybe' }}</span>
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-[9px] font-black uppercase tracking-widest truncate" :class="twoFactorEnabled ? 'text-emerald-500' : 'text-rose-500'">{{ twoFactorEnabled ? '2FA Activo' : '2FA Inactivo' }}</span>
+                            <span class="text-[6px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-widest mt-0.5 truncate">Seguridad de Cuenta</span>
+                        </div>
+                    </div>
+                </div>
+                <div v-else class="flex justify-center">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center border transition-all" :class="twoFactorEnabled ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-rose-500/10 border-rose-500/20'" :title="twoFactorEnabled ? '2FA Activo' : '2FA Inactivo'">
+                        <span class="material-symbols-rounded !text-[16px]" :class="twoFactorEnabled ? 'text-emerald-500' : 'text-rose-500'">{{ twoFactorEnabled ? 'verified_user' : 'gpp_maybe' }}</span>
+                    </div>
+                </div>
+
+                <Link :href="route('pqrs.index')" class="w-full flex items-center p-3 rounded-xl text-on-surface-variant hover:bg-primary/10 hover:text-primary transition-all group overflow-hidden border border-transparent">
+                    <span class="material-symbols-rounded shrink-0">support_agent</span>
+                    <span class="ml-3 text-sm font-semibold tracking-wide transition-opacity duration-300 whitespace-nowrap" :class="isSidebarExpanded ? 'opacity-100' : 'opacity-0 hidden'">Soporte Técnico</span>
+                </Link>
+
                 <button 
                     @click="isSidebarExpanded = !isSidebarExpanded"
                     class="w-full flex justify-center items-center p-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors"
@@ -188,6 +213,11 @@ const logout = () => {
                     >
                         <span class="material-symbols-rounded mr-4">{{ item.icon }}</span>
                         <span class="font-bold">{{ item.name }}</span>
+                    </Link>
+
+                    <Link :href="route('pqrs.index')" class="flex items-center p-4 bg-primary/5 text-primary border border-primary/10 rounded-2xl mt-4">
+                        <span class="material-symbols-rounded mr-4">support_agent</span>
+                        <span class="font-black uppercase tracking-widest text-[11px]">Soporte Técnico</span>
                     </Link>
                 </div>
             </div>

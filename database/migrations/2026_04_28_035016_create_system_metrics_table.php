@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('system_metrics', function (Blueprint $table) {
-            $table->id();
+            $column = $table->uuid('id')->primary();
+            if (DB::getDriverName() === 'pgsql') {
+                $column->default(DB::raw('gen_random_uuid()'));
+            }
+            $table->string('method', 10)->nullable();
             $table->float('latency_ms');
             $table->integer('status_code');
             $table->string('path')->nullable();

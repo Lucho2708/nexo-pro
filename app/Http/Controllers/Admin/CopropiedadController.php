@@ -36,10 +36,13 @@ class CopropiedadController extends Controller
     public function settings(): Response
     {
         $copropiedad = auth()->user()->currentCopropiedad;
+        $copropiedad->load('tiposUnidad.componentes');
         
         return Inertia::render('Admin/Settings/Index', [
             'copropiedad' => $copropiedad,
-            'settings' => $copropiedad->settings ?? \App\Models\Copropiedad::defaultSettings()
+            'settings' => $copropiedad->settings ?? \App\Models\Copropiedad::defaultSettings(),
+            'componentes_catalogo' => \App\Models\ComponenteUnidad::all(),
+            'is_super_admin' => auth()->user()->role === 'super_admin'
         ]);
     }
 
@@ -54,9 +57,10 @@ class CopropiedadController extends Controller
 
         $currentSettings = $copropiedad->settings ?? \App\Models\Copropiedad::defaultSettings();
         
-        // Merge settings
+        // Merge settings and properties
         $copropiedad->update([
-            'settings' => array_merge($currentSettings, $validated['settings'])
+            'settings' => array_merge($currentSettings, $validated['settings']),
+            'area_construida_total' => $validated['area_construida_total'] ?? $copropiedad->area_construida_total,
         ]);
 
         return back()->with('success', 'Configuración actualizada correctamente.');

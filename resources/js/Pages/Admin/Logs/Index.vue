@@ -9,6 +9,8 @@ import Select from '@/Components/UI/Select.vue';
 import Pagination from '@/Components/UI/Pagination.vue';
 import Modal from '@/Components/UI/Modal.vue';
 import Tooltip from '@/Components/UI/Tooltip.vue';
+import Table from '@/Components/UI/Table.vue';
+import { useToast } from '@/Composables/useToast';
 
 defineOptions({ layout: AuthenticatedLayout });
 
@@ -18,35 +20,16 @@ const props = defineProps<{
     metrics: Record<string, number>;
 }>();
 
-const search = ref(props.filters.search || '');
-const levelName = ref(props.filters.level_name || '');
-const copropiedadId = ref(props.filters.copropiedad_id || '');
 const isRefreshing = ref(false);
+const toast = useToast();
 
-const debounce = (fn: Function, delay: number) => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    return (...args: any[]) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => fn(...args), delay);
-    };
-};
-
-const handleSearch = (manual = false) => {
-    if (manual) isRefreshing.value = true;
-    router.get(route('admin.logs'), {
-        search: search.value,
-        level_name: levelName.value,
-    }, { 
-        preserveState: true, 
-        replace: true,
-        onFinish: () => {
-            if (manual) setTimeout(() => isRefreshing.value = false, 600);
-        }
-    });
-};
-
-const debouncedSearch = debounce(() => handleSearch(), 400);
-watch([search, levelName, copropiedadId], debouncedSearch);
+const tableColumns = [
+    { key: 'severidad', label: 'SEVERIDAD', sortable: true, sortField: 'level_name' },
+    { key: 'timestamp', label: 'TIMESTAMP UTC', sortable: true, sortField: 'created_at' },
+    { key: 'mensaje', label: 'MENSAJE / RESUMEN', sortable: true, sortField: 'message' },
+    { key: 'modulo', label: 'MÓDULO / TENANT', sortable: true },
+    { key: 'accion', label: 'ACCIÓN', sortable: false },
+];
 
 const levelConfigs: Record<string, { color: string; icon: string; bg: string; border: string }> = {
     INFO:      { color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/20', icon: 'info' },
@@ -87,7 +70,7 @@ const isPurging = ref(false);
 
 const purgeLogs = () => {
     isPurging.value = true;
-    router.post(route('admin.logs.purge'), {}, {
+    router.post(route('superadmin.logs.purge'), {}, {
         onSuccess: () => {
             showPurgeModal.value = false;
             toast.add('Buffer de logs locales purgado correctamente', 'success');
@@ -119,9 +102,6 @@ const purgeLogs = () => {
             </div>
             
             <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2 bg-surface-container-low dark:bg-white/5 p-1.5 rounded-2xl border border-outline-variant/10 dark:border-white/5 shadow-sm mr-2">
-                    <Button variant="ghost" icon="refresh" @click="handleSearch(true)" class="!w-10 !h-10 !p-0 !rounded-xl transition-all dark:!text-white/60" :class="{'rotate-180 opacity-50': isRefreshing}"></Button>
-                </div>
                 <div class="hidden lg:flex items-center gap-3 mr-4">
                      <div v-for="(count, level) in metrics" :key="level" class="px-4 py-2 rounded-xl bg-surface-container-low dark:bg-white/5 border border-outline-variant/10 dark:border-white/5 flex items-center gap-3 transition-all hover:bg-surface-container">
                         <span class="material-symbols-rounded text-sm" :class="getLevelConfig(level).color">{{ getLevelConfig(level).icon }}</span>
@@ -132,102 +112,63 @@ const purgeLogs = () => {
             </div>
         </div>
 
-        <!-- Tactical Diagnostic Filters -->
-        <div class="bg-surface-container-low/50 dark:bg-white/[0.02] backdrop-blur-xl border border-outline-variant/10 dark:border-white/5 rounded-[2.5rem] p-8 shadow-xl">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-                <div class="md:col-span-8 space-y-2">
-                    <label class="text-[9px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.2em] ml-2">Análisis de Eventos (Mensaje, Clase, Traza)</label>
-                    <div class="relative group">
-                        <span class="material-symbols-rounded absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 group-focus-within:text-primary transition-colors text-lg">search</span>
-                        <input 
-                            v-model="search"
-                            placeholder="Ejecutar escaneo de registros..."
-                            class="w-full h-14 pl-12 pr-4 bg-white dark:bg-white/[0.03] border border-outline-variant/10 dark:border-white/5 rounded-2xl text-xs font-bold text-on-surface dark:text-white focus:ring-4 focus:ring-primary/5 dark:focus:ring-primary/10 outline-none transition-all placeholder:text-on-surface-variant/20 shadow-sm"
-                        />
+        <!-- Main Logs Table -->
+        <Card title="Trazabilidad de Eventos" subtitle="Análisis profundo de la red" icon="analytics" class="!p-0 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14] overflow-hidden">
+            <template #header>
+                <div class="p-10 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Registro <span class="text-secondary italic">Maestro</span></h3>
+                        <p class="text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] mt-3 italic">Registro cronológico de anomalías y eventos del core</p>
                     </div>
                 </div>
+            </template>
 
-                <div class="md:col-span-4 space-y-2">
-                    <label class="text-[9px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.2em] ml-2">Gravedad del Evento</label>
-                    <Select 
-                        v-model="levelName"
-                        :options="[
-                            { value: '', label: 'TODOS LOS NIVELES' },
-                            { value: 'INFO', label: 'INFORMATIVO' },
-                            { value: 'WARNING', label: 'ADVERTENCIAS' },
-                            { value: 'ERROR', label: 'FALLOS CRÍTICOS' }
-                        ]"
-                        class="!h-14 !rounded-2xl !bg-white dark:!bg-white/[0.03] !text-[10px] !font-black dark:!text-white/80 !shadow-sm !border-outline-variant/10 dark:!border-white/5"
-                    />
-                </div>
-            </div>
-        </div>
+            <Table :columns="tableColumns" :data="logs.data" class="border-t border-outline-variant/5 dark:border-white/5">
+                <template #cell-severidad="{ row }">
+                    <div class="flex items-center gap-3 px-3 py-1.5 rounded-xl border w-fit transition-all" :class="[getLevelConfig(row.level_name).bg, getLevelConfig(row.level_name).border]">
+                        <span class="material-symbols-rounded text-sm" :class="getLevelConfig(row.level_name).color">{{ getLevelConfig(row.level_name).icon }}</span>
+                        <span class="text-[9px] font-black uppercase tracking-widest text-on-surface dark:text-white">{{ row.level_name }}</span>
+                    </div>
+                </template>
 
-        <!-- Lista de Logs Refinada -->
-        <div class="bg-white dark:bg-[#0b0e14] border border-outline-variant/10 dark:border-white/5 rounded-[3rem] overflow-hidden shadow-2xl relative">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="bg-surface-container dark:bg-white/[0.01] border-b border-outline-variant/10 dark:border-white/5">
-                            <th class="px-8 py-5 text-[9px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.2em]">Severidad</th>
-                            <th class="px-8 py-5 text-[9px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.2em]">Timestamp UTC</th>
-                            <th class="px-8 py-5 text-[9px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.2em]">Mensaje / Resumen de Diagnóstico</th>
-                            <th class="px-8 py-5 text-[9px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.2em]">Módulo / Tenant</th>
-                            <th class="px-8 py-5 text-[9px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.2em] text-center">Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-outline-variant/5 dark:divide-white/[0.02]">
-                        <tr v-for="log in logs.data" :key="log.id" class="group hover:bg-primary/[0.008] dark:hover:bg-primary/[0.03] transition-all">
-                            <td class="px-8 py-6 whitespace-nowrap">
-                                <div class="flex items-center gap-3 px-3 py-1.5 rounded-xl border transition-all" :class="[getLevelConfig(log.level_name).bg, getLevelConfig(log.level_name).border]">
-                                    <span class="material-symbols-rounded text-sm" :class="getLevelConfig(log.level_name).color">{{ getLevelConfig(log.level_name).icon }}</span>
-                                    <span class="text-[9px] font-black uppercase tracking-widest text-on-surface dark:text-white">{{ log.level_name }}</span>
-                                </div>
-                            </td>
-                            <td class="px-8 py-6 whitespace-nowrap">
-                                <p class="text-[10px] font-black text-on-surface dark:text-white/80 italic">{{ formatDate(log.created_at) }}</p>
-                                <p class="text-[8px] font-bold text-on-surface-variant/30 uppercase mt-1 tracking-widest">Servidor Local</p>
-                            </td>
-                            <td class="px-8 py-6 max-w-sm">
-                                <p class="text-xs font-bold text-on-surface dark:text-white leading-relaxed group-hover:text-primary transition-colors">
-                                    {{ truncateMessage(log.message) }}
-                                </p>
-                            </td>
-                            <td class="px-8 py-6">
-                                <div v-if="log.copropiedad" class="flex flex-col">
-                                    <span class="text-[10px] font-black text-primary uppercase leading-none tracking-tight">{{ log.copropiedad.nombre }}</span>
-                                    <span class="text-[8px] font-bold text-on-surface-variant/30 uppercase mt-1 tracking-widest">{{ log.user?.name || 'DAEMON' }}</span>
-                                </div>
-                                <div v-else>
-                                    <span class="text-[9px] font-black text-on-surface-variant/20 dark:text-white/10 uppercase tracking-[0.2em]">SISTEMA_CORE</span>
-                                </div>
-                            </td>
-                            <td class="px-8 py-6 text-center">
-                                <Tooltip text="Ver Stack Trace">
-                                    <button @click="viewDetail(log)" class="w-10 h-10 rounded-xl bg-surface-container dark:bg-white/5 border border-outline-variant/10 dark:border-white/5 flex items-center justify-center text-on-surface-variant dark:text-white/40 hover:bg-primary dark:hover:bg-primary hover:text-white dark:hover:text-white transition-all shadow-sm active:scale-95 mx-auto">
-                                        <span class="material-symbols-rounded text-lg font-variation-settings-fill">terminal</span>
-                                    </button>
-                                </Tooltip>
-                            </td>
-                        </tr>
+                <template #cell-timestamp="{ row }">
+                    <div class="flex flex-col py-1">
+                        <p class="text-[10px] font-black text-on-surface dark:text-white/80 italic">{{ formatDate(row.created_at) }}</p>
+                        <p class="text-[8px] font-bold text-on-surface-variant/30 uppercase mt-1 tracking-widest">Servidor Local</p>
+                    </div>
+                </template>
 
-                        <!-- Empty State -->
-                        <tr v-if="logs.data.length === 0">
-                            <td colspan="5" class="px-8 py-24 text-center">
-                                <div class="flex flex-col items-center opacity-30">
-                                    <span class="material-symbols-rounded text-6xl mb-4">analytics</span>
-                                    <p class="text-xs font-black uppercase tracking-[0.3em]">Cero anomalías detectadas en este sector</p>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <template #cell-mensaje="{ row }">
+                    <div class="py-1">
+                        <p class="text-xs font-bold text-on-surface dark:text-white leading-relaxed group-hover:text-primary transition-colors max-w-sm overflow-hidden text-ellipsis whitespace-nowrap">
+                            {{ truncateMessage(row.message) }}
+                        </p>
+                    </div>
+                </template>
 
-            <div class="px-10 py-12 bg-surface-container/5 dark:bg-white/[0.01] border-t border-outline-variant/5 dark:border-white/5 flex justify-center">
-                <Pagination :links="logs.links" />
-            </div>
-        </div>
+                <template #cell-modulo="{ row }">
+                    <div v-if="row.copropiedad" class="flex flex-col py-1">
+                        <span class="text-[10px] font-black text-primary uppercase leading-none tracking-tight">{{ row.copropiedad.nombre }}</span>
+                        <span class="text-[8px] font-bold text-on-surface-variant/30 uppercase mt-1 tracking-widest">{{ row.user?.name || 'DAEMON' }}</span>
+                    </div>
+                    <div v-else class="py-1">
+                        <span class="text-[9px] font-black text-on-surface-variant/20 dark:text-white/10 uppercase tracking-[0.2em]">SISTEMA_CORE</span>
+                    </div>
+                </template>
+
+                <template #cell-accion="{ row }">
+                    <div class="flex justify-center py-1">
+                        <Tooltip text="Ver Stack Trace">
+                            <button @click="viewDetail(row)" class="w-10 h-10 rounded-xl bg-surface-container dark:bg-white/5 border border-outline-variant/10 dark:border-white/5 flex items-center justify-center text-on-surface-variant dark:text-white/40 hover:bg-secondary dark:hover:bg-secondary hover:text-white dark:hover:text-white transition-all shadow-sm active:scale-95">
+                                <span class="material-symbols-rounded text-lg font-variation-settings-fill">terminal</span>
+                            </button>
+                        </Tooltip>
+                    </div>
+                </template>
+            </Table>
+
+
+        </Card>
 
         <!-- Modal de Diagnóstico Profundo -->
         <Modal :show="showModal" @close="showModal = false" max-width="3xl">

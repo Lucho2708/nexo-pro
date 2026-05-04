@@ -3,9 +3,12 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
         "dev": "vite",
-        "ssr": "php artisan inertia:start-ssr"
+        "build": "vite build",
+        "ssr": "php artisan inertia:start-ssr",
+        "reverb": "php artisan reverb:start",
+        "livekit": "livekit-server --config livekit.yaml",
+        "dev:full": "concurrently \"npm run dev\" \"php artisan serve\" \"npm run reverb\" \"npm run ssr\" \"npm run livekit\""
     },
     "devDependencies": {
         "@inertiajs/vue3": "^2.3.21",

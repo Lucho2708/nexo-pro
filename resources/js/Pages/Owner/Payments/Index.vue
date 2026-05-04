@@ -5,6 +5,7 @@ import OwnerLayout from '@/Layouts/OwnerLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
 import Badge from '@/Components/UI/Badge.vue';
+import Table from '@/Components/UI/Table.vue';
 import PaymentModule from '@/Components/Payments/PaymentModule.vue';
 import PaymentMethodModal from '@/Components/Payments/PaymentMethodModal.vue';
 import { useToast } from '@/Composables/useToast';
@@ -24,6 +25,14 @@ const props = defineProps<{
 const toast = useToast();
 const payModule = ref<any>(null);
 const showMethodModal = ref(false);
+
+const tableColumns = [
+    { key: 'fecha', label: 'FECHA', sortable: true, sortField: 'fecha' },
+    { key: 'concepto', label: 'CONCEPTO', sortable: true },
+    { key: 'unidad', label: 'UNIDAD', sortable: true },
+    { key: 'referencia', label: 'REFERENCIA', sortable: false },
+    { key: 'monto', label: 'MONTO', sortable: true, sortField: 'monto' },
+];
 
 const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('es-CO', {
@@ -141,49 +150,34 @@ const processPayment = (gatewayKey: string) => {
 
                 <Card class="!p-0 overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead class="bg-surface-container-high/30 border-b border-outline-variant/10">
-                                <tr>
-                                    <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">Fecha</th>
-                                    <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">Concepto</th>
-                                    <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">Unidad</th>
-                                    <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">Referencia</th>
-                                    <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60 text-right">Monto</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-outline-variant/5">
-                                <tr v-for="tx in transacciones" :key="tx.id" class="hover:bg-primary/5 transition-colors group">
-                                    <td class="px-6 py-5">
-                                        <p class="text-xs font-bold text-on-surface">{{ formatDate(tx.fecha) }}</p>
-                                    </td>
-                                    <td class="px-6 py-5">
-                                        <div class="flex items-center gap-3">
-                                            <span class="material-symbols-outlined text-sm" :class="tx.tipo === 'abono' ? 'text-success' : 'text-error'">
-                                                {{ tx.tipo === 'abono' ? 'arrow_downward' : 'arrow_upward' }}
-                                            </span>
-                                            <p class="text-xs font-black text-on-surface tracking-tight">{{ tx.concepto?.nombre || 'Administración' }}</p>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5">
-                                        <p class="text-[10px] font-bold text-on-surface-variant">{{ tx.unidad?.torre }} {{ tx.unidad?.nombre }}</p>
-                                    </td>
-                                    <td class="px-6 py-5">
-                                        <p class="text-[10px] font-mono text-on-surface-variant/50">{{ tx.referencia || 'N/A' }}</p>
-                                    </td>
-                                    <td class="px-6 py-5 text-right">
-                                        <p class="text-sm font-black text-primary tracking-tighter">{{ formatCurrency(tx.monto) }}</p>
-                                    </td>
-                                </tr>
-                                <tr v-if="transacciones.length === 0">
-                                    <td colspan="5" class="px-6 py-20 text-center">
-                                        <div class="flex flex-col items-center gap-4 opacity-30">
-                                            <span class="material-symbols-outlined text-5xl">receipt_long</span>
-                                            <p class="text-xs font-black uppercase tracking-[0.2em]">No se registran pagos en el sistema</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <Table :columns="tableColumns" :data="transacciones">
+                            <template #cell-fecha="{ row }">
+                                <p class="text-xs font-bold text-on-surface">{{ formatDate(row.fecha) }}</p>
+                            </template>
+
+                            <template #cell-concepto="{ row }">
+                                <div class="flex items-center gap-3 py-1">
+                                    <span class="material-symbols-outlined text-sm" :class="row.tipo === 'abono' ? 'text-success' : 'text-error'">
+                                        {{ row.tipo === 'abono' ? 'arrow_downward' : 'arrow_upward' }}
+                                    </span>
+                                    <p class="text-xs font-black text-on-surface tracking-tight">{{ row.concepto?.nombre || 'Administración' }}</p>
+                                </div>
+                            </template>
+
+                            <template #cell-unidad="{ row }">
+                                <p class="text-[10px] font-bold text-on-surface-variant uppercase">{{ row.unidad?.torre }} {{ row.unidad?.nombre }}</p>
+                            </template>
+
+                            <template #cell-referencia="{ row }">
+                                <p class="text-[10px] font-mono text-on-surface-variant/50">{{ row.referencia || 'N/A' }}</p>
+                            </template>
+
+                            <template #cell-monto="{ row }">
+                                <div class="flex justify-end pr-4 py-1">
+                                    <p class="text-sm font-black text-primary tracking-tighter">{{ formatCurrency(row.monto) }}</p>
+                                </div>
+                            </template>
+                        </Table>
                     </div>
                 </Card>
             </div>

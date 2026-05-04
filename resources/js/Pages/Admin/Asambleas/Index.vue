@@ -10,7 +10,15 @@ import Tooltip from '@/Components/UI/Tooltip.vue';
 
 const props = defineProps<{
     asambleas: any[];
+    auditoria: {
+        area_construida_total: number;
+        area_unidades_total: number;
+        total_coeficientes: number;
+        unidades: any[];
+    };
 }>();
+
+const activeTab = ref('eventos');
 
 const showCreateModal = ref(false);
 
@@ -45,6 +53,12 @@ const formatDate = (dateStr: string) => {
         month: 'long' 
     }).toUpperCase();
 };
+
+const recalculateCoeficientes = () => {
+    useForm({}).post(route('admin.asambleas.coeficientes.recalculate'), {
+        preserveScroll: true
+    });
+};
 </script>
 
 <template>
@@ -60,13 +74,41 @@ const formatDate = (dateStr: string) => {
                     </h1>
                     <p class="text-on-surface-variant/60 text-[10px] font-black uppercase tracking-[0.3em] mt-2 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-primary"></span>
-                        Gestión de quórum y votaciones en tiempo real
+                        Gestión de quórum y auditoría matemática
                     </p>
                 </div>
-                <Button @click="showCreateModal = true" variant="primary" icon="add_circle" class="!rounded-2xl !py-4 shadow-xl shadow-primary/20 hover:scale-105 transition-all">
-                    NUEVA ASAMBLEA
-                </Button>
+                
+                <div class="flex items-center gap-4">
+                    <div class="flex bg-surface-container-highest p-1.5 rounded-2xl border border-outline-variant/10">
+                        <button 
+                            @click="activeTab = 'eventos'"
+                            :class="activeTab === 'eventos' ? 'bg-primary text-white shadow-lg' : 'text-on-surface-variant/60 hover:text-on-surface'"
+                            class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                        >
+                            EVENTOS
+                        </button>
+                        <button 
+                            @click="activeTab = 'auditoria'"
+                            :class="activeTab === 'auditoria' ? 'bg-primary text-white shadow-lg' : 'text-on-surface-variant/60 hover:text-on-surface'"
+                            class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
+                        >
+                            AUDITORÍA
+                            <span v-if="auditoria.total_coeficientes !== 100" class="w-2 h-2 bg-error rounded-full animate-pulse"></span>
+                        </button>
+                    </div>
+
+                    <Button v-if="activeTab === 'eventos'" @click="showCreateModal = true" variant="outline" icon="add_circle" class="!rounded-2xl !py-4 shadow-sm hover:scale-105 transition-all">
+                        NUEVA ASAMBLEA
+                    </Button>
+                    <Link v-if="activeTab === 'eventos'" :href="route('admin.asambleas.standalone.create')" class="bg-indigo-600 text-white px-6 py-4 rounded-2xl flex items-center gap-2 font-black text-[11px] tracking-widest uppercase shadow-xl shadow-indigo-500/20 hover:bg-indigo-700 hover:scale-105 transition-all">
+                        <span class="material-symbols-rounded text-xl">auto_awesome</span>
+                        STANDALONE WIZARD
+                    </Link>
+                </div>
             </div>
+
+            <!-- Tab: EVENTOS -->
+            <div v-if="activeTab === 'eventos'" class="animate-in fade-in duration-500 space-y-10">
 
             <!-- Empty State -->
             <div v-if="asambleas.length === 0" class="flex flex-col items-center justify-center py-32 bg-surface-container-lowest rounded-[4rem] border-2 border-dashed border-outline-variant/20">
@@ -172,6 +214,119 @@ const formatDate = (dateStr: string) => {
                                 </Link>
                             </Tooltip>
                         </div>
+                    </div>
+                </Card>
+            </div>
+            </div>
+
+            <!-- Tab: AUDITORÍA -->
+            <div v-if="activeTab === 'auditoria'" class="animate-in fade-in slide-in-from-right-4 duration-500 space-y-8">
+                
+                <!-- Health Check Dashboard -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card class="!rounded-[2.5rem] !p-8 border border-outline-variant/10 shadow-sm relative overflow-hidden bg-surface-container-lowest">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50 mb-2">ÁREA TOTAL BASE</p>
+                                <h3 class="text-4xl font-black text-on-surface tracking-tighter">{{ Number(auditoria.area_construida_total).toLocaleString('es-CO') }}<span class="text-xl text-on-surface-variant">m²</span></h3>
+                            </div>
+                            <div class="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
+                                <span class="material-symbols-rounded">business</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] font-bold text-on-surface-variant/60 mt-4 leading-relaxed">Valor matriz ingresado en la hoja de vida del conjunto.</p>
+                    </Card>
+
+                    <Card class="!rounded-[2.5rem] !p-8 border border-outline-variant/10 shadow-sm bg-surface-container-lowest"
+                        :class="Number(auditoria.area_unidades_total).toFixed(2) !== Number(auditoria.area_construida_total).toFixed(2) ? 'ring-1 ring-warning border-transparent bg-warning/5' : ''">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50 mb-2">SUMA ÁREAS PRIVADAS</p>
+                                <h3 class="text-4xl font-black tracking-tighter" :class="Number(auditoria.area_unidades_total).toFixed(2) !== Number(auditoria.area_construida_total).toFixed(2) ? 'text-warning' : 'text-on-surface'">
+                                    {{ Number(auditoria.area_unidades_total).toLocaleString('es-CO') }}<span class="text-xl opacity-50">m²</span>
+                                </h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center" :class="Number(auditoria.area_unidades_total).toFixed(2) !== Number(auditoria.area_construida_total).toFixed(2) ? 'bg-warning/20 text-warning' : 'bg-primary/10 text-primary'">
+                                <span class="material-symbols-rounded">{{ Number(auditoria.area_unidades_total).toFixed(2) !== Number(auditoria.area_construida_total).toFixed(2) ? 'warning' : 'check_circle' }}</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] font-bold text-on-surface-variant/60 mt-4 leading-relaxed">Suma de las áreas de todos los inmuebles creados.</p>
+                    </Card>
+
+                    <Card class="!rounded-[2.5rem] !p-8 border border-outline-variant/10 shadow-lg relative overflow-hidden"
+                        :class="auditoria.total_coeficientes === 100 ? 'bg-emerald-500 text-white border-transparent shadow-emerald-500/20' : 'bg-error text-white border-transparent shadow-error/20'">
+                        <div class="flex justify-between items-start relative z-10">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest opacity-80 mb-2">TOTALIZADOR DE QUÓRUM</p>
+                                <h3 class="text-5xl font-black tracking-tighter">{{ Number(auditoria.total_coeficientes).toFixed(2) }}%</h3>
+                            </div>
+                            <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                                <span class="material-symbols-rounded">{{ auditoria.total_coeficientes === 100 ? 'verified_user' : 'gpp_bad' }}</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] font-bold opacity-80 mt-4 leading-relaxed max-w-[200px]">
+                            {{ auditoria.total_coeficientes === 100 ? 'Sistema certificado. Quórum matemáticamente exacto.' : 'Discrepancia detectada. El sistema bloquea asambleas hasta que el total sea 100% exacto.' }}
+                        </p>
+                        <span class="material-symbols-rounded absolute -bottom-6 -right-6 text-9xl opacity-10 rotate-12">{{ auditoria.total_coeficientes === 100 ? 'shield' : 'warning' }}</span>
+                    </Card>
+                </div>
+
+                <!-- Acciones Rápidas -->
+                <div class="flex justify-end mb-6">
+                    <Button @click="recalculateCoeficientes" variant="primary" icon="calculate" class="!rounded-2xl !h-14 font-black tracking-widest text-[11px] uppercase shadow-lg shadow-primary/20">
+                        EJECUTAR RECÁLCULO GLOBAL
+                    </Button>
+                </div>
+
+                <!-- Tabla de Auditoría -->
+                <Card class="!rounded-[2.5rem] overflow-hidden border border-outline-variant/10 !p-0">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-surface-container-low border-b border-outline-variant/10">
+                                    <th class="py-5 px-6 text-[10px] font-black text-on-surface-variant/60 uppercase tracking-widest whitespace-nowrap">ID / Inmueble</th>
+                                    <th class="py-5 px-6 text-[10px] font-black text-on-surface-variant/60 uppercase tracking-widest whitespace-nowrap">Torre / Piso</th>
+                                    <th class="py-5 px-6 text-[10px] font-black text-on-surface-variant/60 uppercase tracking-widest whitespace-nowrap">Modelo Asignado</th>
+                                    <th class="py-5 px-6 text-[10px] font-black text-on-surface-variant/60 uppercase tracking-widest whitespace-nowrap text-right">Área (m²)</th>
+                                    <th class="py-5 px-6 text-[10px] font-black text-on-surface-variant/60 uppercase tracking-widest whitespace-nowrap text-right">Coeficiente Asignado (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-outline-variant/5">
+                                <tr v-for="unidad in auditoria.unidades" :key="unidad.id" class="hover:bg-surface-container-lowest/50 transition-colors group">
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-xl bg-surface-container-highest flex items-center justify-center font-black text-on-surface group-hover:bg-primary group-hover:text-white transition-colors">
+                                                {{ unidad.nombre }}
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span class="text-xs font-bold text-on-surface">Unidad {{ unidad.nombre }}</span>
+                                                <span class="text-[9px] font-mono text-on-surface-variant/40 mt-1 uppercase">{{ unidad.id.split('-')[0] }}...</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <div class="flex flex-col">
+                                            <span class="text-xs font-black text-on-surface">{{ unidad.torre || 'N/A' }}</span>
+                                            <span class="text-[10px] text-on-surface-variant/60 font-bold">Piso {{ unidad.piso || '-' }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <Badge v-if="unidad.tipo_unidad" variant="info" class="!bg-info/10 !text-info !rounded-lg !px-3 !py-1.5 font-bold uppercase tracking-widest text-[9px]">
+                                            {{ unidad.tipo_unidad.nombre }}
+                                        </Badge>
+                                        <Badge v-else variant="warning" class="!rounded-lg !px-3 !py-1.5 font-bold uppercase tracking-widest text-[9px]">SIN MODELO</Badge>
+                                    </td>
+                                    <td class="py-4 px-6 text-right font-mono text-xs font-bold text-on-surface">
+                                        {{ unidad.tipo_unidad ? unidad.tipo_unidad.area_m2 : '0.00' }}
+                                    </td>
+                                    <td class="py-4 px-6 text-right">
+                                        <span class="text-sm font-black tracking-tighter" :class="unidad.coeficiente > 0 ? 'text-primary' : 'text-error'">
+                                            {{ Number(unidad.coeficiente).toFixed(4) }}%
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </Card>
             </div>

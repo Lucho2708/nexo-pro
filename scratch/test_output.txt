@@ -1,0 +1,1 @@
+bash: línea 1: vendor/bin/phpunit: No existe el fichero o el directorio

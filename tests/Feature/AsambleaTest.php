@@ -39,6 +39,9 @@ class AsambleaTest extends TestCase
         ]);
         
         $this->unidad->users()->attach($this->user->id, ['role' => 'propietario']);
+
+        // Inicializar ecosistema dinámico para que las tablas existan durante el test
+        app(\App\Services\AsambleaService::class)->initializeDynamicEcosystem($this->asamblea);
     }
 
     public function test_an_owner_can_access_the_assembly_room()
@@ -94,22 +97,16 @@ class AsambleaTest extends TestCase
         $response->assertRedirect();
     }
 
-    public function test_it_broadcasts_hand_raised_event()
+    public function test_it_broadcasts_intervencion_updated_event()
     {
         Event::fake();
 
         $response = $this->actingAs($this->user)
-            ->post(route('asambleas.toggle-hand', $this->asamblea), [
-                'is_raised' => true
-            ]);
+            ->post(route('asambleas.intervenciones.request', $this->asamblea));
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         
-        Event::assertDispatched(HandRaised::class, function ($event) {
-            return $event->asambleaId === (string)$this->asamblea->id &&
-                   $event->userData['name'] === $this->user->name &&
-                   $event->userData['is_raised'] === true;
-        });
+        Event::assertDispatched(\App\Events\IntervencionUpdated::class);
     }
 
     public function test_an_owner_can_cast_a_vote()

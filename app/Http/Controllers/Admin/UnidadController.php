@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Unidad;
+use App\Services\CoeficienteCalculator;
 
 class UnidadController extends Controller
 {
@@ -17,6 +18,7 @@ class UnidadController extends Controller
             'torre' => 'required|string|max:50',
             'pisos' => 'required|integer|min:1|max:150',
             'aptos_por_piso' => 'required|integer|min:1|max:100',
+            'tipo_unidad_id' => 'required|uuid|exists:tipos_unidad,id',
             'default_coeficiente' => 'nullable|numeric|min:0',
             'custom_settings' => [
                 'nullable',
@@ -50,6 +52,7 @@ class UnidadController extends Controller
                     'nombre' => $nombreUnidad,
                     'torre' => $request->torre,
                     'piso' => $piso,
+                    'tipo_unidad_id' => $request->tipo_unidad_id,
                     'coeficiente' => $request->default_coeficiente ?? 1.0,
                     'saldo_actual' => 0,
                     'created_at' => $now,
@@ -62,9 +65,13 @@ class UnidadController extends Controller
         foreach (array_chunk($unidadesAInsertar, 200) as $chunk) {
             Unidad::upsert($chunk, 
                 ['copropiedad_id', 'torre', 'nombre'], // Unique By
-                ['piso', 'coeficiente', 'updated_at']  // Update if exists
+                ['piso', 'tipo_unidad_id', 'coeficiente', 'updated_at']  // Update if exists
             );
         }
+
+        // Ejecutar el cálculo automático de coeficientes
+        $calculator = new CoeficienteCalculator();
+        $calculator->calculateForCopropiedad($user->currentCopropiedad);
 
         return back()->with('success', count($unidadesAInsertar) . ' unidades registradas exitosamente en la ' . $request->torre);
     }

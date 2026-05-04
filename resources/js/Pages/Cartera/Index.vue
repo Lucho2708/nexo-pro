@@ -43,11 +43,11 @@ onMounted(() => {
 });
 
 const tableColumns = [
-    { key: 'unidad', label: 'ACTIVO / LOTE', sortable: false },
-    { key: 'propietario', label: 'RESPONSABLE LEGAL', sortable: false },
-    { key: 'coeficiente', label: 'COEF.', sortable: false },
-    { key: 'estado', label: 'INDICE DE MORA', sortable: false },
-    { key: 'saldo', label: 'DEUDA CONSOLIDADA', sortable: false },
+    { key: 'unidad', label: 'ACTIVO / LOTE', sortable: true, sortField: 'nombre' },
+    { key: 'propietario', label: 'RESPONSABLE LEGAL', sortable: true, sortField: 'propietario_nombre' },
+    { key: 'coeficiente', label: 'COEF.', sortable: true, sortField: 'coeficiente' },
+    { key: 'estado', label: 'INDICE DE MORA', sortable: true, sortField: 'saldo_actual' },
+    { key: 'saldo', label: 'DEUDA CONSOLIDADA', sortable: true, sortField: 'saldo_actual' },
     { key: 'acciones', label: '', sortable: false },
 ];
 
@@ -57,15 +57,6 @@ const showImportModal = ref(false);
 const showBillingModal = ref(false);
 const billingAmount = ref(150000);
 const selectedUnidad = ref(null);
-const search = ref(props.filters.search || '');
-const torre = ref(props.filters.torre || '');
-
-watch([search, torre], ([newSearch, newTorre]) => {
-    router.get(route('cartera.index'), { search: newSearch, torre: newTorre }, {
-        preserveState: true,
-        replace: true
-    });
-});
 
 const openPaymentModal = (unidad = null) => {
     selectedUnidad.value = unidad;
@@ -175,34 +166,7 @@ const formatCurrency = (value: number) => {
             </Card>
         </div>
 
-        <!-- Search & Advanced Filtering -->
-        <Card class="!p-8 !rounded-[3rem] border border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14]">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
-                <div class="md:col-span-5">
-                    <Input 
-                        v-model="search"
-                        label="IDENTIFICADOR DE RESPONSABLE / UNIDAD"
-                        placeholder="Nombre, ID o nomenclatura..."
-                        icon="search"
-                        class="!bg-surface-container-low !rounded-2xl !h-14 font-black italic text-xs uppercase"
-                    />
-                </div>
-                <div class="md:col-span-3">
-                    <Select 
-                        v-model="torre"
-                        label="ESTRUCTURA / TORRE"
-                        placeholder="GLOBAL"
-                        icon="apartment"
-                        :options="[{ value: '', label: 'GLOBAL' }, ...torres.map(t => ({ value: t, label: t.toUpperCase() }))]"
-                        class="!bg-surface-container-low !rounded-2xl !h-14 font-black italic text-xs uppercase"
-                    />
-                </div>
-                <div class="md:col-span-4 flex gap-3">
-                    <Button variant="secondary" class="flex-1 !h-14 !rounded-2xl !text-[11px] font-black uppercase italic shadow-sm" icon="filter_list">Aplicar Capas</Button>
-                    <Button variant="ghost" class="!w-14 !h-14 !rounded-2xl border border-outline-variant/10 hover:bg-error/5 hover:text-error transition-all" icon="restart_alt" @click="search = ''; torre = ''"></Button>
-                </div>
-            </div>
-        </Card>
+
 
         <!-- Main Cartera Table -->
         <Card title="Monitor de Saldos" subtitle="Desglose técnico pro unidad" icon="receipt_long" class="!p-0 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14] overflow-hidden">

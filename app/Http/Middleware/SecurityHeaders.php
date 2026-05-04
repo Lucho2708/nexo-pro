@@ -26,7 +26,7 @@ class SecurityHeaders
         
         // Content-Security-Policy (CSP) - Blindaje contra XSS e inyecciones
         $scriptSources = "'self' 'unsafe-inline' 'unsafe-eval'";
-        $connectSources = "'self' ws: wss: *.livekit.cloud https://*.livekit.cloud";
+        $connectSources = "'self' ws: wss: *.livekit.cloud https://*.livekit.cloud *.trycloudflare.com localhost:7880 127.0.0.1:7880";
         
         // Permitir Vite en desarrollo para evitar pantalla en blanco
         if (config('app.debug')) {

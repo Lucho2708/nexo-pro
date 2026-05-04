@@ -1,17 +1,8 @@
-# Configuración de LiveKit para Nexo-Pro
 keys:
-  devkey_nexo_pro_asamblea_virtual_2026: secret_nexo_pro_long_key_for_jwt_validation_32_chars
-
+  devkey: secret_nexo_pro_long_key_for_jwt_validation_32_chars
 port: 7880
-bind_addresses:
-  - 0.0.0.0
-
-logging:
-  level: info
-
-# Configuración de red para desarrollo
+bind_address: 0.0.0.0
 rtc:
-  use_external_ip: false
   tcp_port: 7881
   port_range_start: 50000
   port_range_end: 60000

@@ -11,13 +11,22 @@ use App\Models\Unidad;
 use App\Models\Pregunta;
 use App\Models\Opcion;
 use App\Models\Voto;
+use App\Events\VoteCast;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 
+use App\Services\Tenant\AssemblyTableManager;
+
 class AsambleaService
 {
+    protected $tableManager;
+
+    public function __construct(AssemblyTableManager $tableManager)
+    {
+        $this->tableManager = $tableManager;
+    }
     /**
      * Generate an access token for LiveKit.
      */
@@ -43,54 +52,140 @@ class AsambleaService
     }
 
     /**
-     * Get the authenticated unit for the user in the given asamblea context.
-     * For admins, it might return null but we handle it in the controller.
+     * Get all units the user represents in the assembly.
      */
-    public function getAuthenticatedUnit(User $user, Asamblea $asamblea): ?Unidad
+    public function getAuthenticatedUnits(User $user, Asamblea $asamblea)
     {
         if ($user->isAdmin() || $user->isSuperAdmin()) {
-            return null; // Admins don't have a unit
+            return collect();
         }
 
+        $shortId = substr($asamblea->id, 0, 8);
+        $quorumTable = "asquorum_{$shortId}";
+
+        // Si existe la tabla de quórum dinámica (aislamiento), la usamos
+        if (Schema::hasTable($quorumTable)) {
+            $unitIds = DB::table($quorumTable)
+                ->where(function($q) use ($user, $quorumTable) {
+                    $q->where("{$quorumTable}.user_id", $user->id)
+                      ->orWhereExists(function ($query) use ($user, $quorumTable) {
+                          $query->select(DB::raw(1))
+                              ->from('unidad_user')
+                              ->whereRaw("unidad_user.unidad_id = {$quorumTable}.unidad_id")
+                              ->where('unidad_user.user_id', $user->id);
+                      });
+                })
+                ->pluck('unidad_id')
+                ->toArray();
+
+            return Unidad::withoutGlobalScopes()
+                ->whereIn('id', $unitIds)
+                ->get();
+        }
+
+        // Fallback a la lógica original (NEXO PRO Nativo)
         return $user->unidades()
             ->where('copropiedad_id', $asamblea->copropiedad_id)
-            ->first();
+            ->get();
     }
 
     /**
-     * Cast a vote for a question.
+     * Initialize the dynamic isolated ecosystem for an assembly.
      */
-    public function castVote(User $user, Unidad $unidad, Pregunta $pregunta, Opcion $opcion, Asamblea $asamblea): Voto
+    public function initializeDynamicEcosystem(Asamblea $asamblea): void
     {
+        $shortId = substr($asamblea->id, 0, 8);
+        $this->tableManager->createAssemblyEcosystem($shortId, $asamblea->copropiedad_id);
+    }
+
+    /**
+     * Helper for legacy or single-unit contexts.
+     */
+    public function getAuthenticatedUnit(User $user, Asamblea $asamblea)
+    {
+        return $this->getAuthenticatedUnits($user, $asamblea)->first();
+    }
+
+    public function castVote(User $user, $unidades, Pregunta $pregunta, Opcion $opcion, Asamblea $asamblea): void
+    {
+        // Ensure we work with a collection for multi-unit support
+        $unidades = $unidades instanceof \Illuminate\Support\Collection ? $unidades : collect([$unidades]);
+
         if ($pregunta->status !== 'open') {
             throw new \Exception('La votación no está abierta.');
         }
 
-        return DB::transaction(function () use ($user, $unidad, $pregunta, $opcion, $asamblea) {
-            $exists = Voto::where('pregunta_id', $pregunta->id)
-                ->where('unidad_id', $unidad->id)
-                ->lockForUpdate() // Prevenir race conditions
-                ->exists();
+        if ($unidades->isEmpty()) {
+            throw new \Exception('No tienes unidades asociadas para votar.');
+        }
 
-            if ($exists) {
-                throw new \Exception('Esta unidad ya ha registrado su voto.');
+        DB::transaction(function () use ($user, $unidades, $pregunta, $opcion, $asamblea) {
+            $shortId = substr($asamblea->id, 0, 8);
+            $votesRegistered = 0;
+            
+            foreach ($unidades as $unidad) {
+                if ($this->tableManager->hasVoted($shortId, $pregunta->id, $unidad->id)) {
+                    continue;
+                }
+                
+                $this->tableManager->registerVote($shortId, [
+                    'pregunta_id' => $pregunta->id,
+                    'user_id' => $user->id,
+                    'unidad_id' => $unidad->id,
+                    'opcion_id' => $opcion->id,
+                    'peso' => $unidad->coeficiente ?? 0,
+                ], $asamblea->copropiedad_id);
+
+                // Global table for legacy support and analytics
+                Voto::create([
+                    'pregunta_id' => $pregunta->id,
+                    'opcion_id' => $opcion->id,
+                    'unidad_id' => $unidad->id,
+                    'user_id' => $user->id,
+                    'peso' => $unidad->coeficiente ?? 0,
+                ]);
+
+                // Still log the event in the dynamic log table for history
+                $this->logEvent($asamblea, $user, $unidad, 'vote', [
+                    'pregunta_id' => $pregunta->id,
+                    'opcion_id' => $opcion->id
+                ]);
+
+                $votesRegistered++;
             }
 
-            $voto = Voto::create([
-                'pregunta_id' => $pregunta->id,
+            if ($votesRegistered === 0) {
+                throw new \Exception('Ya has votado con todas tus unidades disponibles.');
+            }
+
+            broadcast(new VoteCast($asamblea, $pregunta, [
                 'user_id' => $user->id,
-                'unidad_id' => $unidad->id,
-                'opcion_id' => $opcion->id,
-                'peso' => $unidad->coeficiente ?? 0,
-            ]);
-
-            $this->logEvent($asamblea, $user, $unidad, 'vote', [
-                'pregunta_id' => $pregunta->id,
-                'opcion_id' => $opcion->id
-            ]);
-
-            return $voto;
+                'unidades_count' => $unidades->count(),
+                'total_peso' => $unidades->sum('coeficiente')
+            ]))->toOthers();
         });
+    }
+
+    /**
+     * Get questions and their options, either from dynamic tables or central tables.
+     */
+    public function getPreguntasWithOpciones(Asamblea $asamblea)
+    {
+        $shortId = substr($asamblea->id, 0, 8);
+        $questionsTable = "aspreguntas_{$shortId}";
+        $optionsTable = "asopciones_{$shortId}";
+
+        if (Schema::hasTable($questionsTable) && Schema::hasTable($optionsTable)) {
+            $questions = DB::table($questionsTable)->latest()->get();
+            $options = DB::table($optionsTable)->orderBy('order')->get();
+
+            return $questions->map(function ($q) use ($options) {
+                $q->opciones = $options->where('pregunta_id', $q->id)->values();
+                return $q;
+            });
+        }
+
+        return $asamblea->preguntas()->with('opciones')->latest()->get();
     }
 
     /**
@@ -100,9 +195,6 @@ class AsambleaService
     {
         $cacheKey = $this->getConnectionKey($unidad);
         $connectedUserId = Cache::get($cacheKey);
-
-        // Si no hay nadie, puede entrar.
-        // Si el que está conectado es el MISMO usuario, puede entrar (traspaso de sesión).
         return !$connectedUserId || $connectedUserId === $user->id;
     }
 
@@ -134,6 +226,7 @@ class AsambleaService
         $this->ensureLogTableExists($tableName);
 
         DB::table($tableName)->insert([
+            'id' => \Illuminate\Support\Str::uuid(),
             'copropiedad_id' => $asamblea->copropiedad_id,
             'user_id' => $user->id,
             'unidad_id' => $unidad->id,
@@ -153,17 +246,23 @@ class AsambleaService
     {
         if (!Schema::hasTable($tableName)) {
             Schema::create($tableName, function (Blueprint $table) {
-                $table->id();
+                $table->uuid('id')->primary();
                 $table->uuid('copropiedad_id');
                 $table->uuid('user_id');
                 $table->uuid('unidad_id')->nullable();
                 $table->string('event_type');
-                $table->json('payload')->nullable();
+                $table->jsonb('payload')->nullable();
                 $table->string('ip_address', 45)->nullable();
                 $table->text('user_agent')->nullable();
                 $table->timestamps();
+
                 $table->index(['event_type']);
             });
+
+            // GIN index for deep searching in JSONB payload (PostgreSQL specific)
+            if (Schema::getConnection()->getDriverName() === 'pgsql') {
+                DB::statement("CREATE INDEX idx_{$tableName}_payload_gin ON {$tableName} USING GIN (payload)");
+            }
         }
     }
 

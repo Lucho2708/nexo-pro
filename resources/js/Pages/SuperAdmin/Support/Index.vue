@@ -7,6 +7,7 @@ import Button from '@/Components/UI/Button.vue';
 import Badge from '@/Components/UI/Badge.vue';
 import Select from '@/Components/UI/Select.vue';
 import Modal from '@/Components/UI/Modal.vue';
+import Table from '@/Components/UI/Table.vue';
 import { useToast } from '@/Composables/useToast';
 
 defineOptions({ layout: AuthenticatedLayout });
@@ -25,6 +26,14 @@ const form = useForm({
     priority: '',
     resolution_notes: '',
 });
+
+const tableColumns = [
+    { key: 'subject', label: 'INCIDENCIA / REPORTE', sortable: true },
+    { key: 'tenant', label: 'ORIGEN / TENANT', sortable: true },
+    { key: 'priority', label: 'CRITICIDAD', sortable: true },
+    { key: 'status', label: 'ESTADO', sortable: true },
+    { key: 'actions', label: 'MANDO', sortable: false },
+];
 
 const priorityOptions = [
     { value: 'low', label: 'BAJA (Consulta / Duda)' },
@@ -120,51 +129,42 @@ const getCategoryLabel = (cat: string) => {
 
         <!-- Master Tickets Tactical Board -->
         <Card class="!p-0 !rounded-[4rem] border-2 border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14] overflow-hidden">
-             <div class="overflow-x-auto no-scrollbar">
-                <table class="w-full text-left min-w-[1200px]">
-                    <thead>
-                        <tr class="bg-surface-container dark:bg-white/[0.01] border-b-2 border-outline-variant/10 dark:border-white/5">
-                            <th class="px-12 py-10 text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.4em]">Incidencia / Reporte</th>
-                            <th class="px-12 py-10 text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.4em]">Origen / Tenant</th>
-                            <th class="px-12 py-10 text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.4em]">Criticidad</th>
-                            <th class="px-12 py-10 text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.4em]">Estado</th>
-                            <th class="px-12 py-10 text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.4em] text-right">Mando</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-outline-variant/5 dark:divide-white/[0.02]">
-                        <tr v-for="ticket in tickets" :key="ticket.id" class="group hover:bg-secondary/[0.012] dark:hover:bg-secondary/[0.05] transition-all duration-500">
-                            <td class="px-12 py-10">
-                                <div class="flex flex-col gap-2">
-                                    <span class="text-xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none transition-transform group-hover:translate-x-1">{{ ticket.subject }}</span>
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-2 h-4 bg-secondary/40 rounded-full"></div>
-                                        <span class="text-[10px] font-black text-secondary/60 uppercase tracking-widest italic">{{ getCategoryLabel(ticket.category) }}</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-12 py-10">
-                                <div class="flex flex-col gap-1">
-                                    <span class="text-[13px] font-black text-on-surface dark:text-white/80 uppercase tracking-tighter">{{ ticket.copropiedad?.nombre || 'SISTEMA_CORE' }}</span>
-                                    <span class="text-[10px] font-bold text-on-surface-variant/30 uppercase tracking-widest italic font-mono">{{ ticket.user.name }}</span>
-                                </div>
-                            </td>
-                            <td class="px-12 py-10">
-                                <div class="px-6 py-2 rounded-2xl border-2 tabular-nums inline-flex items-center gap-3 transition-all group-hover:scale-105 shadow-sm" :class="getPriorityColor(ticket.priority)">
-                                    <span class="text-[10px] font-black uppercase tracking-widest italic">{{ ticket.priority }}</span>
-                                </div>
-                            </td>
-                            <td class="px-12 py-10">
-                                <Badge :variant="getStatusVariant(ticket.status)" class="!px-7 !py-2 !font-black !text-[10px] tracking-[0.25em] uppercase italic border-2 !rounded-xl shadow-inner">
-                                    {{ ticket.status.replace('_', ' ') }}
-                                </Badge>
-                            </td>
-                            <td class="px-12 py-10 text-right">
-                                <Button variant="ghost" icon="terminal" class="!w-16 !h-16 !p-0 !rounded-[1.5rem] transition-all hover:bg-secondary/10 hover:text-secondary border-2 border-outline-variant/10 dark:border-white/5 active:scale-90 shadow-xl" @click="openManageModal(ticket)"></Button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-             </div>
+             <Table :columns="tableColumns" :data="tickets" class="border-t border-outline-variant/5 dark:border-white/5">
+                <template #cell-subject="{ row }">
+                    <div class="flex flex-col gap-2 py-2">
+                        <span class="text-xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none transition-transform group-hover:translate-x-1">{{ row.subject }}</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-4 bg-secondary/40 rounded-full"></div>
+                            <span class="text-[10px] font-black text-secondary/60 uppercase tracking-widest italic">{{ getCategoryLabel(row.category) }}</span>
+                        </div>
+                    </div>
+                </template>
+
+                <template #cell-tenant="{ row }">
+                    <div class="flex flex-col gap-1 py-2">
+                        <span class="text-[13px] font-black text-on-surface dark:text-white/80 uppercase tracking-tighter">{{ row.copropiedad?.nombre || 'SISTEMA_CORE' }}</span>
+                        <span class="text-[10px] font-bold text-on-surface-variant/30 uppercase tracking-widest italic font-mono">{{ row.user?.name }}</span>
+                    </div>
+                </template>
+
+                <template #cell-priority="{ row }">
+                    <div class="px-6 py-2 rounded-2xl border-2 tabular-nums inline-flex items-center gap-3 transition-all group-hover:scale-105 shadow-sm" :class="getPriorityColor(row.priority)">
+                        <span class="text-[10px] font-black uppercase tracking-widest italic">{{ row.priority }}</span>
+                    </div>
+                </template>
+
+                <template #cell-status="{ row }">
+                    <Badge :variant="getStatusVariant(row.status)" class="!px-7 !py-2 !font-black !text-[10px] tracking-[0.25em] uppercase italic border-2 !rounded-xl shadow-inner">
+                        {{ row.status.replace('_', ' ') }}
+                    </Badge>
+                </template>
+
+                <template #cell-actions="{ row }">
+                    <div class="flex justify-end pr-4">
+                        <Button variant="ghost" icon="terminal" class="!w-16 !h-16 !p-0 !rounded-[1.5rem] transition-all hover:bg-secondary/10 hover:text-secondary border-2 border-outline-variant/10 dark:border-white/5 active:scale-90 shadow-xl" @click="openManageModal(row)"></Button>
+                    </div>
+                </template>
+             </Table>
         </Card>
 
         <!-- Tactical Resolution Modal PRO - 3 Tier Design -->

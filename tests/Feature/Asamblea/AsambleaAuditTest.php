@@ -24,7 +24,7 @@ test('it creates a dynamic log table for a specific assembly and logs events to 
         'status' => 'in_progress'
     ]);
 
-    $service = new AsambleaService();
+    $service = app(AsambleaService::class);
     $tableName = $asamblea->getLogTableName();
 
     // 2. Act: Log an event (this should trigger table creation if it doesn't exist)

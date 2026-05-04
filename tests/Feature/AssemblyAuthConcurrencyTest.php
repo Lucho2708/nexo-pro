@@ -79,16 +79,17 @@ class AssemblyAuthConcurrencyTest extends TestCase
         $this->assertEquals($totalUsers, $successCount, "Todos los usuarios legítimos pudieron entrar.");
         $this->assertEquals(0, $blockedCount);
 
-        // --- SIMULACIÓN DE COLISIÓN (Intento de entrada con sesión ya activa) ---
+        // --- SIMULACIÓN DE COLISIÓN (Intento de entrada con sesión ya activa por OTRO usuario) ---
         $secondWaveBlocked = 0;
         foreach ($users as $index => $user) {
+            $attacker = User::factory()->create(['role' => 'owner']); // OTRO USUARIO
             $service = app(AsambleaService::class);
-            if (!$service->canJoin($user, $units[$index])) {
+            if (!$service->canJoin($attacker, $units[$index])) {
                 $secondWaveBlocked++;
             }
         }
 
-        $this->assertEquals($totalUsers, $secondWaveBlocked, "El bloqueo de 'Dispositivo Único' fue efectivo para los 500 intentos duplicados.");
+        $this->assertEquals($totalUsers, $secondWaveBlocked, "El bloqueo de 'Dispositivo Único' fue efectivo para los 500 intentos de intrusión.");
 
         echo "\n   > ACCESO MASIVO EXITOSO: 500 sesiones gestionadas.";
         echo "\n   > Tiempo total de ráfaga: " . number_format($duration, 4) . " segundos.";

@@ -58,9 +58,11 @@ class CopropiedadController extends Controller
 
         // Datos de Telemetría REALES (Últimas 12 horas)
         $driver = DB::getDriverName();
-        $timeRaw = $driver === 'sqlite' 
-            ? "strftime('%H:00', created_at) as time" 
-            : "DATE_FORMAT(created_at, '%H:00') as time";
+        $timeRaw = match($driver) {
+            'sqlite' => "strftime('%H:00', created_at) as time",
+            'pgsql'  => "to_char(created_at, 'HH24:00') as time",
+            default  => "DATE_FORMAT(created_at, '%H:00') as time", // MySQL fallback
+        };
 
         $metricsData = DB::table('system_metrics')
             ->select(

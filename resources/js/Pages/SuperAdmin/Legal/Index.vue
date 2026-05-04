@@ -4,6 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
 import Badge from '@/Components/UI/Badge.vue';
+import Table from '@/Components/UI/Table.vue';
 import { useToast } from '@/Composables/useToast';
 
 defineOptions({ layout: AuthenticatedLayout });
@@ -20,6 +21,14 @@ const props = defineProps<{
 }>();
 
 const toast = useToast();
+
+const tableColumns = [
+    { key: 'document', label: 'DOCUMENTO', sortable: true, sortField: 'title' },
+    { key: 'version', label: 'VERSIÓN', sortable: true, sortField: 'version' },
+    { key: 'status', label: 'ESTADO', sortable: true, sortField: 'is_active' },
+    { key: 'date', label: 'FECHA', sortable: true, sortField: 'created_at' },
+    { key: 'actions', label: 'ACCIONES', sortable: false },
+];
 
 const toggleStatus = (id: string) => {
     router.patch(route('superadmin.legal.toggle', id), {}, {
@@ -50,73 +59,61 @@ const getTypeName = (type: string) => {
 <template>
     <Head title="Gestión Legal" />
 
-    <div class="space-y-6 max-w-7xl mx-auto p-4 md:p-8">
+    <div class="space-y-6 max-w-7xl mx-auto p-4 md:p-8 animate-in fade-in duration-700">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Gestión Legal y Habeas Data</h1>
-                <p class="text-slate-500 dark:text-slate-400">Administra los documentos legales y el cumplimiento normativo de la plataforma.</p>
+                <h1 class="text-3xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Gestión <span class="text-primary italic">Legal</span></h1>
+                <p class="text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] mt-3 italic">Administra los documentos legales y el cumplimiento normativo</p>
             </div>
             <Link :href="route('superadmin.legal.create')">
-                <Button variant="primary" icon="add">
+                <Button variant="primary" icon="add" class="!rounded-2xl shadow-xl shadow-primary/20">
                     Nuevo Documento
                 </Button>
             </Link>
         </div>
 
-        <Card variant="flat" class="overflow-hidden border-slate-200 dark:border-slate-700">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
-                        <tr>
-                            <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Documento</th>
-                            <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Versión</th>
-                            <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Estado</th>
-                            <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Fecha</th>
-                            <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-                        <tr v-for="doc in documents" :key="doc.id" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex flex-col">
-                                    <span class="font-medium text-slate-900 dark:text-white">{{ doc.title }}</span>
-                                    <div class="flex gap-2 mt-1">
-                                        <Badge :variant="getBadgeColor(doc.type)" size="sm" class="uppercase text-[10px]">
-                                            {{ getTypeName(doc.type) }}
-                                        </Badge>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="font-mono text-sm text-slate-600 dark:text-slate-400">v{{ doc.version }}</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <Badge :variant="doc.is_active ? 'success' : 'danger'" size="sm">
-                                    {{ doc.is_active ? 'Activo' : 'Inactivo' }}
-                                </Badge>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
-                                {{ new Date(doc.created_at).toLocaleDateString() }}
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <Button 
-                                    @click="toggleStatus(doc.id)"
-                                    :variant="doc.is_active ? 'secondary' : 'primary'"
-                                    size="sm"
-                                    class="!px-3"
-                                >
-                                    {{ doc.is_active ? 'Desactivar' : 'Activar' }}
-                                </Button>
-                            </td>
-                        </tr>
-                        <tr v-if="documents.length === 0">
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
-                                No hay documentos legales registrados. Comienza creando uno nuevo.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <Card content-class="!p-0 !rounded-[3.5rem] overflow-hidden" class="border border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14]">
+            <Table :columns="tableColumns" :data="documents">
+                <template #cell-document="{ row }">
+                    <div class="flex flex-col py-2">
+                        <span class="font-black text-xs text-on-surface dark:text-white uppercase tracking-tighter italic">{{ row.title }}</span>
+                        <div class="flex gap-2 mt-1">
+                            <Badge :variant="getBadgeColor(row.type)" class="!px-3 !py-1 uppercase !text-[8px] font-black tracking-widest border-2">
+                                {{ getTypeName(row.type) }}
+                            </Badge>
+                        </div>
+                    </div>
+                </template>
+                
+                <template #cell-version="{ row }">
+                    <span class="font-mono text-sm font-black text-primary italic">v{{ row.version }}</span>
+                </template>
+                
+                <template #cell-status="{ row }">
+                    <Badge :variant="row.is_active ? 'success' : 'error'" class="!px-4 !py-1 uppercase !text-[9px] font-black tracking-widest">
+                        {{ row.is_active ? 'Activo' : 'Inactivo' }}
+                    </Badge>
+                </template>
+                
+                <template #cell-date="{ row }">
+                    <span class="text-[10px] font-bold text-on-surface-variant dark:text-white/40 uppercase tracking-widest italic">
+                        {{ new Date(row.created_at).toLocaleDateString() }}
+                    </span>
+                </template>
+                
+                <template #cell-actions="{ row }">
+                    <div class="flex justify-end pr-4">
+                        <Button 
+                            @click="toggleStatus(row.id)"
+                            :variant="row.is_active ? 'error' : 'success'"
+                            class="!rounded-xl !h-10 uppercase tracking-widest !text-[9px] font-black"
+                            :icon="row.is_active ? 'block' : 'check_circle'"
+                        >
+                            {{ row.is_active ? 'Desactivar' : 'Activar' }}
+                        </Button>
+                    </div>
+                </template>
+            </Table>
         </Card>
     </div>
 </template>

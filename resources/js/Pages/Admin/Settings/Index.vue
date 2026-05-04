@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
 import Input from '@/Components/UI/Input.vue';
 import Checkbox from '@/Components/UI/Checkbox.vue';
 import Badge from '@/Components/UI/Badge.vue';
+import UnitGeneratorModal from './Partials/UnitGeneratorModal.vue';
 import { useToast } from '@/Composables/useToast';
 
 defineOptions({ layout: AuthenticatedLayout });
@@ -14,11 +15,16 @@ defineOptions({ layout: AuthenticatedLayout });
 const props = defineProps<{
     copropiedad: any;
     settings: any;
+    componentes_catalogo: any[];
+    is_super_admin: boolean;
 }>();
 
+const activeTab = ref(props.copropiedad.unit_types_locked ? 'nucleo' : 'hoja_vida');
+const showGeneratorModal = ref(false);
 const toast = useToast();
 
 const form = useForm({
+    area_construida_total: props.copropiedad.area_construida_total || '',
     settings: {
         payments_enabled: props.settings.payments_enabled ?? false,
         wompi_public_key: props.settings.wompi_public_key ?? '',
@@ -44,6 +50,48 @@ const submit = () => {
         }
     });
 };
+
+// --- Lógica de Hoja de Vida ---
+const tipoUnidadForm = useForm({
+    nombre: '',
+    area_m2: '',
+    componentes: [] as any[]
+});
+
+const toggleComponente = (comp: any) => {
+    const index = tipoUnidadForm.componentes.findIndex(c => c.id === comp.id);
+    if (index === -1) {
+        tipoUnidadForm.componentes.push({ id: comp.id, nombre: comp.nombre, cantidad: 1 });
+    } else {
+        tipoUnidadForm.componentes.splice(index, 1);
+    }
+};
+
+const updateCantidad = (compId: string, delta: number) => {
+    const comp = tipoUnidadForm.componentes.find(c => c.id === compId);
+    if (comp) {
+        comp.cantidad = Math.max(1, comp.cantidad + delta);
+    }
+};
+
+const saveTipoUnidad = () => {
+    tipoUnidadForm.post(route('admin.unit-types.store'), {
+        onSuccess: () => {
+            toast.add('Modelo de unidad registrado', 'success');
+            tipoUnidadForm.reset();
+        }
+    });
+};
+
+const lockConfiguration = () => {
+    showGeneratorModal.value = true;
+};
+
+const unlockConfiguration = () => {
+    useForm({}).post(route('admin.unit-types.unlock'), {
+        onSuccess: () => toast.add('Edición habilitada para Super Admin', 'warning')
+    });
+};
 </script>
 
 <template>
@@ -61,8 +109,30 @@ const submit = () => {
                 <h2 class="text-5xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none">Sala de <span class="text-primary italic">Máquinas</span></h2>
                 <p class="text-[11px] font-bold text-on-surface-variant/40 dark:text-white/10 uppercase tracking-[0.2em] mt-2 leading-relaxed italic">Gestión de llaves de integración, módulos y reglas financieras del conjunto</p>
             </div>
-            <Badge variant="primary" class="!px-6 !py-2 !rounded-xl !text-[10px] font-black uppercase tracking-widest italic border-2">Copropiedad ID: {{ copropiedad.id.split('-')[0] }}</Badge>
+            
+            <!-- Tab Switcher Premium -->
+            <div class="flex bg-on-surface/5 dark:bg-white/5 p-1.5 rounded-2xl border border-outline-variant/10 dark:border-white/5 backdrop-blur-xl">
+                <button 
+                    @click="activeTab = 'nucleo'"
+                    :class="activeTab === 'nucleo' ? 'bg-primary text-white shadow-lg' : 'text-on-surface-variant/60 dark:text-white/40 hover:text-on-surface dark:hover:text-white'"
+                    class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
+                >
+                    <span class="material-symbols-rounded text-sm">settings_input_component</span>
+                    NÚCLEO
+                </button>
+                <button 
+                    @click="activeTab = 'hoja_vida'"
+                    :class="activeTab === 'hoja_vida' ? 'bg-primary text-white shadow-lg' : 'text-on-surface-variant/60 dark:text-white/40 hover:text-on-surface dark:hover:text-white'"
+                    class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
+                >
+                    <span class="material-symbols-rounded text-sm">architecture</span>
+                    HOJA DE VIDA
+                </button>
+            </div>
         </div>
+
+        <!-- TAB: NUCLEO (Original Settings) -->
+        <div v-if="activeTab === 'nucleo'" class="animate-in fade-in slide-in-from-right-4 duration-500">
 
         <form @submit.prevent="submit" class="grid grid-cols-1 xl:grid-cols-12 gap-10 items-start">
             
@@ -253,6 +323,143 @@ const submit = () => {
             </div>
         </form>
     </div>
+
+        <!-- TAB: HOJA DE VIDA (Unit Types) -->
+        <div v-if="activeTab === 'hoja_vida'" class="animate-in fade-in slide-in-from-left-4 duration-500 space-y-10">
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-10">
+                
+                <!-- Setup Form -->
+                <div class="xl:col-span-7 space-y-8">
+                    <Card class="!p-10 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:shadow-3xl bg-surface dark:bg-[#0b0e14] relative overflow-hidden">
+                        <div v-if="copropiedad.unit_types_locked && !is_super_admin" class="absolute inset-0 z-20 bg-surface/60 dark:bg-black/60 backdrop-blur-md flex flex-col items-center justify-center text-center p-10">
+                            <div class="w-20 h-20 bg-on-surface/5 dark:bg-white/5 rounded-full flex items-center justify-center mb-6 border border-outline-variant/10 dark:border-white/10">
+                                <span class="material-symbols-rounded text-4xl text-primary">lock</span>
+                            </div>
+                            <h4 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic">Configuración Bloqueada</h4>
+                            <p class="text-[10px] font-bold text-on-surface-variant/60 dark:text-white/40 uppercase tracking-widest mt-4 max-w-xs leading-relaxed">
+                                Los modelos de unidad han sido certificados. Cualquier cambio debe ser solicitado al Super Administrador.
+                            </p>
+                        </div>
+
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div>
+                                    <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Definir <span class="text-primary">Modelo</span></h3>
+                                    <p class="text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] mt-3 italic">Registro de tipos de unidad por medidas y componentes</p>
+                                </div>
+                                <Badge :variant="copropiedad.unit_types_locked ? 'primary' : 'warning'" class="!rounded-xl !px-4 !py-2 uppercase font-black text-[9px] tracking-widest italic">
+                                    {{ copropiedad.unit_types_locked ? '🔒 CONFIGURACIÓN BLINDADA' : '🔓 EDICIÓN ABIERTA' }}
+                                </Badge>
+                            </div>
+
+                        <div class="mb-8 p-6 bg-surface-container-low dark:bg-white/[0.02] rounded-[2rem] border border-outline-variant/10 dark:border-white/5 shadow-sm">
+                            <h4 class="text-sm font-black text-on-surface dark:text-white uppercase tracking-tighter mb-4 italic">Datos Base del Conjunto</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <Input 
+                                    v-model="form.area_construida_total" 
+                                    type="number" 
+                                    step="0.01" 
+                                    label="ÁREA CONSTRUIDA TOTAL (M2)" 
+                                    placeholder="Ej: 15200.50" 
+                                    class="!rounded-2xl" 
+                                />
+                                <div class="flex items-end">
+                                    <Button @click="submit" variant="primary" size="lg" :loading="form.processing" class="w-full !rounded-2xl">
+                                        Guardar Área Total
+                                    </Button>
+                                </div>
+                            </div>
+                            <p class="text-[9px] font-bold text-on-surface-variant/50 uppercase tracking-widest mt-3">
+                                Este valor es la base matemática para el cálculo automático de los coeficientes de copropiedad.
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                            <Input v-model="tipoUnidadForm.nombre" label="NOMBRE DEL MODELO" placeholder="Ej: Apartamento Tipo A" class="!rounded-2xl" />
+                            <Input v-model="tipoUnidadForm.area_m2" type="number" step="0.01" label="ÁREA PRIVADA (M2)" placeholder="0.00" class="!rounded-2xl" />
+                        </div>
+
+                        <div class="space-y-6">
+                            <p class="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4">Selección de Componentes</p>
+                            <div class="flex flex-wrap gap-3">
+                                <button 
+                                    v-for="comp in componentes_catalogo" 
+                                    :key="comp.id"
+                                    @click="toggleComponente(comp)"
+                                    type="button"
+                                    :class="tipoUnidadForm.componentes.some(c => c.id === comp.id) ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-surface-container-low dark:bg-white/5 text-on-surface-variant/60 dark:text-white/40 border-outline-variant/10 dark:border-white/5'"
+                                    class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all hover:border-primary/50"
+                                >
+                                    {{ comp.nombre }}
+                                </button>
+                            </div>
+
+                            <!-- Quantity Adjusters -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                                <div v-for="comp in tipoUnidadForm.componentes" :key="comp.id" class="flex items-center justify-between p-4 bg-surface-container-lowest dark:bg-white/[0.02] rounded-2xl border border-outline-variant/10 dark:border-white/5 animate-in zoom-in-95 duration-300">
+                                    <span class="text-[10px] font-black text-on-surface/60 dark:text-white/60 uppercase tracking-widest">{{ comp.nombre }}</span>
+                                    <div class="flex items-center gap-4">
+                                        <button @click="updateCantidad(comp.id, -1)" type="button" class="w-8 h-8 rounded-lg bg-on-surface/5 dark:bg-white/5 text-on-surface dark:text-white flex items-center justify-center hover:bg-primary hover:text-white transition-all">-</button>
+                                        <span class="text-sm font-black text-on-surface dark:text-white w-4 text-center">{{ comp.cantidad }}</span>
+                                        <button @click="updateCantidad(comp.id, 1)" type="button" class="w-8 h-8 rounded-lg bg-on-surface/5 dark:bg-white/5 text-on-surface dark:text-white flex items-center justify-center hover:bg-primary hover:text-white transition-all">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-12 flex flex-col md:flex-row items-center gap-4">
+                            <Button @click="saveTipoUnidad" variant="primary" size="lg" :loading="tipoUnidadForm.processing" icon="send" class="w-full md:w-auto" :disabled="copropiedad.unit_types_locked && !is_super_admin">
+                                REGISTRAR MODELO
+                            </Button>
+                            
+                            <!-- Security Actions (Moved here for visibility) -->
+                            <div v-if="!copropiedad.unit_types_locked" class="flex-1 w-full">
+                                <Button @click="lockConfiguration" variant="primary" outline class="w-full !rounded-2xl !h-14 font-black tracking-widest border-2" icon="precision_manufacturing">
+                                    LANZAR MOTOR DE NOMENCLATURA
+                                </Button>
+                            </div>
+
+                            <div v-if="copropiedad.unit_types_locked && is_super_admin" class="flex-1 w-full">
+                                <Button @click="unlockConfiguration" variant="danger" outline class="w-full !rounded-2xl !h-14 font-black tracking-widest border-2" icon="lock_open">
+                                    DESBLOQUEAR (SUPER ADMIN)
+                                </Button>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+
+                <!-- Summary & List -->
+                <div class="xl:col-span-5 space-y-8">
+                    <Card class="!p-10 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl bg-surface dark:bg-[#0b0e14]">
+                        <h3 class="text-xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none mb-8">Modelos <span class="text-primary">Certificados</span></h3>
+                        
+                        <div class="space-y-4">
+                            <div v-for="tipo in copropiedad.tipos_unidad" :key="tipo.id" class="p-6 rounded-[2.5rem] bg-surface-container-low dark:bg-white/[0.02] border border-outline-variant/10 dark:border-white/5 group hover:border-primary/30 transition-all shadow-sm">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-base font-black text-on-surface dark:text-white uppercase tracking-tighter italic">{{ tipo.nombre }}</h4>
+                                    <Badge variant="primary" class="!rounded-lg">{{ tipo.area_m2 }} M2</Badge>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span v-for="comp in tipo.componentes" :key="comp.id" class="px-3 py-1 bg-on-surface/5 dark:bg-white/5 rounded-lg text-[8px] font-bold text-on-surface-variant/60 dark:text-white/40 uppercase tracking-widest">
+                                        {{ comp.pivot.cantidad }} {{ comp.nombre }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div v-if="!copropiedad.tipos_unidad?.length" class="py-12 text-center opacity-40 dark:opacity-20 italic text-sm text-on-surface dark:text-white">
+                                No hay modelos registrados aún
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <UnitGeneratorModal 
+        :show="showGeneratorModal" 
+        @close="showGeneratorModal = false"
+        @success="() => { showGeneratorModal = false; activeTab = 'settings'; toast.success('Unidades generadas exitosamente'); }"
+    />
 </template>
 
 <style scoped>

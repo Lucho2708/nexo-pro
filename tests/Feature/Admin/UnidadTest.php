@@ -24,6 +24,13 @@ beforeEach(function () {
 
     $this->admin->managedCopropiedades()->attach($this->copropiedadA->id);
     $this->admin->update(['current_copropiedad_id' => $this->copropiedadA->id]);
+
+    $tipo = \App\Models\TipoUnidad::create([
+        'copropiedad_id' => $this->copropiedadA->id,
+        'nombre' => 'Apartamento',
+        'area_m2' => 60,
+    ]);
+    $this->tipoUnidad = $tipo->id;
 });
 
 it('can bulk generate unidades for a torre', function () {
@@ -32,6 +39,7 @@ it('can bulk generate unidades for a torre', function () {
         'pisos' => 5,
         'aptos_por_piso' => 4,
         'default_coeficiente' => 1.5,
+        'tipo_unidad_id' => $this->tipoUnidad,
     ];
 
     $response = $this->actingAs($this->admin)->post(route('unidades.bulk-generate'), $data);
@@ -66,6 +74,7 @@ it('validates custom_settings is a valid json if provided', function () {
         'pisos' => 1,
         'aptos_por_piso' => 1,
         'default_coeficiente' => 1.0,
+        'tipo_unidad_id' => $this->tipoUnidad,
         'custom_settings' => 'invalid-json',
     ];
 
@@ -83,6 +92,7 @@ it('fails to bulk generate if the user has no current_copropiedad_id', function 
         'pisos' => 5,
         'aptos_por_piso' => 4,
         'default_coeficiente' => 1.5,
+        'tipo_unidad_id' => $this->tipoUnidad,
     ];
 
     $response = $this->actingAs($this->admin)->post(route('unidades.bulk-generate'), $data);

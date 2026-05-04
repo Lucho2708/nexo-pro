@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('preguntas', function (Blueprint $table) {
-            $table->id();
+            $column = $table->uuid('id')->primary();
+            if (DB::getDriverName() === 'pgsql') {
+                $column->default(DB::raw('gen_random_uuid()'));
+            }
             $table->foreignUuid('asamblea_id')->constrained('asambleas')->onDelete('cascade');
             $table->string('titulo');
             $table->text('descripcion')->nullable();
@@ -22,19 +25,25 @@ return new class extends Migration
         });
 
         Schema::create('opciones', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pregunta_id')->constrained('preguntas')->onDelete('cascade');
+            $column = $table->uuid('id')->primary();
+            if (DB::getDriverName() === 'pgsql') {
+                $column->default(DB::raw('gen_random_uuid()'));
+            }
+            $table->foreignUuid('pregunta_id')->constrained('preguntas')->onDelete('cascade');
             $table->string('titulo');
             $table->integer('order')->default(0);
             $table->timestamps();
         });
 
         Schema::create('votos', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pregunta_id')->constrained('preguntas')->onDelete('cascade');
+            $column = $table->uuid('id')->primary();
+            if (DB::getDriverName() === 'pgsql') {
+                $column->default(DB::raw('gen_random_uuid()'));
+            }
+            $table->foreignUuid('pregunta_id')->constrained('preguntas')->onDelete('cascade');
             $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignUuid('unidad_id')->constrained('unidades')->onDelete('cascade');
-            $table->foreignId('opcion_id')->constrained('opciones')->onDelete('cascade');
+            $table->foreignUuid('opcion_id')->constrained('opciones')->onDelete('cascade');
             $table->decimal('peso', 10, 5)->default(0);
             $table->timestamps();
 

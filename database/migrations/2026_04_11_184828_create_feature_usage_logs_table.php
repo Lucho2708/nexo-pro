@@ -9,7 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('feature_usage_logs', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $column = $table->uuid('id')->primary();
+            if (DB::getDriverName() === 'pgsql') {
+                $column->default(DB::raw('gen_random_uuid()'));
+            }
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignUuid('copropiedad_id')->constrained('copropiedades')->cascadeOnDelete();
             // Feature keys: pqrs, reservas, pagos, dashboard, cartera

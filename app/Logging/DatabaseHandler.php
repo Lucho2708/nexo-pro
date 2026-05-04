@@ -14,12 +14,12 @@ class DatabaseHandler extends AbstractProcessingHandler
      */
     protected function write(LogRecord $record): void
     {
-        // Evitar bucles infinitos intentando guardar logs de errores de DB
-        if (!Schema::hasTable('system_logs')) {
-            return;
-        }
-
         try {
+            // Evitar bucles infinitos y errores en transacciones abortadas (Postgres)
+            if (!Schema::hasTable('system_logs')) {
+                return;
+            }
+
             SystemLog::create([
                 'level_name' => $record->level->getName(),
                 'level' => $record->level->value,
@@ -29,8 +29,9 @@ class DatabaseHandler extends AbstractProcessingHandler
                 'copropiedad_id' => auth()->check() ? auth()->user()->current_copropiedad_id : null,
                 'user_id' => auth()->check() ? auth()->id() : null,
             ]);
-        } catch (\Exception $e) {
-            // Failsafe: silenciar para evitar bucle de excepción al guardar un log
+        } catch (\Throwable $e) {
+            // Failsafe: Si la DB falla, la transacción está abortada o la tabla no existe, 
+            // simplemente ignoramos el log en DB para no romper la aplicación principal.
         }
     }
 }

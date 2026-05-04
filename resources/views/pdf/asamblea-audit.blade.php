@@ -66,8 +66,14 @@
         <tbody>
             @foreach($participants as $participant)
                 <tr>
-                    <td>Unidad ID: {{ $participant->unidad_id }}</td>
-                    <td>{{ $participant->user_id }}</td>
+                    <td>
+                        <strong>{{ $participant->unit_tower }} - {{ $participant->unit_name }}</strong><br>
+                        <span style="font-size: 8px; color: #999;">ID: {{ $participant->unidad_id }}</span>
+                    </td>
+                    <td>
+                        {{ $participant->user_name }}<br>
+                        <span style="font-size: 8px; color: #999;">ID: {{ $participant->user_id }}</span>
+                    </td>
                     <td>{{ $participant->ip_address }}</td>
                     <td>{{ \Carbon\Carbon::parse($participant->created_at)->format('H:i:s') }}</td>
                 </tr>

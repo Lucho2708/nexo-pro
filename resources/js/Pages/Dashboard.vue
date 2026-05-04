@@ -6,6 +6,7 @@ import Card from '@/Components/UI/Card.vue';
 import Button from '@/Components/UI/Button.vue';
 import Badge from '@/Components/UI/Badge.vue';
 import Tooltip from '@/Components/UI/Tooltip.vue';
+import Dropdown from '@/Components/UI/Dropdown.vue';
 import { useToast } from '@/Composables/useToast';
 
 // Componentes asíncronos para performance

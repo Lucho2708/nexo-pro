@@ -20,7 +20,7 @@ class OwnerPortalController extends Controller
         // Load units associated with the user via pivot, ONLY for the active copropiedad
         $unidades = $user->unidades()
             ->where('unidades.copropiedad_id', $currentCopropiedadId)
-            ->with('copropiedad')
+            ->with(['copropiedad', 'tipoUnidad.componentes'])
             ->get();
         
         // Calculate consolidated balance for current context
@@ -52,6 +52,7 @@ class OwnerPortalController extends Controller
             ],
             'features' => [
                 'payments_enabled' => $unidades->first()?->copropiedad?->hasFeature('payments_enabled') ?? false,
+                'two_factor_enabled' => (bool) $user->two_factor_confirmed_at,
                 'gateways' => collect($unidades->first()?->copropiedad?->getSetting('gateways', []))
                     ->filter(fn($g) => $g['enabled'] ?? false)
                     ->toArray(),

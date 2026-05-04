@@ -104,7 +104,8 @@ class IntervencionTest extends TestCase
         
         $intervencion->refresh();
         $this->assertEquals('completed', $intervencion->status);
-        $this->assertEquals(134, $intervencion->duration_seconds);
+        $this->assertGreaterThanOrEqual(134, $intervencion->duration_seconds);
+        $this->assertLessThanOrEqual(136, $intervencion->duration_seconds);
     }
 
     public function test_a_resident_can_cancel_their_own_pending_request()

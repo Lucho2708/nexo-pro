@@ -10,6 +10,7 @@ import DatePicker from '@/Components/UI/DatePicker.vue';
 import Pagination from '@/Components/UI/Pagination.vue';
 import Modal from '@/Components/UI/Modal.vue';
 import Tooltip from '@/Components/UI/Tooltip.vue';
+import Table from '@/Components/UI/Table.vue';
 import VueApexCharts from 'vue3-apexcharts';
 
 // Definir layout persistente
@@ -39,6 +40,13 @@ const form = ref({
     date_to: props.filters.date_to || '',
 });
 
+const tableColumns = [
+    { key: 'timestamp', label: 'TIMESTAMP', sortable: true, sortField: 'used_at' },
+    { key: 'evento', label: 'EVENTO', sortable: true, sortField: 'action' },
+    { key: 'actor', label: 'ACTOR OPERATIVO', sortable: true },
+    { key: 'actions', label: 'INSPECCIÓN', sortable: false },
+];
+
 const isRefreshing = ref(false);
 
 const debounce = (fn: Function, delay: number) => {
@@ -55,6 +63,7 @@ const applyFilters = (isManual = false) => {
         ...form.value
     }, {
         preserveState: true,
+        preserveScroll: true,
         replace: true,
         only: ['logs', 'filters', 'chartData'],
         onFinish: () => {
@@ -235,54 +244,51 @@ const resetFilters = () => {
         </div>
 
         <!-- Feed de Auditoria ADAPTATIVO -->
-        <div class="bg-white dark:bg-[#0b0e14] border border-outline-variant/10 dark:border-white/5 rounded-[3rem] overflow-hidden shadow-2xl relative">
-            <div class="absolute left-[5rem] top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-outline-variant/10 dark:via-white/5 to-transparent hidden md:block"></div>
-            
-            <div class="divide-y divide-outline-variant/5 dark:divide-white/[0.02]">
-                <div v-for="log in logs.data" :key="log.id" 
-                    class="group flex flex-col md:flex-row md:items-center gap-10 p-10 transition-all hover:bg-primary/[0.008] dark:hover:bg-primary/[0.03] relative"
-                >
-                    <div class="relative md:w-36 flex flex-col md:pl-16">
-                        <div class="hidden md:block absolute left-[1.38rem] top-[0.6rem] w-3 h-3 rounded-full bg-white dark:bg-[#0b0e14] border-2 border-outline-variant dark:border-white/10 group-hover:border-primary transition-all z-10"></div>
-                        <p class="text-[10px] font-black text-primary uppercase tracking-tighter leading-none italic">{{ log.used_at_human }}</p>
-                        <p class="text-[8px] font-bold text-on-surface-variant/30 dark:text-white/10 uppercase mt-2 tracking-widest">{{ new Date(log.used_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }}</p>
+        <Card content-class="!p-0 overflow-hidden !rounded-[2.5rem]">
+            <Table :columns="tableColumns" :data="logs.data" :hideLocalSearch="true">
+                <template #cell-timestamp="{ row }">
+                    <div class="relative flex flex-col py-1">
+                        <p class="text-[10px] font-black text-primary uppercase tracking-tighter leading-none italic">{{ row.used_at_human }}</p>
+                        <p class="text-[8px] font-bold text-on-surface-variant/30 dark:text-white/10 uppercase mt-2 tracking-widest">{{ new Date(row.used_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }}</p>
                     </div>
+                </template>
 
-                    <div class="md:w-60 flex items-center gap-5">
-                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-outline-variant/10 dark:border-white/5 transition-all duration-500 group-hover:bg-primary group-hover:text-white" :class="[getFeatureConfig(log.feature).color, getFeatureConfig(log.feature).border]">
-                            <span class="material-symbols-rounded text-xl leading-none font-variation-settings-fill">{{ getFeatureConfig(log.feature).icon }}</span>
+                <template #cell-evento="{ row }">
+                    <div class="flex items-center gap-5 py-1">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-outline-variant/10 dark:border-white/5 transition-all duration-500 bg-primary/5 group-hover:bg-primary group-hover:text-white" :class="[getFeatureConfig(row.feature).color, getFeatureConfig(row.feature).border]">
+                            <span class="material-symbols-rounded text-lg leading-none font-variation-settings-fill">{{ getFeatureConfig(row.feature).icon }}</span>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[8px] font-black text-on-surface-variant/20 dark:text-white/10 uppercase tracking-[0.3em] leading-none mb-2">{{ log.feature }}</span>
-                            <span class="text-[12px] font-black text-on-surface dark:text-white uppercase leading-none tracking-tight group-hover:text-primary transition-colors">{{ log.action ? log.action.replace(/_/g, ' ') : 'ACTO_CORE' }}</span>
+                            <span class="text-[8px] font-black text-on-surface-variant/30 dark:text-white/10 uppercase tracking-[0.3em] leading-none mb-1">{{ row.feature }}</span>
+                            <span class="text-[11px] font-black text-on-surface dark:text-white uppercase leading-none tracking-tight group-hover:text-primary transition-colors">{{ row.action ? row.action.replace(/_/g, ' ') : 'ACTO_CORE' }}</span>
                         </div>
                     </div>
+                </template>
 
-                    <div class="flex-1 flex items-center gap-5 border-l border-outline-variant/10 dark:border-white/5 pl-10">
-                        <img :src="log.user?.avatar" class="w-10 h-10 rounded-[1.2rem] object-cover border border-outline-variant/10 dark:border-white/10 shadow-sm" />
+                <template #cell-actor="{ row }">
+                    <div class="flex items-center gap-4 py-1">
+                        <img :src="row.user?.avatar" class="w-8 h-8 rounded-[1rem] object-cover border border-outline-variant/10 dark:border-white/10 shadow-sm" />
                         <div class="flex flex-col">
                              <div class="flex items-center gap-2">
-                                <span class="text-xs font-black text-on-surface dark:text-white uppercase tracking-tight">{{ log.user?.name || 'Kernel' }}</span>
-                                <Badge v-if="log.copropiedad" variant="neutral" class="!px-3 !py-0.5 !text-[8.5px] !font-black !bg-primary/5 !text-primary !border-primary/10 tracking-widest uppercase">{{ log.copropiedad.nombre }}</Badge>
+                                <span class="text-[10px] font-black text-on-surface dark:text-white uppercase tracking-tight">{{ row.user?.name || 'Kernel' }}</span>
+                                <Badge v-if="row.copropiedad" variant="neutral" class="!px-2 !py-0.5 !text-[7px] !font-black !bg-primary/5 !text-primary !border-primary/10 tracking-widest uppercase">{{ row.copropiedad.nombre }}</Badge>
                              </div>
-                             <p class="text-[9px] font-bold text-on-surface-variant/30 dark:text-white/20 uppercase tracking-[0.2em] mt-1">{{ log.user?.email || 'AUTH_DRIVEN' }}</p>
+                             <p class="text-[8px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.2em] mt-1">{{ row.user?.email || 'AUTH_DRIVEN' }}</p>
                         </div>
                     </div>
+                </template>
 
-                    <div class="md:w-32 flex justify-end">
+                <template #cell-actions="{ row }">
+                    <div class="flex justify-end pr-4 py-1">
                         <Tooltip text="Inspecionar Payload">
-                            <button @click="viewDetail(log)" class="w-10 h-10 rounded-xl bg-surface-container dark:bg-white/5 border border-outline-variant/10 dark:border-white/5 flex items-center justify-center text-on-surface-variant dark:text-white/40 hover:bg-primary dark:hover:bg-primary hover:text-white dark:hover:text-white transition-all shadow-sm active:scale-95">
+                            <button @click="viewDetail(row)" class="w-10 h-10 rounded-xl bg-surface-container dark:bg-white/5 border border-outline-variant/10 dark:border-white/5 flex items-center justify-center text-on-surface-variant dark:text-white/40 hover:bg-primary dark:hover:bg-primary hover:text-white dark:hover:text-white transition-all shadow-sm active:scale-95">
                                 <span class="material-symbols-rounded text-lg font-variation-settings-fill">terminal</span>
                             </button>
                         </Tooltip>
                     </div>
-                </div>
-            </div>
-
-            <div class="px-10 py-12 bg-surface-container/5 dark:bg-white/[0.01] border-t border-outline-variant/5 dark:border-white/5 flex justify-center">
-                <Pagination :links="logs.links" />
-            </div>
-        </div>
+                </template>
+            </Table>
+        </Card>
 
         <!-- Modal Forense -->
         <Modal :show="showDetailModal" @close="showDetailModal = false" max-width="2xl">

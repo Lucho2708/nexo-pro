@@ -31,6 +31,7 @@ class UpdateCopropiedadSettingsRequest extends FormRequest
             'settings.gateways' => 'nullable|array',
             'settings.gateways.*.enabled' => 'boolean',
             'settings.gateways.*.url' => 'nullable|url',
+            'area_construida_total' => 'nullable|numeric|min:0',
         ];
     }
 }

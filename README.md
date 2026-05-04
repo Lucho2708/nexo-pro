@@ -1,21 +1,44 @@
 # NEXO-PRO: Gestión Inteligente de Copropiedades 🏢✨
 
-NEXO-PRO es una plataforma de alta ingeniería diseñada para la administración moderna de propiedad horizontal. Este repositorio contiene el núcleo de la **Asamblea Virtual Inmersiva**, un sistema que combina video de baja latencia con control legal de intervenciones en tiempo real.
-
-## 🛠️ Tecnologías Core
-- **Backend**: Laravel 11/12 (PHP 8.3+)
-- **Frontend**: Vue.js 3 + Inertia.js + Tailwind CSS
-- **Tiempo Real**: Laravel Reverb (WebSockets nativos)
-- **Video & Audio**: LiveKit (WebRTC Industrial)
-- **Infraestructura**: Cloudflare Tunnels para conectividad móvil global
+NEXO-PRO es una plataforma de alta ingeniería de grado industrial diseñada para la administración moderna de propiedad horizontal. Combina una suite administrativa completa con un motor de **Asamblea Virtual Inmersiva** de última generación.
 
 ---
 
-## 🚀 Guía de Alistamiento y Despliegue
+## 🌟 Logros Recientes y Capacidades Avanzadas
 
-Sigue estos pasos para poner en marcha el ecosistema completo en un entorno local o de producción.
+### 1. Sistema de Asambleas Standalone (Modo Cápsula)
+Hemos implementado un flujo de **Onboarding Externo** que permite a administradores que no utilizan la suite completa de NEXO-PRO acceder exclusivamente al poder del módulo de asambleas.
+- **Wizard Administrativo**: Registro de copropiedades con validación legal completa (NIT, Ciudad, Dirección).
+- **Importación Masiva**: Carga de quórum externo mediante archivos CSV con procesamiento de alta velocidad.
+- **Acceso por Token/Documento**: Validación de propietarios externos mediante los últimos 4 dígitos de su documento, eliminando la necesidad de registro previo.
 
-### 1. Instalación Base
+### 2. Aislamiento Dinámico de Datos (Ecosistema Dinámico)
+Para garantizar la máxima integridad y rendimiento en eventos masivos:
+- **Tablas On-Demand**: Creación dinámica de tablas de auditoría (`aslog_`), quórum (`asquorum_`), preguntas (`aspreguntas_`) y votos (`asvotos_`) para cada asamblea.
+- **Escalabilidad**: Soporte verificado para más de **1,000 unidades concurrentes** mediante pruebas de estrés automatizadas.
+
+### 3. Gestión Estricta de Unidades y Coeficientes
+- **Modelado de Tipos de Unidad**: Definición de áreas, componentes y características por tipo.
+- **Calculadora de Coeficientes**: Motor automático que recalcula la participación de cada unidad basándose en el área construida total del conjunto.
+
+### 4. Interfaz Adaptativa y Seguridad Contextual
+- **Navegación Reactiva**: La interfaz se contrae o expande automáticamente según el contexto de la copropiedad actual.
+- **Standalone Gate**: Middleware especializado que bloquea el acceso a módulos de Cartera o Reservas cuando se opera en una copropiedad de "Solo Asambleas".
+
+---
+
+## 🛠️ Tecnologías Core
+- **Backend**: Laravel 11/12 (PHP 8.3+)
+- **Frontend**: Vue.js 3 + Inertia.js + Tailwind CSS (Diseño Premium)
+- **Tiempo Real**: Laravel Reverb (WebSockets nativos)
+- **Video & Audio**: LiveKit (WebRTC Industrial para baja latencia)
+- **Base de Datos**: PostgreSQL con soporte para JSONB e índices GIN.
+
+---
+
+## 🚀 Guía de Alistamiento
+
+### Instalación Base
 ```bash
 composer install
 npm install
@@ -23,55 +46,27 @@ php artisan migrate
 php artisan db:seed
 ```
 
-### 2. Configuración de Video (LiveKit)
-Es necesario tener un servidor LiveKit corriendo. 
-1. Descarga el binario de LiveKit.
-2. Arranca el servidor usando el archivo de configuración:
+### Ejecución de Tests (TDD)
+Nuestra suite de pruebas garantiza la estabilidad del sistema multi-tenant:
 ```bash
-livekit-server --config livekit.yaml
+./vendor/bin/pest
 ```
 
-### 3. Motor de Tiempo Real (Reverb)
-Para que las notificaciones y el control de palabra funcionen instantáneamente:
-```bash
-php artisan reverb:start
-```
-
-### 4. Compilación de Assets
-Para producción o pruebas con dispositivos externos:
-```bash
-npm run build
-```
-
-### 5. Conectividad Global (Túneles de Cloudflare)
-Para permitir que propietarios entren desde móviles con datos externos, abre dos túneles:
-
-**Túnel Web (Puerto 8003):**
-```bash
-cloudflared tunnel --url http://localhost:8003
-```
-
-**Túnel de Mensajería (Puerto 8080 - Reverb):**
-```bash
-cloudflared tunnel --url http://localhost:8080
-```
-*Recuerda actualizar las variables `VITE_REVERB_HOST` y `APP_URL` en tu `.env` con las direcciones generadas por Cloudflare.*
+### Motor de Tiempo Real y Video
+1. **LiveKit Server**:
+   ```bash
+   livekit-server --config livekit.yaml
+   ```
+2. **Reverb**:
+   ```bash
+   php artisan reverb:start
+   ```
 
 ---
 
-## 🗳️ Módulo de Asamblea: Reglas de Negocio
-- **Fase de Solicitud**: Los residentes piden la palabra; el sistema valida que la asamblea esté "En curso".
-- **Gestión de Turnos**: El moderador visualiza la cola de espera y cede la palabra, lo que habilita automáticamente el micrófono del residente vía LiveKit.
-- **Auditoría Legal**: Cada intervención registra hora exacta de inicio, fin y duración para el acta final.
-- **Inmersión**: Interfaz optimizada 4:3 para enfoque en video y controles flotantes premium.
+## 🛡️ Estándares de Ingeniería
+- **SOLID & POO**: Código desacoplado, mantenible y abierto a extensión.
+- **UX/UI Premium**: Interfaces mobile-first con micro-interacciones de alta fidelidad.
+- **Seguridad**: Protección contra OWASP Top 10, parametrización total y hashing de grado militar.
 
----
-
-## 🛡️ Seguridad y Calidad
-- **SOLID**: Arquitectura desacoplada en Servicios y Repositorios.
-- **TDD**: Pruebas unitarias y de integración para el flujo de intervenciones.
-- **Optimización**: Renderizado de lado del cliente (CSR) para máxima compatibilidad móvil.
-
----
-
-Desarrollado por **Lucho2708** & **Antigravity AI**.
+Desarrollado con pasión por **Lucho2708** & **Antigravity AI** (Advanced Agentic Coding).

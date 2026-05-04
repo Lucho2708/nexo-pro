@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('system_logs', function (Blueprint $table) {
-            $table->id();
+            $column = $table->uuid('id')->primary();
+            if (DB::getDriverName() === 'pgsql') {
+                $column->default(DB::raw('gen_random_uuid()'));
+            }
             $table->string('level_name', 50)->index();
             $table->integer('level')->index();
             $table->text('message');

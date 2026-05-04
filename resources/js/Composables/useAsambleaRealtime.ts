@@ -3,13 +3,28 @@ import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
 // @ts-ignore
-window.Pusher = Pusher;
+if (typeof window !== 'undefined') {
+    window.Pusher = Pusher;
+}
 
 export function useAsambleaRealtime(asambleaId: number) {
     const activeQuestion = ref<any>(null);
     const raisedHands = ref<any[]>([]);
-    const activeIntervencion = ref<any>(null); // Intervención que está hablando ahora
+    const activeIntervencion = ref<any>(null);
+    const actividad = ref<any[]>([]);
+    const asistentesCount = ref(0);
     const echo = ref<Echo | null>(null);
+
+    const addActividad = (mensaje: string, tipo: 'info' | 'success' | 'warning' = 'info') => {
+        actividad.value.unshift({
+            id: Date.now(),
+            mensaje,
+            tipo,
+            hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+        // Mantener solo los últimos 20 eventos
+        if (actividad.value.length > 20) actividad.value.pop();
+    };
 
     const initEcho = () => {
         if (typeof window === 'undefined') return; // Evitar error en SSR
@@ -17,60 +32,71 @@ export function useAsambleaRealtime(asambleaId: number) {
         echo.value = new Echo({
             broadcaster: 'reverb',
             key: import.meta.env.VITE_REVERB_APP_KEY || 'test_key',
-            wsHost: import.meta.env.VITE_REVERB_HOST || window.location.hostname,
+            wsHost: import.meta.env.VITE_REVERB_HOST || (typeof window !== 'undefined' ? window.location.hostname : 'localhost'),
             wsPort: import.meta.env.VITE_REVERB_PORT || 8080,
             wssPort: import.meta.env.VITE_REVERB_PORT || 8080,
             forceTLS: (import.meta.env.VITE_REVERB_SCHEME || 'https') === 'https',
             enabledTransports: ['ws', 'wss'],
         });
 
-        // Escuchar eventos públicos de la asamblea
+        // Canal Público de la Asamblea
         echo.value.channel(`asamblea.${asambleaId}`)
             .listen('.hand.raised', (e: any) => {
-                if (e.userData.is_raised) {
-                    if (!raisedHands.value.find(h => h.user_id === e.userData.user_id)) {
-                        raisedHands.value.push(e.userData);
+                const { userData } = e;
+                if (userData.is_raised) {
+                    if (!raisedHands.value.find(h => h.user_id === userData.user_id)) {
+                        raisedHands.value.push(userData);
+                        addActividad(`${userData.unidad} (${userData.name}) levantó la mano`, 'warning');
                     }
                 } else {
-                    raisedHands.value = raisedHands.value.filter(h => h.user_id !== e.userData.user_id);
+                    raisedHands.value = raisedHands.value.filter(h => h.user_id !== userData.user_id);
+                    addActividad(`${userData.name} bajó la mano`, 'info');
                 }
             })
             .listen('.intervencion.updated', (e: any) => {
                 const data = e.intervencionData;
-                
-                // 1. Gestionar la cola de espera (raisedHands)
+                const userName = data.user?.name || 'Residente';
+                const unidadStr = data.user?.unidades?.[0] ? `${data.user.unidades[0].torre}-${data.user.unidades[0].nombre}` : '';
+
                 if (data.status === 'pending') {
-                    // Añadir a la lista si no está (y formatear para la UI)
+                    // Mano levantada (petición de palabra)
                     if (!raisedHands.value.find(h => h.user_id === data.user_id)) {
                         raisedHands.value.push({
                             user_id: data.user_id,
                             intervencion_id: data.id,
-                            name: data.user?.name || 'Residente',
-                            unidad: data.user?.unidades?.[0] ? `${data.user.unidades[0].torre}-${data.user.unidades[0].nombre}` : '?',
+                            name: userName,
+                            unidad: unidadStr,
                         });
+                        addActividad(`${unidadStr} (${userName}) pidió la palabra`, 'warning');
                     }
-                } else {
-                    // Si ya no es pending (es active, cancelled, etc), quitar de la lista
-                    raisedHands.value = raisedHands.value.filter(h => h.user_id !== data.user_id);
-                }
-
-                // 2. Gestionar la intervención activa (quién habla ahora)
-                if (data.status === 'active') {
+                } else if (data.status === 'active') {
+                    // Palabra concedida
                     activeIntervencion.value = data;
+                    raisedHands.value = raisedHands.value.filter(h => h.user_id !== data.user_id);
+                    addActividad(`Palabra concedida a ${userName}`, 'success');
                 } else if (['completed', 'forced_close', 'cancelled'].includes(data.status)) {
+                    // Finalizada o Cancelada
                     if (activeIntervencion.value?.id === data.id) {
                         activeIntervencion.value = null;
+                        addActividad(`Intervención de ${userName} finalizada`, 'info');
+                    }
+                    raisedHands.value = raisedHands.value.filter(h => h.user_id !== data.user_id);
+                    
+                    if (data.status === 'cancelled') {
+                        addActividad(`${userName} canceló su petición`, 'info');
                     }
                 }
             });
 
-        // Escuchar eventos privados (preguntas)
+        // Canal Privado (Votaciones y Preguntas)
         echo.value.private(`asamblea.${asambleaId}`)
             .listen('.PreguntaOpened', (e: any) => {
                 activeQuestion.value = e.pregunta;
+                addActividad(`Nueva pregunta abierta: ${e.pregunta.titulo}`, 'info');
             })
             .listen('.PreguntaClosed', (e: any) => {
                 activeQuestion.value = null;
+                addActividad(`Pregunta cerrada`, 'info');
             });
     };
 
@@ -81,7 +107,6 @@ export function useAsambleaRealtime(asambleaId: number) {
     onUnmounted(() => {
         if (echo.value) {
             echo.value.leave(`asamblea.${asambleaId}`);
-            echo.value.leaveChannel(`asamblea.${asambleaId}`);
         }
     });
 
@@ -89,6 +114,8 @@ export function useAsambleaRealtime(asambleaId: number) {
         activeQuestion,
         raisedHands,
         activeIntervencion,
-        echo
+        actividad,
+        asistentesCount,
+        addActividad
     };
 }

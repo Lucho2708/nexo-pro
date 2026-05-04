@@ -1,0 +1,10 @@
+                            <div v-if="!copropiedad.tipos_unidad?.length" class="py-12 text-center opacity-40 dark:opacity-20 italic text-sm text-on-surface dark:text-white">
+                                No hay modelos registrados aún
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

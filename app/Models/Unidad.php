@@ -27,11 +27,17 @@ class Unidad extends Model
         'propietario_identificacion',
         'email_contacto',
         'saldo_actual',
+        'tipo_unidad_id',
     ];
 
     public function copropiedad()
     {
         return $this->belongsTo(Copropiedad::class);
+    }
+
+    public function tipoUnidad(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(TipoUnidad::class, 'tipo_unidad_id');
     }
 
     public function transacciones()

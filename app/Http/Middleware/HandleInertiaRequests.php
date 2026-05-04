@@ -41,6 +41,7 @@ class HandleInertiaRequests extends Middleware
                     'name' => $user->name,
                     'email' => $user->email,
                     'role' => $user->role,
+                    'is_standalone' => $user->is_standalone,
                     'current_copropiedad' => $user->current_copropiedad_id ? $user->currentCopropiedad()->first() : null,
                     'copropiedad_settings' => $user->current_copropiedad_id ? ($user->currentCopropiedad()->first()->settings ?? []) : [],
                     'available_copropiedades' => $this->getAvailableProperties($user),

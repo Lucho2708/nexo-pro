@@ -23,7 +23,7 @@ class Copropiedad extends Model
         return [
             'id', 'nit', 'nombre', 'direccion', 'ciudad', 'plan', 
             'license_status', 'license_expires_at',
-            'settings', 'unidades_totales', 'torres', 'created_at', 'updated_at'
+            'settings', 'unidades_totales', 'torres', 'area_construida_total', 'created_at', 'updated_at'
         ];
     }
 
@@ -38,11 +38,14 @@ class Copropiedad extends Model
         'settings',
         'unidades_totales',
         'torres',
+        'unit_types_locked',
+        'area_construida_total',
     ];
 protected $casts = [
     'settings' => 'array',
     'unidades_totales' => 'integer',
     'torres' => 'integer',
+    'unit_types_locked' => 'boolean',
 ];
 
 /**
@@ -136,5 +139,10 @@ protected $casts = [
     public function unidades(): HasMany
     {
         return $this->hasMany(Unidad::class, 'copropiedad_id');
+    }
+
+    public function tiposUnidad(): HasMany
+    {
+        return $this->hasMany(TipoUnidad::class, 'copropiedad_id');
     }
 }

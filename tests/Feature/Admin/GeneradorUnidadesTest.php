@@ -24,11 +24,18 @@ class GeneradorUnidadesTest extends TestCase
         ]);
         $admin->managedCopropiedades()->attach($copropiedad->id);
 
+        $tipo = \App\Models\TipoUnidad::create([
+            'copropiedad_id' => $copropiedad->id,
+            'nombre' => 'Apto',
+            'area_m2' => 50
+        ]);
+
         $payload = [
             'torre' => 'Torre A',
             'pisos' => 5,
             'aptos_por_piso' => 4,
-            'default_coeficiente' => 1.0
+            'default_coeficiente' => 1.0,
+            'tipo_unidad_id' => $tipo->id
         ];
 
         // Action

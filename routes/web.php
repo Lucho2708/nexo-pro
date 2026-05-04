@@ -16,6 +16,10 @@ use Inertia\Inertia;
 Route::get('/', [LandingController::class, 'index'])->name('home');
 Route::post('/demo/request', [LandingController::class, 'requestDemo'])->name('demo.request');
 
+// ── ACCESO A ASAMBLEA STANDALONE (Invitados) ─────────────────
+Route::get('/asambleas/acceso/{asamblea}', [\App\Http\Controllers\AsambleaGuestController::class, 'showLogin'])->name('asambleas.guest.login');
+Route::post('/asambleas/acceso/{asamblea}', [\App\Http\Controllers\AsambleaGuestController::class, 'login'])->name('asambleas.guest.attempt');
+
 // ── PÁGINAS LEGALES (Habeas Data & SIC) ───────────────────────
 Route::get('/legal/terminos-y-condiciones', function () {
     return Inertia::render('Legal/Terms');
@@ -130,7 +134,7 @@ Route::middleware(['auth', 'verified', 'ensure-legal'])->group(function () {
         ->name('dashboard');
 
     // ── ADMINISTRADOR (protegido + logging de uso) ──────────────────
-    Route::middleware(['ensure-admin', 'check-license'])->group(function () {
+    Route::middleware(['ensure-admin', 'check-license', 'standalone-gate'])->group(function () {
         Route::patch('/notifications/{notification}/read', [DashboardController::class, 'markNotificationAsRead'])->name('notifications.read');
 
         // Cartera y Recaudo
@@ -149,12 +153,18 @@ Route::middleware(['auth', 'verified', 'ensure-legal'])->group(function () {
         // Reservas Admin
         Route::get('/admin/reservas', [\App\Http\Controllers\ReservaController::class, 'adminIndex'])->middleware('log-feature:reservas')->name('admin.reservas.index');
         Route::patch('/admin/reservas/{id}/status', [\App\Http\Controllers\ReservaController::class, 'updateStatus'])->name('admin.reservas.status');
+    });
 
+    // Rutas de Asambleas (Abiertas para Standalone Admin)
+    Route::middleware(['ensure-admin', 'check-license'])->group(function () {
         // Asambleas Admin
         Route::get('/admin/asambleas', [\App\Http\Controllers\Admin\AsambleaManagementController::class, 'index'])->name('admin.asambleas.index');
+        Route::get('/admin/asambleas/standalone/create', [\App\Http\Controllers\Admin\StandaloneAsambleaController::class, 'create'])->name('admin.asambleas.standalone.create');
+        Route::post('/admin/asambleas/standalone', [\App\Http\Controllers\Admin\StandaloneAsambleaController::class, 'store'])->name('admin.asambleas.standalone.store');
         Route::post('/admin/asambleas', [\App\Http\Controllers\Admin\AsambleaManagementController::class, 'store'])->name('admin.asambleas.store');
         Route::patch('/admin/asambleas/{asamblea}/toggle', [\App\Http\Controllers\Admin\AsambleaManagementController::class, 'toggle'])->name('admin.asambleas.toggle');
         Route::delete('/admin/asambleas/{asamblea}', [\App\Http\Controllers\Admin\AsambleaManagementController::class, 'destroy'])->name('admin.asambleas.destroy');
+        Route::post('/admin/asambleas/coeficientes/recalculate', [\App\Http\Controllers\Admin\AsambleaManagementController::class, 'recalculateCoeficientes'])->name('admin.asambleas.coeficientes.recalculate');
 
         // Unidades y Configuración
         Route::post('/admin/unidades/bulk', [\App\Http\Controllers\Admin\UnidadController::class, 'bulkGenerate'])->name('unidades.bulk-generate');
@@ -171,6 +181,12 @@ Route::middleware(['auth', 'verified', 'ensure-legal'])->group(function () {
         // Configuración de la Copropiedad (Settings)
         Route::get('/admin/settings', [\App\Http\Controllers\Admin\CopropiedadController::class, 'settings'])->name('admin.settings');
         Route::patch('/admin/settings', [\App\Http\Controllers\Admin\CopropiedadController::class, 'updateSettings'])->name('admin.settings.update');
+
+        // Gestión de Tipos de Unidad (Hoja de Vida)
+        Route::post('/admin/unit-types', [\App\Http\Controllers\Admin\TipoUnidadController::class, 'store'])->name('admin.unit-types.store');
+        Route::post('/admin/unit-types/lock', [\App\Http\Controllers\Admin\TipoUnidadController::class, 'lock'])->name('admin.unit-types.lock');
+        Route::post('/admin/unit-types/generate', [\App\Http\Controllers\Admin\TipoUnidadController::class, 'generateUnits'])->name('admin.settings.generate_units');
+        Route::post('/admin/unit-types/unlock', [\App\Http\Controllers\Admin\TipoUnidadController::class, 'unlock'])->name('admin.unit-types.unlock');
     });
 
     // ── PROPIETARIO (portal móvil-first) ────────────────────────────
@@ -190,18 +206,26 @@ Route::middleware(['auth', 'verified', 'ensure-legal'])->group(function () {
     // ── ASAMBLEA VIRTUAL (Acceso a la sala) ─────────────────────────
     Route::middleware(['ensure-asamblea'])->group(function () {
         Route::get('/asambleas/{asamblea}', [\App\Http\Controllers\AsambleaController::class, 'show'])->name('asambleas.show');
-        Route::post('/asambleas/{asamblea}/toggle-hand', [\App\Http\Controllers\AsambleaController::class, 'toggleHand'])->name('asambleas.toggle-hand');
         Route::post('/asambleas/{asamblea}/reset', [\App\Http\Controllers\AsambleaController::class, 'resetConnection'])->name('asambleas.reset-connection');
         Route::post('/asambleas/preguntas/{pregunta}/votar', [\App\Http\Controllers\AsambleaController::class, 'votar'])->name('asambleas.votar');
+        Route::get('/asambleas/preguntas/{pregunta}/results', [\App\Http\Controllers\AsambleaController::class, 'results'])->name('asambleas.preguntas.results');
         
-        // Intervenciones
-        Route::post('/asambleas/{asamblea}/intervenciones/request', [\App\Http\Controllers\AsambleaController::class, 'requestIntervencion'])->name('asambleas.intervenciones.request');
-        Route::post('/asambleas/intervenciones/{intervencion}/cancel', [\App\Http\Controllers\AsambleaController::class, 'cancelIntervencion'])->name('asambleas.intervenciones.cancel');
-        Route::post('/asambleas/intervenciones/{intervencion}/grant', [\App\Http\Controllers\AsambleaController::class, 'grantIntervencion'])->name('asambleas.intervenciones.grant');
-        Route::post('/asambleas/intervenciones/{intervencion}/close', [\App\Http\Controllers\AsambleaController::class, 'closeIntervencion'])->name('asambleas.intervenciones.close');
-        Route::post('/asambleas/intervenciones/{intervencion}/extend', [\App\Http\Controllers\AsambleaController::class, 'extendIntervencion'])->name('asambleas.intervenciones.extend');
-        
-        Route::get('/asambleas/{asamblea}/report', [\App\Http\Controllers\AsambleaController::class, 'report'])->name('asambleas.report');
+        // Intervenciones (Propietario)
+        Route::post('/asambleas/{asamblea}/intervenciones/request', [\App\Http\Controllers\Asamblea\IntervencionController::class, 'request'])->name('asambleas.intervenciones.request');
+        Route::post('/asambleas/intervenciones/{intervencion}/cancel', [\App\Http\Controllers\Asamblea\IntervencionController::class, 'cancel'])->name('asambleas.intervenciones.cancel');
+        Route::post('/asambleas/intervenciones/{intervencion}/close', [\App\Http\Controllers\Asamblea\IntervencionController::class, 'close'])->name('asambleas.intervenciones.close');
+
+        // Moderación (Solo Admin)
+        Route::middleware(['ensure-admin'])->group(function () {
+            Route::post('/asambleas/intervenciones/{intervencion}/grant', [\App\Http\Controllers\Asamblea\IntervencionController::class, 'grant'])->name('asambleas.intervenciones.grant');
+            Route::post('/asambleas/intervenciones/{intervencion}/extend', [\App\Http\Controllers\Asamblea\IntervencionController::class, 'extend'])->name('asambleas.intervenciones.extend');
+            Route::get('/asambleas/{asamblea}/report', [\App\Http\Controllers\AsambleaController::class, 'report'])->name('asambleas.report');
+            
+            // Gestión de Preguntas (Moderación)
+            Route::post('/asambleas/{asamblea}/preguntas', [\App\Http\Controllers\Asamblea\PreguntaController::class, 'store'])->name('asambleas.preguntas.store');
+            Route::post('/asambleas/preguntas/{pregunta}/open', [\App\Http\Controllers\Asamblea\PreguntaController::class, 'open'])->name('asambleas.preguntas.open');
+            Route::post('/asambleas/preguntas/{pregunta}/close', [\App\Http\Controllers\Asamblea\PreguntaController::class, 'close'])->name('asambleas.preguntas.close');
+        });
     });
     });
 });

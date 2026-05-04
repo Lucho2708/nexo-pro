@@ -35,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'two-factor'         => \App\Http\Middleware\EnsureTwoFactorIsConfigured::class,
             'ensure-asamblea'    => \App\Http\Middleware\EnsureAsambleaIsActive::class,
             'ensure-legal'       => \App\Http\Middleware\EnsureLegalConsent::class,
+            'standalone-gate'    => \App\Http\Middleware\RedirectStandaloneAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
