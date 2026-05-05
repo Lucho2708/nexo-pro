@@ -3,7 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Transaccion;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Models\Unidad;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;

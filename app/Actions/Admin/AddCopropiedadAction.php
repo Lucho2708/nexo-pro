@@ -3,7 +3,7 @@
 namespace App\Actions\Admin;
 
 use App\Models\Copropiedad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class AddCopropiedadAction

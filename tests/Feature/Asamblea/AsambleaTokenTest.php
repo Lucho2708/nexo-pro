@@ -3,7 +3,7 @@
 namespace Tests\Feature\Asamblea;
 
 use App\Models\Asamblea;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Models\Unidad;
 use App\Services\AsambleaService;
 use Illuminate\Foundation\Testing\RefreshDatabase;

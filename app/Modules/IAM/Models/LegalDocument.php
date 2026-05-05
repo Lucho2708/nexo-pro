@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Modules\IAM\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class LegalDocument extends Model
 {
     use HasFactory, HasUuids;
+
+    protected $table = 'iam.legal_documents';
 
     protected $fillable = [
         'type',

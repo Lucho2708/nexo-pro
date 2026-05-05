@@ -3,7 +3,7 @@
 namespace App\Actions\Auth;
 
 use App\Models\Copropiedad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Events\CopropiedadCreated;
 use App\Notifications\WelcomeAdminNotification;
 use App\DTOs\RegisterCopropiedadDTO;

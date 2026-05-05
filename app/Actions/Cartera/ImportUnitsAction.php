@@ -3,7 +3,7 @@
 namespace App\Actions\Cartera;
 
 use App\Models\Unidad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;

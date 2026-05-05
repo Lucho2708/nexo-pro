@@ -7,7 +7,7 @@ use App\Actions\Cartera\ProcessPaymentAction;
 use App\Models\ConceptoCobro;
 use App\Models\Copropiedad;
 use App\Models\Unidad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Illuminate\Http\UploadedFile;

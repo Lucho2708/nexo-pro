@@ -5,7 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\Copropiedad;
 use App\Models\FeatureUsageLog;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 

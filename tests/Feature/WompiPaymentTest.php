@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\Copropiedad;
 use App\Models\OnlinePayment;
 use App\Models\Unidad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Models\ConceptoCobro;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;

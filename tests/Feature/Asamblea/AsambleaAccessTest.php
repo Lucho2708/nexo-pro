@@ -5,7 +5,7 @@ namespace Tests\Feature\Asamblea;
 use App\Models\Asamblea;
 use App\Models\Copropiedad;
 use App\Models\Unidad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

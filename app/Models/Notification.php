@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Modules\IAM\Models\User;
+
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 

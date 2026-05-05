@@ -233,14 +233,14 @@ Route::middleware(['auth', 'verified', 'ensure-legal'])->group(function () {
 // ── VISTA PREVIA DE CORREOS (Solo Desarrollo) ──────────────────
 if (app()->environment('local')) {
     Route::get('/preview-mail/welcome', function () {
-        $user = \App\Models\User::first() ?? \App\Models\User::factory()->make();
+        $user = \App\Modules\IAM\Models\User::first() ?? \App\Modules\IAM\Models\User::factory()->make();
         $copropiedad = \App\Models\Copropiedad::first();
         return (new \App\Notifications\WelcomeAdminNotification($user, $copropiedad))
             ->toMail($user);
     });
 
     Route::get('/preview-mail/payment', function () {
-        $user = \App\Models\User::first() ?? \App\Models\User::factory()->make();
+        $user = \App\Modules\IAM\Models\User::first() ?? \App\Modules\IAM\Models\User::factory()->make();
         $transaccion = \App\Models\Transaccion::where('tipo', 'abono')->first();
         $unidad = \App\Models\Unidad::first();
         

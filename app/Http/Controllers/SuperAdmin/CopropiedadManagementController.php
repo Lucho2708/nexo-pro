@@ -6,7 +6,7 @@ use App\Actions\SuperAdmin\TransferPropertyManagementAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SuperAdmin\TransferManagementRequest;
 use App\Models\Copropiedad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Inertia\Inertia;
 
 class CopropiedadManagementController extends Controller

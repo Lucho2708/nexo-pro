@@ -6,7 +6,7 @@ use App\Models\ComponenteUnidad;
 use App\Models\Copropiedad;
 use App\Models\TipoUnidad;
 use App\Models\Unidad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

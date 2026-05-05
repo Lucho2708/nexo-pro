@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Pqrs;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Auth\Access\Response;
 
 class PqrsPolicy

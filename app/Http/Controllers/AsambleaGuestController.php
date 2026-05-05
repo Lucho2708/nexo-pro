@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asamblea;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Services\Tenant\StandaloneOnboardingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

@@ -4,7 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Models\Copropiedad;
 use App\Models\Unidad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

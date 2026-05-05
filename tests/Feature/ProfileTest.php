@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

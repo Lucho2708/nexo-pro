@@ -7,7 +7,7 @@ use App\Models\Copropiedad;
 use App\Models\Opcion;
 use App\Models\Pregunta;
 use App\Models\Unidad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Models\Voto;
 use App\Services\AsambleaService;
 use Illuminate\Foundation\Testing\RefreshDatabase;

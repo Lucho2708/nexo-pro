@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Http\Request;
 use App\Actions\Auth\TwoFactorManagementAction;
 use App\Traits\Auditable;

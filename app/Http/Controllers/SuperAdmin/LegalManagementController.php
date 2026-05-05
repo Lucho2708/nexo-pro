@@ -4,7 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\LegalDocument;
+use App\Modules\IAM\Models\LegalDocument;
 use Inertia\Inertia;
 
 class LegalManagementController extends Controller

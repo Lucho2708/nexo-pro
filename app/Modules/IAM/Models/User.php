@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Modules\IAM\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
@@ -11,14 +11,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Copropiedad;
+use App\Models\Unidad;
+use App\Models\Notification;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
 #[Fillable(['name', 'email', 'password', 'terms_accepted_at', 'is_active', 'role', 'is_standalone', 'current_copropiedad_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
+    /**
+     * Define the table associated with the model, including the PostgreSQL schema.
+     */
+    protected $table = 'iam.users';
+    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasUuids, TwoFactorAuthenticatable;
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return \Database\Factories\UserFactory::new();
+    }
 
     /**
      * Role check helpers.

@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Asamblea;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Services\AsambleaReportService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

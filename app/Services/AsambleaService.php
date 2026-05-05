@@ -6,7 +6,7 @@ use Agence104\LiveKit\AccessToken;
 use Agence104\LiveKit\AccessTokenOptions;
 use Agence104\LiveKit\VideoGrant;
 use App\Models\Asamblea;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Models\Unidad;
 use App\Models\Pregunta;
 use App\Models\Opcion;

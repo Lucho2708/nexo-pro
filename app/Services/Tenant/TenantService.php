@@ -3,7 +3,7 @@
 namespace App\Services\Tenant;
 
 use App\Models\Copropiedad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 
 class TenantService
 {

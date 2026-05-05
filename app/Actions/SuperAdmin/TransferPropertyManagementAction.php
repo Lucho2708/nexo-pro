@@ -3,7 +3,7 @@
 namespace App\Actions\SuperAdmin;
 
 use App\Models\Copropiedad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Mail\Admin\WelcomeManagementMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;

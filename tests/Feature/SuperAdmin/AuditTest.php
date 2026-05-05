@@ -2,7 +2,7 @@
 
 use App\Models\Copropiedad;
 use App\Models\FeatureUsageLog;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 

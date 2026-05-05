@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Asamblea;
 
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Models\Asamblea;
 use App\Models\Copropiedad;
 use App\Models\Unidad;

@@ -21,7 +21,13 @@ Para garantizar la máxima integridad y rendimiento en eventos masivos:
 - **Modelado de Tipos de Unidad**: Definición de áreas, componentes y características por tipo.
 - **Calculadora de Coeficientes**: Motor automático que recalcula la participación de cada unidad basándose en el área construida total del conjunto.
 
-### 4. Interfaz Adaptativa y Seguridad Contextual
+### 4. Arquitectura de Monolito Modular (Evolución Arquitectónica) 🚀
+Hemos iniciado la transición de un monolito tradicional a un **Monolito Modular**, incrementando la cohesión y reduciendo el acoplamiento:
+- **Módulo IAM (Identity & Access Management)**: Primer componente totalmente aislado en su propio namespace (`App\Modules\IAM`).
+- **Segregación de Esquemas (PostgreSQL)**: Las tablas de identidad residen ahora en un esquema dedicado llamado `iam`, protegiendo la integridad de los datos y permitiendo joins de alto rendimiento entre dominios.
+- **Inversión de Dependencias**: Implementación de `IAMServiceInterface` para desacoplar la autenticación del resto de la lógica de negocio.
+
+### 5. Interfaz Adaptativa y Seguridad Contextual
 - **Navegación Reactiva**: La interfaz se contrae o expande automáticamente según el contexto de la copropiedad actual.
 - **Standalone Gate**: Middleware especializado que bloquea el acceso a módulos de Cartera o Reservas cuando se opera en una copropiedad de "Solo Asambleas".
 

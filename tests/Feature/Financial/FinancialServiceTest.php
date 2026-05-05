@@ -6,7 +6,7 @@ use App\DTOs\TransactionDataDTO;
 use App\Models\ConceptoCobro;
 use App\Models\Copropiedad;
 use App\Models\Unidad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Services\Financial\FinancialService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

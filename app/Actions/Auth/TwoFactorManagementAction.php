@@ -2,7 +2,7 @@
 
 namespace App\Actions\Auth;
 
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class TwoFactorManagementAction

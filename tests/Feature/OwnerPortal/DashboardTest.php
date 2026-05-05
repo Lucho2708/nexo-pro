@@ -5,7 +5,7 @@ namespace Tests\Feature\OwnerPortal;
 use App\Models\ConceptoCobro;
 use App\Models\Copropiedad;
 use App\Models\Unidad;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Models\Transaccion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

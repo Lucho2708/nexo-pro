@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Models\Copropiedad;
 use App\Models\Unidad;
 use App\Models\Asamblea;

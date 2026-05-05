@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\LegalDocument;
+use App\Modules\IAM\Models\LegalDocument;
 use Illuminate\Support\Facades\Auth;
 
 class EnsureLegalConsent

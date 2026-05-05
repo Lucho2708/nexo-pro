@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Pqrs;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Models\Unidad;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

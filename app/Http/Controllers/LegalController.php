@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\LegalDocument;
-use App\Models\LegalConsent;
+use App\Modules\IAM\Models\LegalDocument;
+use App\Modules\IAM\Models\LegalConsent;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 

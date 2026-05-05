@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Intervencion;
 use App\Models\Asamblea;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use App\Events\IntervencionUpdated;
 use Carbon\Carbon;
 

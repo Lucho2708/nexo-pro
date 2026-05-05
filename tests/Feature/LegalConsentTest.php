@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\LegalDocument;
+use App\Modules\IAM\Models\User;
+use App\Modules\IAM\Models\LegalDocument;
 use App\Models\Copropiedad;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

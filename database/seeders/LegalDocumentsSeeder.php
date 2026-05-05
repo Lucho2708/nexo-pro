@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\LegalDocument;
+use App\Modules\IAM\Models\LegalDocument;
 
 class LegalDocumentsSeeder extends Seeder
 {

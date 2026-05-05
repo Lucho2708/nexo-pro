@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Asamblea;
-use App\Models\User;
+use App\Modules\IAM\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class IntervencionFactory extends Factory
