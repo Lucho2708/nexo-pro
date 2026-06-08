@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Models\Announcement;
+use App\Modules\Operations\Models\Announcement;
 use Illuminate\Support\Collection;
 
 interface AnnouncementRepositoryInterface

@@ -34,7 +34,7 @@ class AssemblyTableManager
             return;
         }
 
-        $units = DB::table('unidades')
+        $units = DB::table('property.unidades')
             ->where('copropiedad_id', $copropiedadId)
             ->select('id as unidad_id', 'nombre as nombre_unidad', 'coeficiente')
             ->get()

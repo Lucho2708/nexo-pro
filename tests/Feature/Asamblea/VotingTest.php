@@ -1,11 +1,11 @@
 <?php
 
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
-use App\Models\Unidad;
-use App\Models\Asamblea;
-use App\Models\Pregunta;
-use App\Models\Opcion;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Asamblea\Models\Asamblea;
+use App\Modules\Asamblea\Models\Pregunta;
+use App\Modules\Asamblea\Models\Opcion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

@@ -2,7 +2,7 @@
 
 namespace App\Actions\SuperAdmin;
 
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
 use App\Mail\Admin\WelcomeManagementMail;
 use Illuminate\Support\Facades\DB;

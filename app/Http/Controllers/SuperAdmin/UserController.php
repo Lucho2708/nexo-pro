@@ -5,7 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Modules\IAM\Models\User;
 use Illuminate\Http\Request;
-use App\Actions\Auth\TwoFactorManagementAction;
+use App\Modules\IAM\Actions\Auth\TwoFactorManagementAction;
 use App\Traits\Auditable;
 use Inertia\Inertia;
 
@@ -15,14 +15,18 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $users = User::with(['currentCopropiedad'])
-            ->when($request->search, function($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%");
-            })
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+        try {
+            $users = User::with(['currentCopropiedad'])
+                ->when($request->search, function($query, $search) {
+                    $query->where('name', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%");
+                })
+                ->latest()
+                ->paginate(10)
+                ->withQueryString();
+        } catch (\Throwable $e) {
+            dd("CONTROLLER EXCEPTION:", $e);
+        }
 
         $stats = [
             'total' => User::count(),

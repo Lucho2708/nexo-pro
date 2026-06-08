@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use App\Models\FeatureUsageLog;
+use App\Modules\Operations\Models\FeatureUsageLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
@@ -17,6 +17,11 @@ trait Auditable
      */
     public function audit(string $feature, string $action, array $metadata = []): void
     {
+        $user = Auth::user();
+        if (!$user) {
+            return;
+        }
+
         // Inyectar datos técnicos base para soporte
         $baseMetadata = [
             'ip' => Request::ip(),
@@ -28,14 +33,20 @@ trait Auditable
         // Sanitización estricta de privacidad
         $sanitizedMetadata = $this->sanitizeAuditMetadata($fullMetadata);
 
-        FeatureUsageLog::create([
-            'user_id'        => Auth::id(),
-            'copropiedad_id' => Auth::user()?->current_copropiedad_id,
-            'feature'        => strtoupper($feature),
-            'action'         => strtoupper($action),
-            'metadata'       => $sanitizedMetadata,
-            'used_at'        => now(),
-        ]);
+        try {
+            // Solo registramos si el usuario está activo y opcionalmente verificamos copropiedad
+            FeatureUsageLog::create([
+                'user_id'        => $user->id,
+                'copropiedad_id' => $user->current_copropiedad_id,
+                'feature'        => strtoupper($feature),
+                'action'         => strtoupper($action),
+                'metadata'       => $sanitizedMetadata,
+                'used_at'        => now(),
+            ]);
+        } catch (\Exception $e) {
+            // Silencio administrativo en auditoría para no romper flujos críticos
+            \Log::warning("Error en auditoría ($feature/$action): " . $e->getMessage());
+        }
     }
 
     /**

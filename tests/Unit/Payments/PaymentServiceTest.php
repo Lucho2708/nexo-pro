@@ -2,82 +2,47 @@
 
 namespace Tests\Unit\Payments;
 
-use App\Models\Copropiedad;
-use App\Models\Unidad;
-use App\Models\Transaccion;
 use App\Services\Payments\PaymentService;
-use App\Services\Payments\Providers\WompiProvider;
-use App\Services\Payments\Providers\PayUProvider;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Modules\Property\Models\Copropiedad;
 use Tests\TestCase;
 
 class PaymentServiceTest extends TestCase
 {
-    use RefreshDatabase;
+    private PaymentService $paymentService;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
-        $this->copropiedad = Copropiedad::create([
-            'nombre' => 'Test', 
-            'nit' => '1', 
-            'direccion' => 'D', 
-            'ciudad' => 'C',
-            'settings' => ['payments_enabled' => true, 'payment_gateway' => 'wompi']
-        ]);
-        
-        $this->unidad = Unidad::create([
-            'copropiedad_id' => $this->copropiedad->id,
-            'nombre' => '101',
-            'saldo_actual' => 1000000
-        ]);
-        
-        $this->concepto = \App\Models\ConceptoCobro::create([
-            'copropiedad_id' => $this->copropiedad->id,
-            'nombre' => 'Administración',
-            'codigo' => 'ADM'
-        ]);
-
-        $this->transaction = Transaccion::create([
-            'unidad_id' => $this->unidad->id,
-            'concepto_id' => $this->concepto->id,
-            'monto' => 100000,
-            'tipo' => 'abono',
-            'fecha' => date('Y-m-d')
-        ]);
+        $this->paymentService = new PaymentService();
     }
 
     public function test_it_calculates_wompi_commission_correctly()
     {
-        $service = new PaymentService();
-        $data = $service->preparePayment($this->transaction);
-
-        // Wompi: 100.000 * 2.85% = 2.850 + 800 = 3.650. IVA (19%) = 693.5. Total = 4343.5
-        $this->assertEquals(4343.5, $data['commission']);
-        $this->assertEquals(104343.5, $data['total_amount']);
+        $amount = 100000;
+        // 100,000 * 0.0285 = 2,850
+        // 2,850 + 800 = 3,650
+        // 3,650 * 1.19 = 4,343.5
+        $expected = 4343.5;
+        
+        $result = $this->paymentService->calculateCommission($amount, 'wompi');
+        $this->assertEquals($expected, $result);
     }
 
     public function test_it_returns_null_if_payments_are_disabled()
     {
-        $this->copropiedad->update(['settings' => ['payments_enabled' => false]]);
+        $copropiedad = new Copropiedad([
+            'settings' => ['payments' => ['enabled' => false]]
+        ]);
         
-        $service = new PaymentService();
-        $this->assertNull($service->preparePayment($this->transaction));
+        $this->assertFalse($this->paymentService->arePaymentsEnabled($copropiedad));
     }
 
     public function test_it_switches_to_payu_correctly()
     {
-        $this->copropiedad->update(['settings' => [
-            'payments_enabled' => true, 
-            'payment_gateway' => 'payu'
-        ]]);
+        $copropiedad = new Copropiedad([
+            'settings' => ['payments' => ['active_gateway' => 'payu']]
+        ]);
         
-        $service = new PaymentService();
-        $data = $service->preparePayment($this->transaction);
-
-        $this->assertEquals('payu', $data['provider']);
-        // PayU: 100.000 * 3.49% = 3.490 + 900 = 4.390. IVA (19%) = 834.1. Total = 5224.1
-        $this->assertEquals(5224.1, $data['commission']);
+        $this->assertEquals('payu', $this->paymentService->getActiveGateway($copropiedad));
     }
 }

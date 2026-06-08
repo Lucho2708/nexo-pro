@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Admin;
 
-use App\Models\ComponenteUnidad;
-use App\Models\Copropiedad;
-use App\Models\TipoUnidad;
-use App\Models\Unidad;
+use App\Modules\Property\Models\ComponenteUnidad;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\TipoUnidad;
+use App\Modules\Property\Models\Unidad;
 use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -35,7 +35,7 @@ class TipoUnidadTest extends TestCase
         ]);
 
         // 4. Assert: Verificar en base de datos
-        $this->assertDatabaseHas('tipos_unidad', [
+        $this->assertDatabaseHas('property.tipos_unidad', [
             'nombre' => 'Apartamento Estándar Tipo A',
             'area_m2' => 75.50
         ]);
@@ -90,15 +90,15 @@ class TipoUnidadTest extends TestCase
         $response->assertSessionHas('success');
 
         // 2 towers * 5 floors * 4 units = 40 units
-        $this->assertDatabaseCount('unidades', 40);
+        $this->assertDatabaseCount('property.unidades', 40);
 
         // Check a specific unit name
-        $this->assertDatabaseHas('unidades', [
+        $this->assertDatabaseHas('property.unidades', [
             'copropiedad_id' => $copropiedad->id,
             'nombre' => 'Torre 1-101'
         ]);
 
-        $this->assertDatabaseHas('unidades', [
+        $this->assertDatabaseHas('property.unidades', [
             'copropiedad_id' => $copropiedad->id,
             'nombre' => 'Torre 2-504'
         ]);
@@ -127,14 +127,14 @@ class TipoUnidadTest extends TestCase
         $response->assertRedirect();
         $response->assertSessionHas('success');
 
-        $this->assertDatabaseCount('unidades', 150);
+        $this->assertDatabaseCount('property.unidades', 150);
 
-        $this->assertDatabaseHas('unidades', [
+        $this->assertDatabaseHas('property.unidades', [
             'copropiedad_id' => $copropiedad->id,
             'nombre' => 'Casa 1'
         ]);
 
-        $this->assertDatabaseHas('unidades', [
+        $this->assertDatabaseHas('property.unidades', [
             'copropiedad_id' => $copropiedad->id,
             'nombre' => 'Casa 150'
         ]);

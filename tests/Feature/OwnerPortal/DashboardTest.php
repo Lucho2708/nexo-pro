@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\OwnerPortal;
 
-use App\Models\ConceptoCobro;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
+use App\Modules\Finance\Models\ConceptoCobro;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
 use App\Modules\IAM\Models\User;
-use App\Models\Transaccion;
+use App\Modules\Finance\Models\Transaccion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Inertia\Testing\AssertableInertia as Assert;

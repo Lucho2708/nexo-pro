@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Financial;
 
-use App\Models\ConceptoCobro;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
+use App\Modules\Finance\Models\ConceptoCobro;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
 use App\Services\Financial\BillingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -79,7 +79,7 @@ class BillingServiceTest extends TestCase
         // El nuevo saldo debe ser 510,000
         $this->assertEquals(510000, $unidad->fresh()->saldo_actual);
         
-        $this->assertDatabaseHas('transacciones', [
+        $this->assertDatabaseHas('finance.transacciones', [
             'unidad_id' => $unidad->id,
             'tipo' => 'cargo',
             'monto' => 10000,

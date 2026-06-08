@@ -1,9 +1,9 @@
 <?php
 
 use App\Modules\IAM\Models\User;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
-use App\Models\Pqrs;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Operations\Models\Pqrs;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
@@ -87,7 +87,7 @@ describe('PqrsController', function () {
 
             $response->assertRedirect()->assertSessionHas('success', 'PQRS radicada exitosamente.');
 
-            $this->assertDatabaseHas('pqrs', [
+            $this->assertDatabaseHas('operations.pqrs', [
                 'user_id' => $this->owner->id,
                 'unidad_id' => $this->unidad->id,
                 'tipo' => 'queja',
@@ -125,7 +125,7 @@ describe('PqrsController', function () {
 
             $response->assertRedirect()->assertSessionHas('success', 'Respuesta enviada exitosamente.');
 
-            $this->assertDatabaseHas('pqrs', [
+            $this->assertDatabaseHas('operations.pqrs', [
                 'id' => $pqrs->id,
                 'respuesta' => 'Estamos trabajando en ello',
                 'estado' => 'cerrado',
@@ -144,7 +144,7 @@ describe('PqrsController', function () {
 
             $response->assertRedirect()->assertSessionHas('success', 'PQRS reabierta.');
 
-            $this->assertDatabaseHas('pqrs', [
+            $this->assertDatabaseHas('operations.pqrs', [
                 'id' => $pqrs->id,
                 'estado' => 'reabierto',
             ]);
@@ -168,7 +168,7 @@ describe('PqrsController', function () {
             // For now, let's just see if it doesn't process the response.
             $response->assertRedirect();
             
-            $this->assertDatabaseMissing('pqrs', [
+            $this->assertDatabaseMissing('operations.pqrs', [
                 'id' => $pqrs->id,
                 'respuesta' => 'Me respondo a mi mismo',
             ]);

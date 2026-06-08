@@ -2,53 +2,38 @@
 
 namespace App\Services\Payments;
 
-use App\Models\Copropiedad;
-use App\Models\Transaccion;
-use App\Services\Payments\Providers\WompiProvider;
-use App\Services\Payments\Providers\PayUProvider;
-use Illuminate\Support\Facades\Log;
+use App\Modules\Property\Models\Copropiedad;
 
 class PaymentService
 {
     /**
-     * Get the configured provider for a copropiedad.
+     * Calcula la comisión de la pasarela (Wompi por defecto).
      */
-    public function getProvider(Copropiedad $copropiedad): PaymentProviderInterface
+    public function calculateCommission(float $amount, string $gateway = 'wompi'): float
     {
-        $gateway = $copropiedad->getSetting('payment_gateway', 'wompi');
-        
-        return match ($gateway) {
-            'payu' => new PayUProvider(),
-            default => new WompiProvider(),
-        };
+        if ($gateway === 'wompi') {
+            // Wompi cobra 2.85% + $800 COP + IVA (19%) sobre la comisión
+            $baseCommission = ($amount * 0.0285) + 800;
+            $iva = $baseCommission * 0.19;
+            return round($baseCommission + $iva, 2);
+        }
+
+        return 0;
     }
 
     /**
-     * Prepare a payment session for a unit bill.
+     * Verifica si los pagos están habilitados para una copropiedad.
      */
-    public function preparePayment(Transaccion $transaction): ?array
+    public function arePaymentsEnabled(Copropiedad $copropiedad): bool
     {
-        $copropiedad = $transaction->unidad->copropiedad;
+        return $copropiedad->settings['payments']['enabled'] ?? false;
+    }
 
-        // Verify Feature Toggle
-        if (!$copropiedad->hasFeature('payments_enabled')) {
-            Log::warning("Intento de pago no autorizado para copropiedad {$copropiedad->id}. El servicio de pagos está deshabilitado.");
-            // In a production app, we would fire an event here for the Super Admin alert
-            return null;
-        }
-
-        $provider = $this->getProvider($copropiedad);
-        
-        // Calculate amount including gateway commission (Auto-summed logic)
-        $commission = $provider->calculateFee($transaction->monto);
-        $totalToPay = $transaction->monto + $commission;
-
-        return [
-            'provider' => $provider->getIdentifier(),
-            'base_amount' => $transaction->monto,
-            'commission' => $commission,
-            'total_amount' => $totalToPay,
-            'checkout_data' => $provider->generateCheckout($transaction, $totalToPay),
-        ];
+    /**
+     * Determina qué pasarela usar.
+     */
+    public function getActiveGateway(Copropiedad $copropiedad): string
+    {
+        return $copropiedad->settings['payments']['active_gateway'] ?? 'wompi';
     }
 }

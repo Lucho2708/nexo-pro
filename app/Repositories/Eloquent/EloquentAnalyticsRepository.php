@@ -2,10 +2,10 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\Pqrs;
-use App\Models\Reserva;
-use App\Models\Transaccion;
-use App\Models\Unidad;
+use App\Modules\Operations\Models\Pqrs;
+use App\Modules\Operations\Models\Reserva;
+use App\Modules\Finance\Models\Transaccion;
+use App\Modules\Property\Models\Unidad;
 use App\Repositories\Interfaces\AnalyticsRepositoryInterface;
 
 class EloquentAnalyticsRepository implements AnalyticsRepositoryInterface

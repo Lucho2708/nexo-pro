@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use App\Modules\IAM\Models\User;
-use App\Models\Asamblea;
-use App\Models\Copropiedad;
-use App\Services\AsambleaService;
+use App\Modules\Asamblea\Models\Asamblea;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Asamblea\Services\AsambleaService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
@@ -33,7 +33,7 @@ class AsambleaDynamicIsolationTest extends TestCase
             'status' => 'scheduled'
         ]);
 
-        \App\Models\Unidad::factory()->create(['copropiedad_id' => $copropiedad->id]);
+        \App\Modules\Property\Models\Unidad::factory()->create(['copropiedad_id' => $copropiedad->id]);
 
         // Act: Inicializamos el ecosistema dinámico
         $this->asambleaService->initializeDynamicEcosystem($asamblea);
@@ -57,7 +57,7 @@ class AsambleaDynamicIsolationTest extends TestCase
             'settings' => array_merge(Copropiedad::defaultSettings(), ['asamblea_virtual_enabled' => true])
         ]);
         $asamblea = Asamblea::factory()->create(['copropiedad_id' => $copropiedad->id]);
-        $unidad = \App\Models\Unidad::factory()->create(['copropiedad_id' => $copropiedad->id]);
+        $unidad = \App\Modules\Property\Models\Unidad::factory()->create(['copropiedad_id' => $copropiedad->id]);
         
         // Creamos un usuario "Huésped" que NO tiene relación con la unidad en la tabla global
         $guestUser = User::factory()->create([

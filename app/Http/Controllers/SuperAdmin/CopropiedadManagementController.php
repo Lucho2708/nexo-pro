@@ -5,7 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Actions\SuperAdmin\TransferPropertyManagementAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SuperAdmin\TransferManagementRequest;
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
 use Inertia\Inertia;
 

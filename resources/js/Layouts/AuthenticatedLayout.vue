@@ -39,6 +39,10 @@ const isRouteActive = (name: string) => {
 };
 
 const navigationItems = computed(() => {
+    const permissions = user.value?.permissions || [];
+    const settings = user.value?.copropiedad_settings;
+    const isStandalone = user.value?.is_standalone || settings?.is_standalone;
+
     if (user.value?.role === 'super_admin') {
         return [
             { name: 'Inicio Global', icon: 'monitoring', href: route('superadmin.dashboard'), active: isRouteActive('superadmin.dashboard') },
@@ -52,34 +56,46 @@ const navigationItems = computed(() => {
         ];
     }
 
-    // Si el usuario o el conjunto actual es Standalone (Solo Asamblea), restringimos el menú al MÁXIMO
-    const settings = user.value?.copropiedad_settings;
-    if (user.value?.role === 'admin' && (user.value?.is_standalone || settings?.is_standalone)) {
-        return [
-            { name: 'Asambleas', icon: 'groups', href: route('admin.asambleas.index'), active: isRouteActive('admin.asambleas.*') },
-        ];
+    const items = [];
+
+    // ── DASHBOARD INICIAL ───────────────────────────────────────
+    items.push({ name: 'Inicio', icon: 'dashboard', href: route(user.value?.role === 'owner' ? 'owner.dashboard' : 'dashboard'), active: isRouteActive('dashboard') || isRouteActive('owner.dashboard') });
+
+    // ── FINANZAS / CARTERA ──────────────────────────────────────
+    if (permissions.includes('finance:manage') || permissions.includes('finance:view')) {
+        const href = user.value?.role === 'owner' ? route('owner.payments') : route('cartera.index');
+        items.push({ name: 'Cartera', icon: 'payments', href: href, active: isRouteActive('cartera.*') || isRouteActive('owner.payments') });
     }
 
-    const items = [
-        { name: 'Inicio', icon: 'dashboard', href: route('dashboard'), active: isRouteActive('dashboard') },
-        { name: 'Cartera', icon: 'payments', href: route('cartera.index'), active: isRouteActive('cartera.*') },
-        { name: 'Zonas Comunes', icon: 'home_work', href: route('admin.zonas.index'), active: isRouteActive('admin.zonas.*') },
-        { name: 'PQRS', icon: 'forum', href: route('pqrs.index'), active: isRouteActive('pqrs.index') },
-        { name: 'Reservas', icon: 'event_available', href: route('admin.reservas.index'), active: isRouteActive('admin.reservas.index') },
-    ];
+    // ── INMUEBLES / ZONAS ───────────────────────────────────────
+    if (permissions.includes('property:manage')) {
+        items.push({ name: 'Zonas Comunes', icon: 'home_work', href: route('admin.zonas.index'), active: isRouteActive('admin.zonas.*') });
+    }
 
-    if (user.value?.role === 'admin') {
-        const settings = user.value?.copropiedad_settings;
-        if (settings && (settings.asamblea_virtual_enabled == 1 || settings.asamblea_virtual_enabled === true)) {
-            try {
-                items.push({ name: 'Asambleas', icon: 'groups', href: route('admin.asambleas.index'), active: isRouteActive('admin.asambleas.*') });
-            } catch (e) {}
+    // ── COMUNIDAD (PQRS & Reservas) ─────────────────────────────
+    if (permissions.includes('pqrs:manage') || permissions.includes('pqrs:create')) {
+        items.push({ name: 'PQRS', icon: 'forum', href: route('pqrs.index'), active: isRouteActive('pqrs.index') });
+    }
+
+    if (permissions.includes('reservations:manage') || permissions.includes('reservations:create')) {
+        const href = user.value?.role === 'owner' ? route('reservas.index') : route('admin.reservas.index');
+        items.push({ name: 'Reservas', icon: 'event_available', href: href, active: isRouteActive('admin.reservas.index') || isRouteActive('reservas.index') });
+    }
+
+    // ── ASAMBLEAS ───────────────────────────────────────────────
+    if (permissions.includes('assembly:admin') || permissions.includes('assembly:vote')) {
+        // Solo mostrar si el módulo está activo para este conjunto
+        if (settings?.asamblea_virtual_active) {
+            const href = user.value?.role === 'admin' ? route('admin.asambleas.index') : '#'; // Los propietarios entran vía link o invitación
+            if (user.value?.role === 'admin') {
+                items.push({ name: 'Asambleas', icon: 'groups', href: href, active: isRouteActive('admin.asambleas.*') });
+            }
         }
-        
-        // Solo mostramos configuración si no es un entorno standalone
-        if (!settings?.is_standalone && !user.value?.is_standalone) {
-            items.push({ name: 'Configuración', icon: 'settings', href: route('admin.settings'), active: isRouteActive('admin.settings') });
-        }
+    }
+
+    // ── CONFIGURACIÓN (Solo si no es Standalone) ────────────────
+    if (permissions.includes('property:manage') && !isStandalone) {
+        items.push({ name: 'Configuración', icon: 'settings', href: route('admin.settings'), active: isRouteActive('admin.settings') });
     }
 
     return items;

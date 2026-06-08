@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Copropiedad;
-use App\Models\FeatureUsageLog;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Operations\Models\FeatureUsageLog;
 use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;

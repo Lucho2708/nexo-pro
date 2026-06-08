@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreReservaRequest;
 use App\Http\Requests\UpdateReservaStatusRequest;
-use App\Models\Reserva;
+use App\Modules\Operations\Models\Reserva;
 use App\Services\Operations\ReservationService;
 use App\Repositories\Interfaces\ReservationRepositoryInterface;
 use App\Repositories\Interfaces\ZonaComunRepositoryInterface;

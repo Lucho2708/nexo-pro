@@ -3,10 +3,10 @@
 namespace Tests\Feature;
 
 use App\Modules\IAM\Models\User;
-use App\Models\Asamblea;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
-use App\Models\Intervencion;
+use App\Modules\Asamblea\Models\Asamblea;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Asamblea\Models\Intervencion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -18,6 +18,10 @@ class IntervencionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        \Illuminate\Support\Facades\Event::fake([
+            \App\Modules\Asamblea\Events\IntervencionUpdated::class,
+            \App\Modules\Asamblea\Events\HandRaised::class,
+        ]);
         
         $this->copropiedad = Copropiedad::factory()->create([
             'settings' => array_merge(Copropiedad::defaultSettings(), ['asamblea_virtual_enabled' => true])

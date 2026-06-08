@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $tables = ['pqrs', 'reservas', 'transacciones'];
+        $tables = ['operations.pqrs', 'operations.reservas', 'finance.transacciones'];
 
         foreach ($tables as $tableName) {
             Schema::table($tableName, function (Blueprint $table) {
-                $table->foreignUuid('copropiedad_id')->nullable()->after('id')->constrained('copropiedades')->cascadeOnDelete();
+                $table->foreignUuid('copropiedad_id')->nullable()->after('id')->constrained('property.copropiedades')->cascadeOnDelete();
                 $table->index('copropiedad_id');
             });
         }
@@ -26,7 +26,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $tables = ['pqrs', 'reservas', 'transacciones'];
+        $tables = ['operations.pqrs', 'operations.reservas', 'finance.transacciones'];
 
         foreach ($tables as $tableName) {
             Schema::table($tableName, function (Blueprint $table) {

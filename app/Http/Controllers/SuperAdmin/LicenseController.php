@@ -4,7 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SuperAdmin\UpdateLicenseRequest;
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Traits\Auditable;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -48,7 +48,7 @@ class LicenseController extends Controller
         $validated = $request->validated();
 
         // Separate settings from root model fields
-        $settingKeys = ['payments_enabled', 'can_charge_online', 'pqrs_enabled', 'reservas_enabled', 'asamblea_virtual_enabled'];
+        $settingKeys = ['payments_enabled', 'can_charge_online', 'pqrs_enabled', 'reservas_enabled', 'asamblea_virtual_active'];
         
         $settings = array_merge(
             $copropiedad->settings ?? [],

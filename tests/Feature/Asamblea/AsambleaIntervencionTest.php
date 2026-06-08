@@ -2,12 +2,12 @@
 
 namespace Tests\Feature\Asamblea;
 
-use App\Models\Asamblea;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
+use App\Modules\Asamblea\Models\Asamblea;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
 use App\Modules\IAM\Models\User;
-use App\Models\Intervencion;
-use App\Events\IntervencionUpdated;
+use App\Modules\Asamblea\Models\Intervencion;
+use App\Modules\Asamblea\Events\IntervencionUpdated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;

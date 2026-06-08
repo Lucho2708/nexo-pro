@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Modules\Asamblea\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+
+class Pregunta extends Model
+{
+    use HasFactory, HasUuids;
+
+    protected $table = 'asamblea.preguntas';
+
+    protected $fillable = [
+        'asamblea_id',
+        'titulo',
+        'descripcion',
+        'tipo', // simple, multiple
+        'status', // draft, open, closed
+    ];
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory<static>
+     */
+    protected static function newFactory()
+    {
+        return \App\Modules\Asamblea\Database\Factories\PreguntaFactory::new();
+    }
+
+    /**
+     * Get the asamblea that owns the question.
+     */
+    public function asamblea(): BelongsTo
+    {
+        return $this->belongsTo(Asamblea::class);
+    }
+
+    /**
+     * Get the options for this question.
+     */
+    public function opciones(): HasMany
+    {
+        return $this->hasMany(Opcion::class);
+    }
+
+    /**
+     * Get the votes for this question.
+     */
+    public function votos(): HasMany
+    {
+        return $this->hasMany(Voto::class);
+    }
+}

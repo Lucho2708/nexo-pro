@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;

@@ -1,14 +1,17 @@
 <?php
 
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
-use App\Models\Unidad;
-use App\Models\Asamblea;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Asamblea\Models\Asamblea;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    \Illuminate\Support\Facades\Event::fake([
+        \App\Modules\Asamblea\Events\VoteCast::class,
+    ]);
     config([
         'services.livekit.key' => 'test_key_1234567890_test_key_123', 
         'services.livekit.secret' => 'test_secret_1234567890_test_secret_123',
@@ -52,7 +55,7 @@ test('a resident cannot access if another device is connected for the same unit'
 
     // Simulate another device already connected (by a different user)
     $otherUser = User::factory()->create();
-    $service = app(\App\Services\AsambleaService::class);
+    $service = app(\App\Modules\Asamblea\Services\AsambleaService::class);
     $service->registerConnection($otherUser, $unidad, $asamblea);
 
     $this->actingAs($user);

@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use App\Listeners\UpdateLastLogin;
-use App\Models\Pqrs;
-use App\Models\Unidad;
+use App\Modules\Operations\Models\Pqrs;
+use App\Modules\Property\Models\Unidad;
 use App\Policies\PqrsPolicy;
 use App\Policies\UnidadPolicy;
 use Illuminate\Support\Facades\Gate;
@@ -68,11 +68,6 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
-        // Rate Limiters
-        RateLimiter::for("login", function (Request $request) {
-            return Limit::perMinute(60)->by($request->ip());
-        });
-
         // Policies
         Gate::policy(Pqrs::class, PqrsPolicy::class);
         Gate::policy(Unidad::class, UnidadPolicy::class);
@@ -100,19 +95,5 @@ class AppServiceProvider extends ServiceProvider
 
         // Track login time for Super Admin analytics
         Event::listen(Login::class, UpdateLastLogin::class);
-
-        // Role-aware redirect for already-authenticated users (fixes 403 loop)
-        RedirectIfAuthenticated::redirectUsing(function () {
-            $user = Auth::user();
-            if (!$user) {
-                return route("home");
-            }
-
-            return match (true) {
-                $user->isSuperAdmin() => route("superadmin.dashboard"),
-                $user->isAdmin() => route("dashboard"),
-                default => route("owner.dashboard"),
-            };
-        });
     }
 }

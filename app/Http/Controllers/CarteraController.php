@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Unidad;
-use App\Models\ConceptoCobro;
-use App\Models\Transaccion;
-use App\Actions\Cartera\ImportUnitsAction;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Finance\Models\ConceptoCobro;
+use App\Modules\Finance\Models\Transaccion;
+use App\Modules\Property\Actions\ImportUnitsAction;
 use App\Services\Financial\FinancialService;
 use App\Services\Documents\DocumentService;
 use App\Repositories\Interfaces\FinancialRepositoryInterface;

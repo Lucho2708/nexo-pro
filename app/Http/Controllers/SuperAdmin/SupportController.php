@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Ticket;
+use App\Modules\Operations\Models\Ticket;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 

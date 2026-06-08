@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Models\Reserva;
-use App\Models\ZonaComun;
+use App\Modules\Operations\Models\Reserva;
+use App\Modules\Property\Models\ZonaComun;
 use App\Modules\IAM\Models\User;
-use App\Models\Unidad;
+use App\Modules\Property\Models\Unidad;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ReservaFactory extends Factory

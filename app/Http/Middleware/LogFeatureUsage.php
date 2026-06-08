@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\FeatureUsageLog;
+use App\Modules\Operations\Models\FeatureUsageLog;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,14 +18,22 @@ class LogFeatureUsage
     {
         $response = $next($request);
 
-        // Only log for authenticated users with a copropiedad
+        // Only log for authenticated users with a valid copropiedad
         $user = $request->user();
         if ($user && $user->current_copropiedad_id && $response->isSuccessful()) {
-            FeatureUsageLog::create([
-                'user_id'        => $user->id,
-                'copropiedad_id' => $user->current_copropiedad_id,
-                'feature'        => $feature,
-            ]);
+            try {
+                // Check if copropiedad exists to avoid FK violations during testing/edge cases
+                if (\App\Modules\Property\Models\Copropiedad::where('id', $user->current_copropiedad_id)->exists()) {
+                    FeatureUsageLog::create([
+                        'user_id'        => $user->id,
+                        'copropiedad_id' => $user->current_copropiedad_id,
+                        'feature'        => $feature,
+                    ]);
+                }
+            } catch (\Exception $e) {
+                // Fail silently to not disrupt user experience for a non-critical log
+                \Log::warning("Could not log feature usage: " . $e->getMessage());
+            }
         }
 
         return $response;

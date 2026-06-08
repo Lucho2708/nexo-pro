@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Models\ZonaComun;
+use App\Modules\Property\Models\ZonaComun;
 use Illuminate\Support\Collection;
 
 interface ZonaComunRepositoryInterface

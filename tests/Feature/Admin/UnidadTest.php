@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
-use App\Models\Unidad;
+use App\Modules\Property\Models\Unidad;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -25,7 +25,7 @@ beforeEach(function () {
     $this->admin->managedCopropiedades()->attach($this->copropiedadA->id);
     $this->admin->update(['current_copropiedad_id' => $this->copropiedadA->id]);
 
-    $tipo = \App\Models\TipoUnidad::create([
+    $tipo = \App\Modules\Property\Models\TipoUnidad::create([
         'copropiedad_id' => $this->copropiedadA->id,
         'nombre' => 'Apartamento',
         'area_m2' => 60,
@@ -48,10 +48,10 @@ it('can bulk generate unidades for a torre', function () {
     $response->assertSessionHas('success');
 
     // It should create 5 * 4 = 20 unidades
-    $this->assertDatabaseCount('unidades', 20);
+    $this->assertDatabaseCount('property.unidades', 20);
 
     // Verify format Piso + Apto (e.g. 101, 102, 504)
-    $this->assertDatabaseHas('unidades', [
+    $this->assertDatabaseHas('property.unidades', [
         'copropiedad_id' => $this->copropiedadA->id,
         'torre' => 'Torre A',
         'nombre' => '101',
@@ -59,7 +59,7 @@ it('can bulk generate unidades for a torre', function () {
         'coeficiente' => 1.5,
     ]);
 
-    $this->assertDatabaseHas('unidades', [
+    $this->assertDatabaseHas('property.unidades', [
         'copropiedad_id' => $this->copropiedadA->id,
         'torre' => 'Torre A',
         'nombre' => '504',
@@ -81,7 +81,7 @@ it('validates custom_settings is a valid json if provided', function () {
     $response = $this->actingAs($this->admin)->post(route('unidades.bulk-generate'), $data);
 
     $response->assertSessionHasErrors('custom_settings');
-    $this->assertDatabaseCount('unidades', 0);
+    $this->assertDatabaseCount('property.unidades', 0);
 });
 
 it('fails to bulk generate if the user has no current_copropiedad_id', function () {

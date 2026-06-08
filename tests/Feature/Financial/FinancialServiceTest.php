@@ -3,9 +3,9 @@
 namespace Tests\Feature\Financial;
 
 use App\DTOs\TransactionDataDTO;
-use App\Models\ConceptoCobro;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
+use App\Modules\Finance\Models\ConceptoCobro;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
 use App\Modules\IAM\Models\User;
 use App\Services\Financial\FinancialService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -62,7 +62,7 @@ class FinancialServiceTest extends TestCase
 
         $transaction = $this->financialService->registerTransaction($data);
 
-        $this->assertDatabaseHas('transacciones', [
+        $this->assertDatabaseHas('finance.transacciones', [
             'id' => $transaction->id,
             'monto' => 50000,
             'tipo' => 'abono'

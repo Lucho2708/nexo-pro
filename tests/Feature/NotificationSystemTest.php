@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Announcement;
-use App\Models\Copropiedad;
+use App\Modules\Operations\Models\Announcement;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -27,7 +27,7 @@ it('can create an announcement linked to a copropiedad', function () {
         'is_active' => true,
     ]);
 
-    $this->assertDatabaseHas('announcements', [
+    $this->assertDatabaseHas('operations.announcements', [
         'id' => $announcement->id,
         'copropiedad_id' => $this->copropiedad->id
     ]);

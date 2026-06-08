@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\CopropiedadCreated;
-use App\Models\ConceptoCobro;
+use App\Modules\Finance\Models\ConceptoCobro;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 

@@ -2,8 +2,8 @@
 
 namespace App\Actions\Cartera;
 
-use App\Models\Unidad;
-use App\Models\Transaccion;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Finance\Models\Transaccion;
 use Illuminate\Support\Facades\DB;
 
 class ProcessPaymentAction

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreAnnouncementRequest;
-use App\Models\Announcement;
+use App\Modules\Operations\Models\Announcement;
 use App\Repositories\Interfaces\AnnouncementRepositoryInterface;
 use App\Traits\Auditable;
 use Inertia\Inertia;

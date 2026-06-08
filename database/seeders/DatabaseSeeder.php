@@ -3,15 +3,15 @@
 namespace Database\Seeders;
 
 use App\Modules\IAM\Models\User;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
-use App\Models\ConceptoCobro;
-use App\Models\ZonaComun;
-use App\Models\Reserva;
-use App\Models\Transaccion;
-use App\Models\Pqrs;
-use App\Models\Announcement;
-use App\Models\FeatureUsageLog;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Finance\Models\ConceptoCobro;
+use App\Modules\Property\Models\ZonaComun;
+use App\Modules\Operations\Models\Reserva;
+use App\Modules\Finance\Models\Transaccion;
+use App\Modules\Operations\Models\Pqrs;
+use App\Modules\Operations\Models\Announcement;
+use App\Modules\Operations\Models\FeatureUsageLog;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 

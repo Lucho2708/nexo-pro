@@ -23,7 +23,7 @@ class LegalController extends Controller
         $user = Auth::user();
         $alreadyAccepted = $user->consents()
             ->where('legal_document_id', $document->id)
-            ->where('version', $document->version)
+            ->wherePivot('version', $document->version)
             ->exists();
 
         if ($alreadyAccepted) {
@@ -43,7 +43,7 @@ class LegalController extends Controller
         // Evitar duplicados si hace doble clic
         $exists = $user->consents()
             ->where('legal_document_id', $document->id)
-            ->where('version', $document->version)
+            ->wherePivot('version', $document->version)
             ->exists();
 
         if (!$exists) {

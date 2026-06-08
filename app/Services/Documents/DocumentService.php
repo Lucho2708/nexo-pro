@@ -2,8 +2,8 @@
 
 namespace App\Services\Documents;
 
-use App\Models\Unidad;
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Property\Models\Copropiedad;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 

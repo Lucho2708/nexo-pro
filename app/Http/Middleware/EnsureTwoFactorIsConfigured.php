@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Modules\Operations\Models\GlobalSetting;
 
 class EnsureTwoFactorIsConfigured
 {
@@ -16,7 +17,7 @@ class EnsureTwoFactorIsConfigured
     public function handle(Request $request, Closure $next): Response
     {
         // Global Disable Check
-        if (! \App\Models\GlobalSetting::get('2fa_enabled', false)) {
+        if (! GlobalSetting::get('2fa_enabled', false)) {
             return $next($request);
         }
 

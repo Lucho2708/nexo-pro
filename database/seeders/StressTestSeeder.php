@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
-use App\Models\Unidad;
+use App\Modules\Property\Models\Unidad;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;

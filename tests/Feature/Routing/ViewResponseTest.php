@@ -1,8 +1,8 @@
 <?php
 
 use App\Modules\IAM\Models\User;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 

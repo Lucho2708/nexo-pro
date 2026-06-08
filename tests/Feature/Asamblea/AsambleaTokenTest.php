@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Asamblea;
 
-use App\Models\Asamblea;
+use App\Modules\Asamblea\Models\Asamblea;
 use App\Modules\IAM\Models\User;
-use App\Models\Unidad;
-use App\Services\AsambleaService;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Asamblea\Services\AsambleaService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

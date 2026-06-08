@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
-use App\Models\ZonaComun;
+use App\Modules\Property\Models\ZonaComun;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -54,7 +54,7 @@ it('can create a zona comun', function () {
     $response->assertRedirect();
     $response->assertSessionHas('success');
 
-    $this->assertDatabaseHas('zonas_comunes', [
+    $this->assertDatabaseHas('property.zonas_comunes', [
         'copropiedad_id' => $this->copropiedadA->id,
         'nombre' => 'Salon Social',
         'capacidad_maxima' => 50,
@@ -84,7 +84,7 @@ it('can update a zona comun', function () {
     $response->assertRedirect();
     $response->assertSessionHas('success');
 
-    $this->assertDatabaseHas('zonas_comunes', [
+    $this->assertDatabaseHas('property.zonas_comunes', [
         'id' => $zona->id,
         'nombre' => 'Piscina Climatizada',
         'capacidad_maxima' => 25,
@@ -106,14 +106,14 @@ it('can toggle zona comun status', function () {
     $response->assertRedirect();
     $response->assertSessionHas('success');
 
-    $this->assertDatabaseHas('zonas_comunes', [
+    $this->assertDatabaseHas('property.zonas_comunes', [
         'id' => $zona->id,
         'activa' => 0,
     ]);
 
     $response = $this->actingAs($this->admin)->patch(route('admin.zonas.toggle', $zona->id));
 
-    $this->assertDatabaseHas('zonas_comunes', [
+    $this->assertDatabaseHas('property.zonas_comunes', [
         'id' => $zona->id,
         'activa' => 1,
     ]);

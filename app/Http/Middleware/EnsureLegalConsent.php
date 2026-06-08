@@ -53,11 +53,12 @@ class EnsureLegalConsent
             if ($document) {
                 $accepted = $user->consents()
                     ->where('legal_document_id', $document->id)
-                    ->where('version', $document->version)
+                    ->wherePivot('version', $document->version)
                     ->exists();
 
+                \Log::info("Checking for user {$user->id}, doc {$document->id} v{$document->version}. Accepted: " . ($accepted ? 'yes' : 'no'));
                 if (!$accepted) {
-                    // \Log::info("User {$user->id} redirected for {$type} v{$document->version}");
+                    \Log::info("User {$user->id} redirected for {$type} v{$document->version}");
                     return redirect()->route('legal.consent', ['type' => $type]);
                 }
             }

@@ -4,12 +4,12 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Modules\IAM\Models\User;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
-use App\Models\Asamblea;
-use App\Models\Pregunta;
-use App\Models\Opcion;
-use App\Models\FeatureUsageLog;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Asamblea\Models\Asamblea;
+use App\Modules\Asamblea\Models\Pregunta;
+use App\Modules\Asamblea\Models\Opcion;
+use App\Modules\Operations\Models\FeatureUsageLog;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -199,7 +199,7 @@ class EnterpriseStressSeeder extends Seeder
             ];
 
             if (count($logs) === 5000) {
-                DB::table('feature_usage_logs')->insert($logs);
+                DB::table('operations.feature_usage_logs')->insert($logs);
                 $logs = [];
             }
         }
@@ -219,7 +219,7 @@ class EnterpriseStressSeeder extends Seeder
             ];
 
             if (count($metrics) === 5000) {
-                DB::table('system_metrics')->insert($metrics);
+                DB::table('operations.system_metrics')->insert($metrics);
                 $metrics = [];
             }
         }

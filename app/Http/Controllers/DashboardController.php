@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-use App\Models\Notification;
+use App\Modules\Operations\Models\Notification;
 use App\Http\Controllers\SuperAdmin\CopropiedadController;
 use App\Services\Analytics\AnalyticsService;
 use Illuminate\Support\Facades\Auth;
@@ -63,8 +63,12 @@ class DashboardController extends Controller
      */
     public function markNotificationAsRead(Notification $notification)
     {
+        \Log::info("Attempting to mark notification {$notification->id} as read for user " . Auth::id());
         if ($notification->user_id === Auth::id()) {
             $notification->update(['read_at' => now()]);
+            \Log::info("Notification {$notification->id} marked as read.");
+        } else {
+            \Log::info("User " . Auth::id() . " does not own notification {$notification->id} (owner: {$notification->user_id})");
         }
 
         return back();

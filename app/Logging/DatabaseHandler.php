@@ -2,7 +2,7 @@
 
 namespace App\Logging;
 
-use App\Models\SystemLog;
+use App\Modules\Operations\Models\SystemLog;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
 use Illuminate\Support\Facades\Schema;

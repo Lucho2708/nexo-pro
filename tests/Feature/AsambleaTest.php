@@ -3,12 +3,12 @@
 namespace Tests\Feature;
 
 use App\Modules\IAM\Models\User;
-use App\Models\Asamblea;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
-use App\Models\Pregunta;
-use App\Models\Opcion;
-use App\Events\HandRaised;
+use App\Modules\Asamblea\Models\Asamblea;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Asamblea\Models\Pregunta;
+use App\Modules\Asamblea\Models\Opcion;
+use App\Modules\Asamblea\Events\HandRaised;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
@@ -41,7 +41,7 @@ class AsambleaTest extends TestCase
         $this->unidad->users()->attach($this->user->id, ['role' => 'propietario']);
 
         // Inicializar ecosistema dinámico para que las tablas existan durante el test
-        app(\App\Services\AsambleaService::class)->initializeDynamicEcosystem($this->asamblea);
+        app(\App\Modules\Asamblea\Services\AsambleaService::class)->initializeDynamicEcosystem($this->asamblea);
     }
 
     public function test_an_owner_can_access_the_assembly_room()
@@ -106,7 +106,7 @@ class AsambleaTest extends TestCase
 
         $response->assertStatus(201);
         
-        Event::assertDispatched(\App\Events\IntervencionUpdated::class);
+        Event::assertDispatched(\App\Modules\Asamblea\Events\IntervencionUpdated::class);
     }
 
     public function test_an_owner_can_cast_a_vote()

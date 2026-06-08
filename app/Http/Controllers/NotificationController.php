@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Announcement;
+use App\Modules\Operations\Models\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

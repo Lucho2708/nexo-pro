@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Announcement;
+use App\Modules\Operations\Models\Announcement;
 use App\Repositories\Interfaces\AnnouncementRepositoryInterface;
 use App\Http\Requests\SuperAdmin\StoreGlobalAnnouncementRequest;
 use Illuminate\Http\Request;

@@ -2,8 +2,8 @@
 
 namespace App\Services\Operations;
 
-use App\Models\Reserva;
-use App\Models\ZonaComun;
+use App\Modules\Operations\Models\Reserva;
+use App\Modules\Property\Models\ZonaComun;
 use App\Repositories\Interfaces\ReservationRepositoryInterface;
 use App\Repositories\Interfaces\ZonaComunRepositoryInterface;
 use App\Repositories\Interfaces\FinancialRepositoryInterface;

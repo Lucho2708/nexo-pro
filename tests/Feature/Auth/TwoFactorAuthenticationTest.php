@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Modules\Operations\Models\GlobalSetting;
 use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -23,7 +24,7 @@ class TwoFactorAuthenticationTest extends TestCase
     public function test_user_without_2fa_is_redirected_to_setup_when_enabled_globally()
     {
         // Forzamos la habilitación global
-        \App\Models\GlobalSetting::set('2fa_enabled', true);
+        GlobalSetting::set('2fa_enabled', true);
         
         $user = User::factory()->create(['role' => 'admin']);
 

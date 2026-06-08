@@ -2,7 +2,7 @@
 
 namespace App\Services\Tenant;
 
-use App\Models\Asamblea;
+use App\Modules\Asamblea\Models\Asamblea;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -27,7 +27,7 @@ class StandaloneOnboardingService
         // 2. Create Real "Shell" Units in the main table for Eloquent compatibility
         $units = collect($data)->map(function ($row) use ($asamblea) {
             // Create in main table and let HasUuids do its magic
-            $unitModel = \App\Models\Unidad::create([
+            $unitModel = \App\Modules\Property\Models\Unidad::create([
                 'copropiedad_id' => $asamblea->copropiedad_id,
                 'nombre' => "{$row['torre']} - {$row['apto']}",
                 'torre' => $row['torre'],

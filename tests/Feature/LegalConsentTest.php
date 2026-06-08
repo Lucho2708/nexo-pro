@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Models\LegalDocument;
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -52,6 +52,7 @@ class LegalConsentTest extends TestCase
         // Aceptar el documento
         $this->actingAs($user)->post(route('legal.accept', $document->id));
 
+        $this->withoutExceptionHandling();
         $response = $this->actingAs($user)->get(route('dashboard'));
 
         // Nota: dashboard redirige a owner.dashboard para propietarios

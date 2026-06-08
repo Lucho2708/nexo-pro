@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\Pqrs;
+use App\Modules\Operations\Models\Pqrs;
 use App\Modules\IAM\Models\User;
-use App\Models\Unidad;
+use App\Modules\Property\Models\Unidad;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PqrsFactory extends Factory

@@ -11,15 +11,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
-use App\Models\Notification;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Operations\Models\Notification;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+
+use App\Modules\IAM\Traits\HasPermissions;
 
 #[Fillable(['name', 'email', 'password', 'terms_accepted_at', 'is_active', 'role', 'is_standalone', 'current_copropiedad_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
+    use HasPermissions;
+
+    /**
+     * Get the user's profile.
+     */
+    public function profile(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Profile::class);
+    }
     /**
      * Define the table associated with the model, including the PostgreSQL schema.
      */
@@ -61,9 +72,11 @@ class User extends Authenticatable
         return $this->belongsTo(Copropiedad::class, 'current_copropiedad_id');
     }
 
-    public function consents()
+    public function consents(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->hasMany(LegalConsent::class);
+        return $this->belongsToMany(LegalDocument::class, 'iam.legal_consents')
+            ->withPivot('version', 'accepted_at', 'ip_address')
+            ->withTimestamps();
     }
 
     /**
@@ -71,7 +84,7 @@ class User extends Authenticatable
      */
     public function managedCopropiedades(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(Copropiedad::class, 'admin_copropiedad', 'user_id', 'copropiedad_id')
+        return $this->belongsToMany(Copropiedad::class, 'property.admin_copropiedad', 'user_id', 'copropiedad_id')
             ->withTimestamps();
     }
 
@@ -88,7 +101,7 @@ class User extends Authenticatable
      */
     public function unidades(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(Unidad::class, 'unidad_user')
+        return $this->belongsToMany(Unidad::class, 'property.unidad_user')
             ->withPivot('role')
             ->withTimestamps();
     }

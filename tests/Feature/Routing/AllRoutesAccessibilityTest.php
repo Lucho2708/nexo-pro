@@ -1,11 +1,11 @@
 <?php
 
 use App\Modules\IAM\Models\User;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
-use App\Models\ZonaComun;
-use App\Models\Pqrs;
-use App\Models\Announcement;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Property\Models\ZonaComun;
+use App\Modules\Operations\Models\Pqrs;
+use App\Modules\Operations\Models\Announcement;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

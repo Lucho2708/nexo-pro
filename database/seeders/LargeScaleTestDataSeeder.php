@@ -2,145 +2,101 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Modules\IAM\Models\User;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
-use App\Models\ZonaComun;
-use App\Models\Reserva;
-use App\Models\Transaccion;
-use App\Models\Pqrs;
-use App\Models\ConceptoCobro;
-use Illuminate\Support\Str;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Property\Models\TipoUnidad;
+use App\Modules\Property\Models\ZonaComun;
+use App\Modules\Property\Services\CoeficienteCalculator;
+use App\Modules\Finance\Models\ConceptoCobro;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class LargeScaleTestDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Create 3 Administrators
-        $admins = User::factory()->count(3)->create([
-            'role' => 'admin',
-            'password' => Hash::make('password'),
-        ]);
+        $password = Hash::make('password');
+        $calculator = new CoeficienteCalculator();
+        $totalCopropiedades = 40;
+        $unidadesPorCopropiedad = 300;
 
-        $mainAdmin = $admins->first();
+        $this->command->info("Iniciando población de {$totalCopropiedades} conjuntos...");
 
-        // 2. Main Admin has 3 Conjuntos (Copropiedades)
-        $copropiedades = Copropiedad::factory()->count(3)->create();
-        
-        // Link them to the admin via pivot table if necessary (managedCopropiedades)
-        foreach ($copropiedades as $copro) {
-            $mainAdmin->managedCopropiedades()->attach($copro->id);
-        }
+        for ($c = 1; $c <= $totalCopropiedades; $c++) {
+            DB::transaction(function () use ($c, $password, $calculator, $unidadesPorCopropiedad) {
+                // 1. Crear Copropiedad
+                $copro = Copropiedad::create([
+                    'nit' => "900." . str_pad($c, 6, '0', STR_PAD_LEFT) . "-1",
+                    'nombre' => "Mega Conjunto Residencial " . Str::upper(Str::random(3)) . " $c",
+                    'direccion' => "Calle " . rand(1, 200) . " # " . rand(1, 100) . "-" . rand(1, 99),
+                    'ciudad' => 'Bogotá',
+                    'plan' => 'pro',
+                    'area_construida_total' => 15000, // 15k m2 base
+                    'settings' => array_merge(Copropiedad::defaultSettings(), [
+                        'asamblea_virtual_enabled' => true,
+                        'payments_enabled' => true
+                    ])
+                ]);
 
-        foreach ($copropiedades as $copro) {
-            $this->command->info("Generating data for: {$copro->nombre}");
+                // 2. Crear Administrador para este conjunto
+                $admin = User::create([
+                    'name' => "Administrador Conjunto $c",
+                    'email' => "admin$c@nexo.pro",
+                    'password' => $password,
+                    'role' => 'admin',
+                    'current_copropiedad_id' => $copro->id,
+                    'terms_accepted_at' => now(),
+                ]);
+                $admin->managedCopropiedades()->attach($copro->id);
 
-            // 3. 1000 Units per Conjunto (Apartments starting from 101)
-            $unitsData = [];
-            for ($i = 1; $i <= 1000; $i++) {
-                $floor = ceil($i / 10); // 10 units per floor
-                $roomNumber = str_pad($i % 10 == 0 ? 10 : $i % 10, 2, '0', STR_PAD_LEFT);
-                $name = "{$floor}{$roomNumber}";
-                
-                $unitsData[] = [
-                    'id' => (string) Str::uuid(),
+                // 3. Crear Concepto de Administración
+                ConceptoCobro::create([
                     'copropiedad_id' => $copro->id,
-                    'nombre' => $name,
-                    'torre' => 'Torre ' . ceil($i / 250), // 4 towers
-                    'piso' => $floor,
-                    'coeficiente' => 0.1,
-                    'propietario_nombre' => 'Propietario ' . $name,
-                    'propietario_identificacion' => 'ID' . $i . rand(1000, 9999),
-                    'email_contacto' => "unidad{$name}_{$copro->id}@example.com",
-                    'saldo_actual' => rand(0, 500000),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
+                    'nombre' => 'Administración Mensual',
+                    'codigo' => 'ADM',
+                    'es_obligatorio' => true
+                ]);
 
-                if (count($unitsData) >= 200) {
-                    Unidad::insert($unitsData);
-                    $unitsData = [];
+                // 4. Crear un Tipo de Unidad base
+                $tipo = TipoUnidad::create([
+                    'copropiedad_id' => $copro->id,
+                    'nombre' => 'Apartamento Estándar',
+                    'area_m2' => 50.00 // Todos iguales para simplificar el cálculo masivo inicial
+                ]);
+
+                // 5. Inserción Masiva de Unidades (Optimizado)
+                $unidadesData = [];
+                for ($u = 1; $u <= $unidadesPorCopropiedad; $u++) {
+                    $torreNum = ceil($u / 50); // 6 torres (A-F)
+                    $torre = chr(64 + $torreNum); // A, B, C...
+                    $piso = ceil(($u % 50 ?: 50) / 5); // 10 pisos
+                    $apto = str_pad($u, 3, '0', STR_PAD_LEFT);
+
+                    $unidadesData[] = [
+                        'id' => Str::uuid(),
+                        'copropiedad_id' => $copro->id,
+                        'tipo_unidad_id' => $tipo->id,
+                        'nombre' => $apto,
+                        'torre' => "Torre $torre",
+                        'piso' => $piso,
+                        'coeficiente' => 0,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
                 }
-            }
-            if (!empty($unitsData)) {
-                Unidad::insert($unitsData);
-            }
+                Unidad::insert($unidadesData);
 
-            $allUnits = Unidad::where('copropiedad_id', $copro->id)->get();
+                // 6. Calcular Coeficientes Reales para asegurar el 100%
+                $copro->update(['area_construida_total' => $unidadesPorCopropiedad * 50.00]);
+                $calculator->calculateForCopropiedad($copro);
+            });
 
-            // 4. Common Zones
-            $zonas = ZonaComun::factory()->count(5)->create([
-                'copropiedad_id' => $copro->id
-            ]);
-
-            // 5. Default Concepts for Transactions
-            $conceptos = ConceptoCobro::factory()->count(3)->create([
-                'copropiedad_id' => $copro->id
-            ]);
-
-            // 6. Create some Owners (Users) and link them
-            $owners = User::factory()->count(100)->create([
-                'role' => 'owner',
-                'current_copropiedad_id' => $copro->id
-            ]);
-
-            foreach ($owners as $owner) {
-                $randomUnits = $allUnits->random(rand(1, 2));
-                $owner->unidades()->attach($randomUnits->pluck('id')->toArray(), ['role' => 'propietario']);
-            }
-
-            // 7. Transactions (Payments and Charges)
-            foreach ($allUnits->random(300) as $unit) {
-                Transaccion::factory()->count(rand(2, 5))->create([
-                    'unidad_id' => $unit->id,
-                    'concepto_id' => $conceptos->random()->id,
-                ]);
-            }
-
-            // 8. Reservations
-            foreach ($owners->random(50) as $owner) {
-                $unit = $owner->unidades()->first();
-                if ($unit) {
-                    Reserva::factory()->count(rand(1, 3))->create([
-                        'user_id' => $owner->id,
-                        'unidad_id' => $unit->id,
-                        'zona_id' => $zonas->random()->id,
-                    ]);
-                }
-            }
-
-            // 9. PQRs (Reported, Managed, Reopened)
-            // Reported (abierto/en_proceso)
-            foreach ($allUnits->random(30) as $unit) {
-                Pqrs::factory()->create([
-                    'unidad_id' => $unit->id,
-                    'user_id' => $owners->random()->id,
-                    'estado' => rand(0, 1) ? 'abierto' : 'en_proceso'
-                ]);
-            }
-
-            // Managed (cerrado)
-            foreach ($allUnits->random(40) as $unit) {
-                Pqrs::factory()->create([
-                    'unidad_id' => $unit->id,
-                    'user_id' => $owners->random()->id,
-                    'estado' => 'cerrado',
-                    'respuesta' => 'Su solicitud ha sido gestionada satisfactoriamente.',
-                    'fecha_respuesta' => now()->subDays(rand(1, 10))
-                ]);
-            }
-
-            // Reopened (reabierto)
-            foreach ($allUnits->random(15) as $unit) {
-                Pqrs::factory()->create([
-                    'unidad_id' => $unit->id,
-                    'user_id' => $owners->random()->id,
-                    'estado' => 'reabierto',
-                    'mensaje' => 'No estoy de acuerdo con la respuesta inicial, solicito revisión.'
-                ]);
-            }
+            $this->command->info("Conjunto $c/40 completado (300 unidades).");
         }
+
+        $this->command->info("¡Población a gran escala finalizada exitosamente!");
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Services\Financial;
 
 use App\DTOs\TransactionDataDTO;
-use App\Models\Transaccion;
+use App\Modules\Finance\Models\Transaccion;
 use App\Events\PaymentRegistered;
 use App\Repositories\Interfaces\FinancialRepositoryInterface;
 use Illuminate\Support\Facades\DB;

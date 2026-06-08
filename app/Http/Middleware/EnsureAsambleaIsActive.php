@@ -24,8 +24,8 @@ class EnsureAsambleaIsActive
 
         $copropiedad = $user->currentCopropiedad;
 
-        if (!$copropiedad || !$copropiedad->hasFeature('asamblea_virtual_enabled')) {
-            abort(403, 'El módulo de Asamblea Virtual no está activo para este conjunto.');
+        if (!$copropiedad || !$copropiedad->hasFeature('asamblea_virtual_active')) {
+            abort(403, 'El módulo de Asamblea Virtual no está activo para este conjunto. Por favor, contacte a soporte para activarlo.');
         }
 
         return $next($request);

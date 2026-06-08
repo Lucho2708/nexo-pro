@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Admin;
 
-use App\Models\Copropiedad;
-use App\Models\Unidad;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
 use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -24,7 +24,7 @@ class GeneradorUnidadesTest extends TestCase
         ]);
         $admin->managedCopropiedades()->attach($copropiedad->id);
 
-        $tipo = \App\Models\TipoUnidad::create([
+        $tipo = \App\Modules\Property\Models\TipoUnidad::create([
             'copropiedad_id' => $copropiedad->id,
             'nombre' => 'Apto',
             'area_m2' => 50
@@ -49,7 +49,7 @@ class GeneradorUnidadesTest extends TestCase
         $this->assertEquals(20, Unidad::where('copropiedad_id', $copropiedad->id)->count());
 
         // Verificar la nomenclatura: Piso 3, Apto 2 = 302
-        $this->assertDatabaseHas('unidades', [
+        $this->assertDatabaseHas('property.unidades', [
             'copropiedad_id' => $copropiedad->id,
             'torre' => 'Torre A',
             'nombre' => '302',
@@ -59,13 +59,13 @@ class GeneradorUnidadesTest extends TestCase
         ]);
         
         // Piso 1, Apto 4 = 104
-        $this->assertDatabaseHas('unidades', [
+        $this->assertDatabaseHas('property.unidades', [
             'nombre' => '104',
             'torre' => 'Torre A'
         ]);
         
         // Piso 5, Apto 4 = 504
-        $this->assertDatabaseHas('unidades', [
+        $this->assertDatabaseHas('property.unidades', [
             'nombre' => '504'
         ]);
     }

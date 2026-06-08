@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use App\Models\FeatureUsageLog;
+use App\Modules\Operations\Models\FeatureUsageLog;
+use App\Modules\Operations\Models\SystemModule;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -65,14 +66,14 @@ class AuditController extends Controller
                 'used_at' => $log->used_at->format('Y-m-d H:i:s'),
                 'used_at_human' => $log->used_at->diffForHumans(),
             ]),
-            'features' => \App\Models\SystemModule::where('is_active', true)
+            'features' => SystemModule::where('is_active', true)
                 ->orderBy('name')
                 ->get()
                 ->map(fn($m) => [
                     'value' => $m->feature,
                     'label' => $m->name
                 ]),
-            'copropiedades' => \App\Models\Copropiedad::select('id', 'nombre')->get(),
+            'copropiedades' => \App\Modules\Property\Models\Copropiedad::select('id', 'nombre')->get(),
             'filters' => $request->only(['feature', 'search', 'copropiedad_id', 'date_from', 'date_to']),
             'chartData' => $this->getUsageChartData($request->feature),
         ]);

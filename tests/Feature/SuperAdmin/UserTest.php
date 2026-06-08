@@ -17,9 +17,14 @@ it('prevents non-superadmin from accessing users index', function () {
 });
 
 it('allows superadmin to view users index', function () {
-    $this->actingAs($this->superAdmin)
-        ->get(route('superadmin.users.index'))
-        ->assertOk()
+    $response = $this->actingAs($this->superAdmin)
+        ->get(route('superadmin.users.index'));
+
+    if ($response->status() === 500) {
+        dd($response->exception ?? $response->content());
+    }
+
+    $response->assertOk()
         ->assertInertia(fn ($page) => $page->component('SuperAdmin/Users/Index'));
 });
 

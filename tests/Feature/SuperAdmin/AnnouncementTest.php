@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Announcement;
+use App\Modules\Operations\Models\Announcement;
 use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -37,7 +37,7 @@ it('allows superadmin to store a new announcement', function () {
         ->assertRedirect()
         ->assertSessionHas('success', 'Anuncio publicado correctamente.');
 
-    $this->assertDatabaseHas('announcements', $data);
+    $this->assertDatabaseHas('operations.announcements', $data);
 });
 
 it('allows superadmin to update an announcement', function () {
@@ -60,7 +60,7 @@ it('allows superadmin to update an announcement', function () {
         ->assertRedirect()
         ->assertSessionHas('success', 'Anuncio actualizado.');
 
-    $this->assertDatabaseHas('announcements', $data);
+    $this->assertDatabaseHas('operations.announcements', $data);
 });
 
 it('allows superadmin to delete an announcement', function () {
@@ -76,5 +76,5 @@ it('allows superadmin to delete an announcement', function () {
         ->assertRedirect()
         ->assertSessionHas('success', 'Anuncio eliminado.');
 
-    $this->assertDatabaseMissing('announcements', ['id' => $announcement->id]);
+    $this->assertDatabaseMissing('operations.announcements', ['id' => $announcement->id]);
 });

@@ -3,9 +3,9 @@
 namespace Tests\Feature\Security;
 
 use App\Modules\IAM\Models\User;
-use App\Models\Pqrs;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
+use App\Modules\Operations\Models\Pqrs;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

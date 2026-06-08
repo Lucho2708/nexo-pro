@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin;
 
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
-use App\Models\Unidad;
+use App\Modules\Property\Models\Unidad;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -48,7 +48,10 @@ class MultiTenantTest extends TestCase
             ->post(route('tenant.switch', $copropiedadStranger))
             ->assertStatus(403); // Forbidden
             
-        $this->assertEquals($copropiedadA->id, $admin->fresh()->current_copropiedad_id);
+        $this->assertDatabaseHas('iam.users', [
+            'id' => $admin->id,
+            'current_copropiedad_id' => $copropiedadA->id
+        ]);
     }
 
     public function test_an_owner_can_switch_if_they_own_units_in_target()

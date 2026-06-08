@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
-use App\Models\Unidad;
-use App\Models\Asamblea;
-use App\Services\AsambleaService;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Asamblea\Models\Asamblea;
+use App\Modules\Asamblea\Services\AsambleaService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;

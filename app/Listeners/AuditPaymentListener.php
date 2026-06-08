@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\PaymentRegistered;
-use App\Models\FeatureUsageLog;
+use App\Modules\Operations\Models\FeatureUsageLog;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 

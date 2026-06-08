@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pqrs;
-use App\Models\Unidad;
+use App\Modules\Operations\Models\Pqrs;
+use App\Modules\Property\Models\Unidad;
 use App\Http\Requests\StorePqrsRequest;
 use App\Http\Requests\RespondPqrsRequest;
 use App\Mail\PqrsCreatedNotification;

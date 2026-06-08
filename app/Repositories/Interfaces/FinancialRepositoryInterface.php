@@ -3,10 +3,10 @@
 namespace App\Repositories\Interfaces;
 
 use App\DTOs\TransactionDataDTO;
-use App\Models\Transaccion;
-use App\Models\Unidad;
-use App\Models\Copropiedad;
-use App\Models\ConceptoCobro;
+use App\Modules\Finance\Models\Transaccion;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Finance\Models\ConceptoCobro;
 
 interface FinancialRepositoryInterface
 {

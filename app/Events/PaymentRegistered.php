@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Transaccion;
+use App\Modules\Finance\Models\Transaccion;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

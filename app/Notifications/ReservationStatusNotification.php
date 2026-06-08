@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Models\Reserva;
+use App\Modules\Operations\Models\Reserva;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

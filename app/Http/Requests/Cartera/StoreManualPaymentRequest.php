@@ -3,6 +3,9 @@
 namespace App\Http\Requests\Cartera;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Finance\Models\ConceptoCobro;
 
 class StoreManualPaymentRequest extends FormRequest
 {
@@ -22,8 +25,8 @@ class StoreManualPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'unidad_id' => 'required|exists:unidades,id',
-            'concepto_id' => 'required|exists:concepto_cobros,id',
+            'unidad_id' => ['required', Rule::exists(Unidad::class, 'id')],
+            'concepto_id' => ['required', Rule::exists(ConceptoCobro::class, 'id')],
             'monto' => 'required|numeric|min:0',
             'fecha' => 'required|date',
             'referencia' => 'nullable|string',

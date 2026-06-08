@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Pqrs;
+use App\Modules\Operations\Models\Pqrs;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;

@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin;
 
-use App\Models\Copropiedad;
-use App\Models\Pqrs;
-use App\Models\Unidad;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Operations\Models\Pqrs;
+use App\Modules\Property\Models\Unidad;
 use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -67,7 +67,7 @@ class PqrsManagementTest extends TestCase
         ]);
 
         $response->assertStatus(302); // Redirect back
-        $this->assertDatabaseHas('pqrs', [
+        $this->assertDatabaseHas('operations.pqrs', [
             'id' => $this->pqrs->id,
             'respuesta' => 'Solucionado.',
             'estado' => 'cerrado'
@@ -84,7 +84,7 @@ class PqrsManagementTest extends TestCase
         ]);
 
         $response->assertStatus(302);
-        $this->assertDatabaseHas('pqrs', [
+        $this->assertDatabaseHas('operations.pqrs', [
             'id' => $this->pqrs->id,
             'respuesta' => 'Respuesta desde SuperAdmin.',
             'estado' => 'en_proceso'

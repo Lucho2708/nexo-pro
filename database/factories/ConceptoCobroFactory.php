@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\ConceptoCobro;
-use App\Models\Copropiedad;
+use App\Modules\Finance\Models\ConceptoCobro;
+use App\Modules\Property\Models\Copropiedad;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ConceptoCobroFactory extends Factory

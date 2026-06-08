@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Asamblea;
 
-use App\Models\Asamblea;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
+use App\Modules\Asamblea\Models\Asamblea;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
 use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

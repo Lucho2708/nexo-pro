@@ -3,6 +3,8 @@
 namespace App\Http\Requests\SuperAdmin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use App\Modules\IAM\Models\User;
 
 class TransferManagementRequest extends FormRequest
 {
@@ -14,8 +16,8 @@ class TransferManagementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'new_admin_id' => 'required|exists:users,id',
-            'old_admin_id' => 'nullable|exists:users,id',
+            'new_admin_id' => ['required', Rule::exists(User::class, 'id')],
+            'old_admin_id' => ['nullable', Rule::exists(User::class, 'id')],
         ];
     }
 }

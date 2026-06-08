@@ -237,11 +237,11 @@ const getPlanConfig = (plan: string) => {
                                     <span class="material-symbols-rounded text-lg">payments</span>
                                 </button>
                             </Tooltip>
-                            <Tooltip :text="c.settings.asamblea_virtual_enabled ? 'Desactivar Asamblea' : 'Activar Asamblea'">
+                            <Tooltip :text="c.settings.asamblea_virtual_active ? 'Desactivar Asamblea' : 'Activar Asamblea'">
                                 <button 
-                                    @click="updateLicense(c, {asamblea_virtual_enabled: !c.settings.asamblea_virtual_enabled})" 
+                                    @click="updateLicense(c, {asamblea_virtual_active: !c.settings.asamblea_virtual_active})" 
                                     class="flex-1 py-1.5 rounded-xl flex items-center justify-center transition-all"
-                                    :class="c.settings.asamblea_virtual_enabled ? 'bg-white shadow-sm text-primary' : 'text-on-surface-variant/20 hover:text-on-surface-variant/40'"
+                                    :class="c.settings.asamblea_virtual_active ? 'bg-white shadow-sm text-primary' : 'text-on-surface-variant/20 hover:text-on-surface-variant/40'"
                                 >
                                     <span class="material-symbols-rounded text-lg">videocam</span>
                                 </button>

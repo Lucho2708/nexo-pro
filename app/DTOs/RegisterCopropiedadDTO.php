@@ -14,7 +14,8 @@ class RegisterCopropiedadDTO
         public readonly int $torres,
         public readonly string $name,
         public readonly string $email,
-        public readonly string $password
+        public readonly string $password,
+        public readonly bool $is_standalone = false
     ) {}
 
     public static function fromRequest(array $validatedData): self
@@ -29,7 +30,8 @@ class RegisterCopropiedadDTO
             torres: (int) $validatedData['torres'],
             name: $validatedData['name'],
             email: $validatedData['email'],
-            password: $validatedData['password']
+            password: $validatedData['password'],
+            is_standalone: (bool) ($validatedData['is_standalone'] ?? false)
         );
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
-use App\Models\Asamblea;
+use App\Modules\Asamblea\Models\Asamblea;
 use App\Modules\IAM\Models\User;
-use App\Services\AsambleaReportService;
+use App\Modules\Asamblea\Services\AsambleaReportService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

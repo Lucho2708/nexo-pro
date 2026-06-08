@@ -224,7 +224,7 @@
 ### AV-AV01-005: Activación por Super Admin (Módulo Add-on)
 **Prioridad:** Bloqueante | **SP:** 3
 **Como** Super Admin, **quiero** activar/inactivar el módulo por copropiedad, **para** gestionar el cobro adicional del servicio.
-- [ ] CA1: Toggle `asamblea_virtual_active` en el panel de gestión de copropiedades.
-- [ ] CA2: Middleware 403 si el módulo está inactivo para el conjunto.
-- [ ] CA3: Registro de auditoría obligatorio para todas las acciones de asamblea.
+- [x] CA1: Toggle `asamblea_virtual_active` en el panel de gestión de copropiedades.
+- [x] CA2: Middleware 403 si el módulo está inactivo para el conjunto.
+- [x] CA3: Registro de auditoría obligatorio para todas las acciones de asamblea.
 

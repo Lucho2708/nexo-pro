@@ -4,7 +4,7 @@ namespace App\Services\Financial; // Lo mantendré en este namespace ya que a ve
 
 namespace App\Services\Operations;
 
-use App\Models\ZonaComun;
+use App\Modules\Property\Models\ZonaComun;
 use App\Repositories\Interfaces\ZonaComunRepositoryInterface;
 
 class ZonaComunService

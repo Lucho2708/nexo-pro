@@ -25,7 +25,8 @@ class CaptureSystemMetrics
         }
 
         try {
-            \Illuminate\Support\Facades\DB::table('system_metrics')->insert([
+            \Illuminate\Support\Facades\DB::table('operations.system_metrics')->insert([
+                'id'          => \Illuminate\Support\Str::uuid()->toString(),
                 'latency_ms'  => $duration,
                 'status_code' => $response->getStatusCode(),
                 'path'        => $request->path(),

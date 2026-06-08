@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Models\Pqrs;
+use App\Modules\Operations\Models\Pqrs;
 use Illuminate\Support\Collection;
 
 interface PqrsRepositoryInterface

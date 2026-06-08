@@ -28,7 +28,11 @@ class SystemModuleSeeder extends Seeder
         ];
 
         foreach ($modules as $module) {
-            \App\Models\SystemModule::updateOrCreate(['key' => $module['key']], $module);
+            SystemModule::updateOrCreate(['key' => $module['key']], $module);
+        }
+    }
+}
+$module);
         }
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\Copropiedad;
-use App\Models\Reserva;
-use App\Models\Unidad;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Operations\Models\Reserva;
+use App\Modules\Property\Models\Unidad;
 use App\Modules\IAM\Models\User;
-use App\Models\ZonaComun;
+use App\Modules\Property\Models\ZonaComun;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -42,7 +42,7 @@ test('a user can create a reservation', function () {
     $response->assertStatus(302);
     $response->assertSessionHas('success');
 
-    $this->assertDatabaseHas('reservas', [
+    $this->assertDatabaseHas('operations.reservas', [
         'user_id' => $this->user->id,
         'zona_id' => $this->zona->id,
         'fecha' => \Illuminate\Support\Carbon::parse($data['fecha']),
@@ -79,7 +79,7 @@ test('it prevents overlapping reservations', function () {
     $response->assertStatus(302);
     $response->assertSessionHas('error', 'El horario seleccionado ya se encuentra ocupado.');
     
-    $this->assertDatabaseCount('reservas', 1);
+    $this->assertDatabaseCount('operations.reservas', 1);
 });
 
 test('it allows back-to-back reservations if handled correctly', function () {
@@ -110,7 +110,7 @@ test('it allows back-to-back reservations if handled correctly', function () {
     $response->assertStatus(302);
     $response->assertSessionHas('success');
     
-    $this->assertDatabaseCount('reservas', 2);
+    $this->assertDatabaseCount('operations.reservas', 2);
 });
 
 test('it prevents reservation if unit is in debt and zone settings block it', function () {
@@ -133,7 +133,7 @@ test('it prevents reservation if unit is in debt and zone settings block it', fu
     $response->assertStatus(302);
     $response->assertSessionHas('error', 'La unidad presenta saldos pendientes. No es posible realizar reservas.');
     
-    $this->assertDatabaseCount('reservas', 0);
+    $this->assertDatabaseCount('operations.reservas', 0);
 });
 
 test('it allows reservation if unit is in debt but zone settings allow it', function () {
@@ -155,7 +155,7 @@ test('it allows reservation if unit is in debt but zone settings allow it', func
     $response->assertStatus(302);
     $response->assertSessionHas('success');
     
-    $this->assertDatabaseCount('reservas', 1);
+    $this->assertDatabaseCount('operations.reservas', 1);
 });
 
 test('it enforces monthly reservation limit', function () {
@@ -187,7 +187,7 @@ test('it enforces monthly reservation limit', function () {
     $response->assertStatus(302);
     $response->assertSessionHas('error', 'Se ha alcanzado el límite máximo de 1 reservas mensuales para esta zona.');
     
-    $this->assertDatabaseCount('reservas', 1);
+    $this->assertDatabaseCount('operations.reservas', 1);
 });
 
 test('it enforces minimum anticipation rules', function () {
@@ -209,5 +209,5 @@ test('it enforces minimum anticipation rules', function () {
     $response->assertStatus(302);
     $response->assertSessionHas('error', 'La reserva debe realizarse con al menos 3 días de anticipación.');
     
-    $this->assertDatabaseCount('reservas', 0);
+    $this->assertDatabaseCount('operations.reservas', 0);
 });

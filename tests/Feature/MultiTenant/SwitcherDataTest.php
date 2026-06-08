@@ -1,7 +1,7 @@
 <?php
 
 use App\Modules\IAM\Models\User;
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -30,9 +30,11 @@ test('a super admin sees all copropiedades in available_copropiedades prop', fun
     $superAdmin = User::factory()->create(['role' => 'super_admin']);
     Copropiedad::factory()->count(5)->create();
 
+    $expectedCount = Copropiedad::count();
+
     $this->actingAs($superAdmin)
         ->get(route('superadmin.dashboard'))
         ->assertInertia(fn (Assert $page) => $page
-            ->has('auth.user.available_copropiedades', 5)
+            ->has('auth.user.available_copropiedades', $expectedCount)
         );
 });

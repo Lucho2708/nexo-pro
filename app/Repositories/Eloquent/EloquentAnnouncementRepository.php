@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\Announcement;
+use App\Modules\Operations\Models\Announcement;
 use App\Repositories\Interfaces\AnnouncementRepositoryInterface;
 use Illuminate\Support\Collection;
 

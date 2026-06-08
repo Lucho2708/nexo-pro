@@ -12,6 +12,11 @@ class LegalDocument extends Model
 
     protected $table = 'iam.legal_documents';
 
+    protected static function newFactory()
+    {
+        return \Database\Factories\LegalDocumentFactory::new();
+    }
+
     protected $fillable = [
         'type',
         'title',

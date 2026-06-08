@@ -2,7 +2,7 @@
 
 namespace App\Services\Pqrs;
 
-use App\Models\Pqrs;
+use App\Modules\Operations\Models\Pqrs;
 use App\Repositories\Interfaces\PqrsRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 

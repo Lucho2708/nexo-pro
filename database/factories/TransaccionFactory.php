@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\Transaccion;
-use App\Models\Unidad;
-use App\Models\ConceptoCobro;
+use App\Modules\Finance\Models\Transaccion;
+use App\Modules\Property\Models\Unidad;
+use App\Modules\Finance\Models\ConceptoCobro;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TransaccionFactory extends Factory

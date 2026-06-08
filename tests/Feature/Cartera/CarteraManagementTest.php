@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Cartera;
 
-use App\Actions\Cartera\ImportUnitsAction;
+use App\Modules\Property\Actions\ImportUnitsAction;
 use App\Actions\Cartera\ProcessPaymentAction;
-use App\Models\ConceptoCobro;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
+use App\Modules\Finance\Models\ConceptoCobro;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
 use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -47,7 +47,7 @@ class CarteraManagementTest extends TestCase
         $results = $action->execute($filePath, $this->copropiedad->id);
 
         $this->assertEquals(1, $results['success']);
-        $this->assertDatabaseHas('unidades', [
+        $this->assertDatabaseHas('property.unidades', [
             'nombre' => '101',
             'torre' => 'Torre A',
             'saldo_actual' => 500000
@@ -81,7 +81,7 @@ class CarteraManagementTest extends TestCase
         );
 
         $this->assertEquals(700000, $unidad->fresh()->saldo_actual);
-        $this->assertDatabaseHas('transacciones', [
+        $this->assertDatabaseHas('finance.transacciones', [
             'unidad_id' => $unidad->id,
             'monto' => 300000,
             'tipo' => 'abono'

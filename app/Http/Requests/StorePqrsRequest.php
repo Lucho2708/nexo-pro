@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use App\Modules\Property\Models\Unidad;
 
 class StorePqrsRequest extends FormRequest
 {
@@ -26,9 +28,9 @@ class StorePqrsRequest extends FormRequest
         return [
             'unidad_id' => [
                 'required', 
-                'exists:unidades,id',
+                Rule::exists(Unidad::class, 'id'),
                 function ($attribute, $value, $fail) use ($user) {
-                    if (!$user->unidades()->where('unidades.id', $value)->exists()) {
+                    if (!$user->unidades()->where('property.unidades.id', $value)->exists()) {
                         $fail('La unidad seleccionada no le pertenece o no es válida en su contexto.');
                     }
                 }

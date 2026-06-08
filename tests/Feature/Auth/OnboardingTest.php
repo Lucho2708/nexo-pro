@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -43,7 +43,7 @@ it('registers a new copropiedad and admin user', function () {
     $response->assertRedirect(route('dashboard'));
     $this->assertAuthenticated();
 
-    $this->assertDatabaseHas('copropiedades', [
+    $this->assertDatabaseHas('property.copropiedades', [
         'nit' => '123456789-0',
         'nombre' => 'Residencial El Sol',
         'plan' => 'pro',

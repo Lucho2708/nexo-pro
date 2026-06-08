@@ -1,7 +1,7 @@
 <?php
 
 use App\Modules\IAM\Models\User;
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

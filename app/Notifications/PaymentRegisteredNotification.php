@@ -2,9 +2,9 @@
 
 namespace App\Notifications;
 
-use App\Models\Transaccion;
+use App\Modules\Finance\Models\Transaccion;
 use App\Modules\IAM\Models\User;
-use App\Models\Unidad;
+use App\Modules\Property\Models\Unidad;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;

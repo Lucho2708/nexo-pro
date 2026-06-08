@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\Copropiedad;
-use App\Models\OnlinePayment;
-use App\Models\Unidad;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Finance\Models\OnlinePayment;
+use App\Modules\Property\Models\Unidad;
 use App\Modules\IAM\Models\User;
-use App\Models\ConceptoCobro;
+use App\Modules\Finance\Models\ConceptoCobro;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
@@ -32,8 +32,15 @@ class WompiPaymentTest extends TestCase
         $copropiedad = Copropiedad::factory()->create([
             'license_expires_at' => now()->addYear(),
             'settings' => [
-                'wompi_integrity_key' => 'custom_integrity',
-                'wompi_public_key' => 'pub_custom',
+                'payments' => [
+                    'active_gateway' => 'wompi',
+                    'gateways' => [
+                        'wompi' => [
+                            'public_key' => 'pub_custom',
+                            'webhook_secret' => 'custom_webhook',
+                        ]
+                    ]
+                ]
             ]
         ]);
         $user = User::factory()->create([
@@ -58,7 +65,7 @@ class WompiPaymentTest extends TestCase
         $this->assertEquals('pub_custom', $response->json('public_key'));
         
         // Verificar registro en DB
-        $this->assertDatabaseHas('online_payments', [
+        $this->assertDatabaseHas('finance.online_payments', [
             'amount' => 50000,
             'unidad_id' => $unidad->id,
             'status' => 'PENDING',
@@ -70,7 +77,14 @@ class WompiPaymentTest extends TestCase
     {
         $copropiedad = Copropiedad::factory()->create([
             'settings' => [
-                'wompi_webhook_secret' => 'webhook_secret_123',
+                'payments' => [
+                    'active_gateway' => 'wompi',
+                    'gateways' => [
+                        'wompi' => [
+                            'webhook_secret' => 'webhook_secret_123',
+                        ]
+                    ]
+                ]
             ]
         ]);
         
@@ -125,7 +139,7 @@ class WompiPaymentTest extends TestCase
         $this->assertEquals($wompiId, $payment->fresh()->wompi_id);
 
         // Verificar que se creó la transacción contable interna
-        $this->assertDatabaseHas('transacciones', [
+        $this->assertDatabaseHas('finance.transacciones', [
             'unidad_id' => $unidad->id,
             'monto' => 50000,
             'tipo' => 'abono'
@@ -139,7 +153,16 @@ class WompiPaymentTest extends TestCase
     public function test_it_rejects_webhooks_with_invalid_checksum()
     {
         $copropiedad = Copropiedad::factory()->create([
-            'settings' => ['wompi_webhook_secret' => 'real_secret']
+            'settings' => [
+                'payments' => [
+                    'active_gateway' => 'wompi',
+                    'gateways' => [
+                        'wompi' => [
+                            'webhook_secret' => 'real_secret',
+                        ]
+                    ]
+                ]
+            ]
         ]);
         $unidad = Unidad::factory()->create(['copropiedad_id' => $copropiedad->id]);
         

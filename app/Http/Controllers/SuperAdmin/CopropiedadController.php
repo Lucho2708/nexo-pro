@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Copropiedad;
-use App\Models\FeatureUsageLog;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Operations\Models\FeatureUsageLog;
 use App\Modules\IAM\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -64,7 +64,7 @@ class CopropiedadController extends Controller
             default  => "DATE_FORMAT(created_at, '%H:00') as time", // MySQL fallback
         };
 
-        $metricsData = DB::table('system_metrics')
+        $metricsData = DB::table('operations.system_metrics')
             ->select(
                 DB::raw($timeRaw),
                 DB::raw('AVG(latency_ms) as latency'),

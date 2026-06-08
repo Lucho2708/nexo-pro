@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use App\Models\GlobalSetting;
+use App\Modules\Operations\Models\GlobalSetting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 

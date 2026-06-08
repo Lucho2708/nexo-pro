@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-use App\Models\Announcement;
+use App\Modules\Operations\Models\Announcement;
 use Illuminate\Support\Facades\Auth;
 
 class HandleInertiaRequests extends Middleware
@@ -46,6 +46,8 @@ class HandleInertiaRequests extends Middleware
                     'copropiedad_settings' => $user->current_copropiedad_id ? ($user->currentCopropiedad()->first()->settings ?? []) : [],
                     'available_copropiedades' => $this->getAvailableProperties($user),
                     'is_impersonating' => session()->has('impersonator_id'),
+                    'permissions' => $this->getSafePermissions($user),
+                    'roles' => $this->getSafeRoles($user),
                 ] : null,
             ],
             'notifications' => $this->getSafeNotifications($user),
@@ -57,12 +59,31 @@ class HandleInertiaRequests extends Middleware
         ];
     }
 
+    protected function getSafePermissions($user) {
+        try {
+            return $user->roles()->with('permissions')->get()->pluck('permissions')->flatten()->pluck('name')->unique()->values();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Error in getSafePermissions: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    protected function getSafeRoles($user) {
+        try {
+            return $user->roles()->pluck('name');
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Error in getSafeRoles: ' . $e->getMessage());
+            return [];
+        }
+    }
+
     protected function getSafeNotifications($user)
     {
         if (! $user) return [];
         try {
             return $user->notifications()->unread()->latest()->take(5)->get();
         } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Error in getSafeNotifications: ' . $e->getMessage());
             return [];
         }
     }
@@ -70,7 +91,7 @@ class HandleInertiaRequests extends Middleware
     protected function getSafeAnnouncements($user)
     {
         try {
-            if (!\Illuminate\Support\Facades\Schema::hasTable('announcements')) {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('operations.announcements')) {
                 return [];
             }
 
@@ -101,6 +122,7 @@ class HandleInertiaRequests extends Middleware
 
             return $query->latest()->get();
         } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Error in getSafeAnnouncements: ' . $e->getMessage());
             return [];
         }
     }
@@ -114,7 +136,7 @@ class HandleInertiaRequests extends Middleware
 
         try {
             if ($user->isSuperAdmin()) {
-                return \App\Models\Copropiedad::all();
+                return \App\Modules\Property\Models\Copropiedad::all();
             }
 
             if ($user->isAdmin()) {
@@ -125,6 +147,7 @@ class HandleInertiaRequests extends Middleware
                 return $user->unidades()->with('copropiedad')->get()->pluck('copropiedad')->unique('id')->values();
             }
         } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Error in getAvailableProperties: ' . $e->getMessage());
             return [];
         }
 

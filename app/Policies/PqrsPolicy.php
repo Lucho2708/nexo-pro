@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Pqrs;
+use App\Modules\Operations\Models\Pqrs;
 use App\Modules\IAM\Models\User;
 use Illuminate\Auth\Access\Response;
 

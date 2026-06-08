@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -41,7 +41,7 @@ it('an authenticated admin can create a second copropiedad', function () {
 
     $response->assertRedirect();
     
-    $this->assertDatabaseHas('copropiedades', [
+    $this->assertDatabaseHas('property.copropiedades', [
         'nit' => '900-2',
         'nombre' => 'Copropiedad B',
     ]);

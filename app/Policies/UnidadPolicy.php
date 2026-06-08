@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Unidad;
+use App\Modules\Property\Models\Unidad;
 use App\Modules\IAM\Models\User;
 use Illuminate\Auth\Access\Response;
 

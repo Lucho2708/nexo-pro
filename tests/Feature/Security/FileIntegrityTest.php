@@ -3,8 +3,8 @@
 namespace Tests\Feature\Security;
 
 use App\Modules\IAM\Models\User;
-use App\Models\Copropiedad;
-use App\Models\Unidad;
+use App\Modules\Property\Models\Copropiedad;
+use App\Modules\Property\Models\Unidad;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
@@ -41,7 +41,7 @@ class FileIntegrityTest extends TestCase
         $response = $this->actingAs($admin)
             ->post(route('cartera.payment'), [
                 'unidad_id' => $unidad->id,
-                'concepto_id' => \App\Models\ConceptoCobro::factory()->create(['copropiedad_id' => $copropiedad->id])->id,
+                'concepto_id' => \App\Modules\Finance\Models\ConceptoCobro::factory()->create(['copropiedad_id' => $copropiedad->id])->id,
                 'monto' => 100,
                 'fecha' => now()->toDateString(),
                 'soporte' => $file,

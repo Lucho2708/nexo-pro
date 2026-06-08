@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Models\Reserva;
+use App\Modules\Operations\Models\Reserva;
 use Illuminate\Support\Collection;
 
 interface ReservationRepositoryInterface

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Announcement;
+use App\Modules\Operations\Models\Announcement;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class AnnouncementFactory extends Factory
 {
+    protected $model = Announcement::class;
+
     /**
      * Define the model's default state.
      *

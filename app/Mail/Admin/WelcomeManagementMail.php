@@ -2,7 +2,7 @@
 
 namespace App\Mail\Admin;
 
-use App\Models\Copropiedad;
+use App\Modules\Property\Models\Copropiedad;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;

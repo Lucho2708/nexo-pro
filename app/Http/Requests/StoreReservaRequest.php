@@ -4,6 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use App\Modules\Property\Models\ZonaComun;
+use App\Modules\Property\Models\Unidad;
 
 class StoreReservaRequest extends FormRequest
 {
@@ -27,10 +30,9 @@ class StoreReservaRequest extends FormRequest
         return [
             'zona_id' => [
                 'required',
-                'exists:zonas_comunes,id',
+                Rule::exists(ZonaComun::class, 'id'),
                 function ($attribute, $value, $fail) use ($user) {
-                    $existsInTenant = DB::table('zonas_comunes')
-                        ->where('id', $value)
+                    $existsInTenant = ZonaComun::where('id', $value)
                         ->where('copropiedad_id', $user->current_copropiedad_id)
                         ->exists();
                     if (!$existsInTenant) {
@@ -40,7 +42,7 @@ class StoreReservaRequest extends FormRequest
             ],
             'unidad_id' => [
                 'required',
-                'exists:unidades,id',
+                Rule::exists(Unidad::class, 'id'),
                 function ($attribute, $value, $fail) use ($user) {
                     if (!$user->unidades()->where('unidades.id', $value)->exists()) {
                         $fail('La unidad seleccionada no le pertenece.');

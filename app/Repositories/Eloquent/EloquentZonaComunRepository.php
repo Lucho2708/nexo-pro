@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\ZonaComun;
+use App\Modules\Property\Models\ZonaComun;
 use App\Repositories\Interfaces\ZonaComunRepositoryInterface;
 use Illuminate\Support\Collection;
 

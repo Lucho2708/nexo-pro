@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\Pqrs;
+use App\Modules\Operations\Models\Pqrs;
 use App\Repositories\Interfaces\PqrsRepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

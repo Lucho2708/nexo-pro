@@ -26,7 +26,7 @@ class UpdateLicenseRequest extends FormRequest
             'can_charge_online' => 'boolean',
             'pqrs_enabled'      => 'boolean',
             'reservas_enabled'  => 'boolean',
-            'asamblea_virtual_enabled' => 'boolean',
+            'asamblea_virtual_active' => 'boolean',
             'plan'              => 'string|in:basic,pro,enterprise',
             'license_status'    => 'string|in:active,suspended,expired',
             'license_expires_at' => 'nullable|date',

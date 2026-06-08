@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
-use App\Models\Transaccion;
+use App\Modules\Finance\Models\Transaccion;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -35,9 +35,17 @@ class OwnerPortalController extends Controller
             ->get();
 
         // Get active or scheduled assemblies for the current copropiedad
-        $asambleas = \App\Models\Asamblea::where('copropiedad_id', $currentCopropiedadId)
+        $asambleas = \App\Modules\Asamblea\Models\Asamblea::where('copropiedad_id', $currentCopropiedadId)
             ->whereIn('status', ['in_progress', 'scheduled'])
             ->orderBy('fecha', 'asc')
+            ->get();
+
+        $announcements = \App\Modules\Operations\Models\Announcement::active()
+            ->where(function ($query) use ($currentCopropiedadId) {
+                $query->where('copropiedad_id', $currentCopropiedadId)
+                    ->orWhereNull('copropiedad_id');
+            })
+            ->orderBy('created_at', 'desc')
             ->get();
             
         return Inertia::render('Owner/Dashboard', [
@@ -45,6 +53,7 @@ class OwnerPortalController extends Controller
             'total_saldo' => $totalSaldo,
             'transacciones' => $transacciones,
             'asambleas' => $asambleas,
+            'announcements' => $announcements,
             'user' => [
                 'name' => $user->name,
                 'email' => $user->email,
