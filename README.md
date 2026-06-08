@@ -4,32 +4,40 @@ NEXO-PRO es una plataforma de alta ingeniería de grado industrial diseñada par
 
 ---
 
-## 🌟 Logros Recientes y Capacidades Avanzadas
+## 🏗️ Arquitectura y Diseño
+
+### Monolito Modular con Aislamiento de Esquemas
+NEXO-PRO ha evolucionado hacia una arquitectura de **Monolito Modular**, garantizando una alta cohesión y bajo acoplamiento entre dominios. La integridad y seguridad de los datos se logran mediante el **aislamiento estricto de esquemas en PostgreSQL**.
+
+#### Módulos Principales (Segregación de Esquemas):
+- `iam.*`: Gestión de Identidad y Accesos.
+- `property.*`: Gestión de Unidades, Copropiedades y Zonas.
+- `finance.*`: Gestión de Cartera, Transacciones y Recaudo.
+- `asamblea.*`: Motor de Asambleas Virtuales.
+- `operations.*`: PQRS, Reservas, Anuncios y Telemetría del sistema.
+
+---
+
+## 🌟 Capacidades Avanzadas
 
 ### 1. Sistema de Asambleas Standalone (Modo Cápsula)
-Hemos implementado un flujo de **Onboarding Externo** que permite a administradores que no utilizan la suite completa de NEXO-PRO acceder exclusivamente al poder del módulo de asambleas.
-- **Wizard Administrativo**: Registro de copropiedades con validación legal completa (NIT, Ciudad, Dirección).
-- **Importación Masiva**: Carga de quórum externo mediante archivos CSV con procesamiento de alta velocidad.
-- **Acceso por Token/Documento**: Validación de propietarios externos mediante los últimos 4 dígitos de su documento, eliminando la necesidad de registro previo.
+Flujo de **Onboarding Externo** para administradores que requieren exclusividad en el módulo de asambleas:
+- **Wizard Administrativo**: Registro de copropiedades con validación legal completa.
+- **Importación Masiva**: Carga rápida de quórum externo mediante archivos CSV.
+- **Acceso por Documento**: Validación mediante los últimos 4 dígitos del documento, sin registro previo necesario.
 
-### 2. Aislamiento Dinámico de Datos (Ecosistema Dinámico)
-Para garantizar la máxima integridad y rendimiento en eventos masivos:
-- **Tablas On-Demand**: Creación dinámica de tablas de auditoría (`aslog_`), quórum (`asquorum_`), preguntas (`aspreguntas_`) y votos (`asvotos_`) para cada asamblea.
-- **Escalabilidad**: Soporte verificado para más de **1,000 unidades concurrentes** mediante pruebas de estrés automatizadas.
+### 2. Aislamiento Dinámico y Escalabilidad
+Gestión de eventos masivos mediante **Tablas On-Demand**:
+- Creación dinámica de tablas de auditoría (`aslog_`), quórum (`asquorum_`) y votación (`asvotos_`) por asamblea.
+- Soporte verificado para +1,000 unidades concurrentes mediante pruebas de estrés.
 
-### 3. Gestión Estricta de Unidades y Coeficientes
-- **Modelado de Tipos de Unidad**: Definición de áreas, componentes y características por tipo.
-- **Calculadora de Coeficientes**: Motor automático que recalcula la participación de cada unidad basándose en el área construida total del conjunto.
+### 3. Gestión Financiera y de Unidades
+- **Cálculo Automático**: Motor de coeficientes basado en áreas construidas.
+- **Automatización Financiera**: Registro de pagos, generación de conceptos de cobro y validación de mora para zonas comunes.
 
-### 4. Arquitectura de Monolito Modular (Evolución Arquitectónica) 🚀
-Hemos iniciado la transición de un monolito tradicional a un **Monolito Modular**, incrementando la cohesión y reduciendo el acoplamiento:
-- **Módulo IAM (Identity & Access Management)**: Primer componente totalmente aislado en su propio namespace (`App\Modules\IAM`).
-- **Segregación de Esquemas (PostgreSQL)**: Las tablas de identidad residen ahora en un esquema dedicado llamado `iam`, protegiendo la integridad de los datos y permitiendo joins de alto rendimiento entre dominios.
-- **Inversión de Dependencias**: Implementación de `IAMServiceInterface` para desacoplar la autenticación del resto de la lógica de negocio.
-
-### 5. Interfaz Adaptativa y Seguridad Contextual
-- **Navegación Reactiva**: La interfaz se contrae o expande automáticamente según el contexto de la copropiedad actual.
-- **Standalone Gate**: Middleware especializado que bloquea el acceso a módulos de Cartera o Reservas cuando se opera en una copropiedad de "Solo Asambleas".
+### 4. Seguridad Contextual
+- **Standalone Gate**: Middleware especializado que restringe el acceso a módulos financieros cuando se opera en una copropiedad de "Solo Asambleas".
+- **Integridad de Datos**: Auditoría automatizada de todas las acciones del sistema con sanitización de metadatos.
 
 ---
 
@@ -37,42 +45,40 @@ Hemos iniciado la transición de un monolito tradicional a un **Monolito Modular
 - **Backend**: Laravel 11/12 (PHP 8.3+)
 - **Frontend**: Vue.js 3 + Inertia.js + Tailwind CSS (Diseño Premium)
 - **Tiempo Real**: Laravel Reverb (WebSockets nativos)
-- **Video & Audio**: LiveKit (WebRTC Industrial para baja latencia)
-- **Base de Datos**: PostgreSQL con soporte para JSONB e índices GIN.
+- **Video & Audio**: LiveKit (WebRTC Industrial)
+- **Base de Datos**: PostgreSQL con soporte JSONB e índices GIN.
 
 ---
 
-## 🚀 Guía de Alistamiento
+## 🚀 Guía de Instalación y Despliegue
 
-### Instalación Base
-```bash
-composer install
-npm install
-php artisan migrate
-php artisan db:seed
-```
+### Requisitos
+- PHP 8.3+, Composer, Node.js, PostgreSQL
 
-### Ejecución de Tests (TDD)
-Nuestra suite de pruebas garantiza la estabilidad del sistema multi-tenant:
+### Configuración
+1. **Instalación:**
+   ```bash
+   composer install
+   npm install
+   ```
+2. **Base de Datos:**
+   Asegurar conexión PostgreSQL. Ejecutar migraciones consolidadas (crea esquemas automáticamente):
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
+
+### Tests (TDD)
+La suite garantiza la estabilidad multi-tenant:
 ```bash
 ./vendor/bin/pest
 ```
 
-### Motor de Tiempo Real y Video
-1. **LiveKit Server**:
-   ```bash
-   livekit-server --config livekit.yaml
-   ```
-2. **Reverb**:
-   ```bash
-   php artisan reverb:start
-   ```
-
 ---
 
 ## 🛡️ Estándares de Ingeniería
-- **SOLID & POO**: Código desacoplado, mantenible y abierto a extensión.
-- **UX/UI Premium**: Interfaces mobile-first con micro-interacciones de alta fidelidad.
-- **Seguridad**: Protección contra OWASP Top 10, parametrización total y hashing de grado militar.
+- **SOLID & POO**: Código modular, desacoplado y mantenible.
+- **UX/UI Premium**: Interfaz mobile-first, moderna y responsiva.
+- **Seguridad**: Protección contra OWASP Top 10, parametrización de queries y cifrado robusto.
 
-Desarrollado con pasión por **Lucho2708** & **Antigravity AI** (Advanced Agentic Coding).
+Desarrollado con pasión por **Lucho2708** & **Antigravity AI**.
