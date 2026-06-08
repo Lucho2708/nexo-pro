@@ -44,7 +44,7 @@ class StoreReservaRequest extends FormRequest
                 'required',
                 Rule::exists(Unidad::class, 'id'),
                 function ($attribute, $value, $fail) use ($user) {
-                    if (!$user->unidades()->where('unidades.id', $value)->exists()) {
+                    if (!$user->unidades()->where('property.unidades.id', $value)->exists()) {
                         $fail('La unidad seleccionada no le pertenece.');
                     }
                 }

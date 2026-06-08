@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Modules\Operations\Models\SystemModule;
 use Illuminate\Database\Seeder;
 
 class SystemModuleSeeder extends Seeder
@@ -29,10 +29,6 @@ class SystemModuleSeeder extends Seeder
 
         foreach ($modules as $module) {
             SystemModule::updateOrCreate(['key' => $module['key']], $module);
-        }
-    }
-}
-$module);
         }
     }
 }

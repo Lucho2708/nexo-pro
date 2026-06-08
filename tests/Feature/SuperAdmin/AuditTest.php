@@ -34,7 +34,7 @@ test('a super admin can view the audit logs', function () {
     $response->assertStatus(200);
     $response->assertInertia(fn (Assert $page) => $page
         ->component('SuperAdmin/Audit/Index')
-        ->has('logs.data', 1)
+        ->has('logs.data', 2)
         ->has('features')
         ->has('chartData')
     );

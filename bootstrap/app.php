@@ -39,5 +39,14 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException $e, $request) {
+            if ($request->header('X-Inertia')) {
+                return \Inertia\Inertia::render('Errors/Forbidden', [
+                    'message' => $e->getMessage() ?: 'No tienes los permisos necesarios para acceder a este módulo.'
+                ])->toResponse($request)->setStatusCode(403);
+            }
+            return response()->view('errors.403', [
+                'message' => $e->getMessage() ?: 'No tienes los permisos necesarios para acceder a este módulo.'
+            ], 403);
+        });
     })->create();
