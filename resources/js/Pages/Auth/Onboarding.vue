@@ -47,6 +47,9 @@ const form = useForm({
     terms: false,
 });
 
+const showPassword = ref(false);
+const showPasswordConfirm = ref(false);
+
 const nextStep = () => {
     if (step.value < totalSteps) step.value++;
 };
@@ -185,8 +188,18 @@ const stepInfo = computed(() => {
                                     <Input v-model="form.email" type="email" label="Correo Electrónico Corporativo" placeholder="admin@conjunto.com" icon="alternate_email" required :error="form.errors.email" />
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                    <Input v-model="form.password" type="password" label="Contraseña de Acceso" placeholder="••••••••" icon="lock" required :error="form.errors.password" />
-                                    <Input v-model="form.password_confirmation" type="password" label="Confirmar Contraseña" placeholder="••••••••" icon="verified_user" required />
+                                    <div class="relative">
+                                        <Input v-model="form.password" :type="showPassword ? 'text' : 'password'" label="Contraseña de Acceso" placeholder="••••••••" icon="lock" required :error="form.errors.password" />
+                                        <button type="button" @click="showPassword = !showPassword" class="absolute right-4 top-6 z-20 text-on-surface-variant/40 hover:text-primary">
+                                            <span class="material-symbols-outlined text-xl">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                                        </button>
+                                    </div>
+                                    <div class="relative">
+                                        <Input v-model="form.password_confirmation" :type="showPasswordConfirm ? 'text' : 'password'" label="Confirmar Contraseña" placeholder="••••••••" icon="verified_user" required />
+                                        <button type="button" @click="showPasswordConfirm = !showPasswordConfirm" class="absolute right-4 top-6 z-20 text-on-surface-variant/40 hover:text-primary">
+                                            <span class="material-symbols-outlined text-xl">{{ showPasswordConfirm ? 'visibility_off' : 'visibility' }}</span>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="pt-4 border-t border-outline-variant/5">
                                     <Checkbox 
