@@ -68,7 +68,7 @@ class AsambleaController extends \App\Http\Controllers\Controller
             return Inertia::render('Asamblea/Show', [
                 'asamblea' => $asamblea->load('copropiedad'),
                 'preguntas' => $this->asambleaService->getPreguntasWithOpciones($asamblea),
-                'token' => $this->asambleaService->generateToken($user, $masterUnidad ?? new Unidad(['torre' => 'MOD', 'nombre' => 'ADMIN'])),
+                'token' => $this->asambleaService->generateToken($user, $masterUnidad ?? new Unidad(['torre' => 'MOD', 'nombre' => 'ADMIN']), $asamblea),
                 'unidades' => $unidades, 
                 'is_admin' => $isAdmin,
                 'user' => $user, 
@@ -129,20 +129,20 @@ class AsambleaController extends \App\Http\Controllers\Controller
 
             return response()->json([
                 'results' => $results,
-                'total_participating_units' => DB::table($votesTable)->where('pregunta_id', $pregunta->id)->count(),
-                'total_participating_weight' => DB::table($votesTable)->where('pregunta_id', $pregunta->id)->sum('peso'),
+                'total_participating_units' => (int) $results->sum('total_votos'),
+                'total_participating_weight' => round((float) $results->sum('total_peso'), 5),
             ]);
         }
 
         $results = $pregunta->votos()
-            ->select('opcion_id', \DB::raw('SUM(peso) as total_peso'), \DB::raw('COUNT(*) as total_votos'))
+            ->select('opcion_id', DB::raw('SUM(peso) as total_peso'), DB::raw('COUNT(*) as total_votos'))
             ->groupBy('opcion_id')
             ->get();
 
         return response()->json([
             'results' => $results,
-            'total_participating_units' => $pregunta->votos()->count(),
-            'total_participating_weight' => $pregunta->votos()->sum('peso'),
+            'total_participating_units' => (int) $results->sum('total_votos'),
+            'total_participating_weight' => round((float) $results->sum('total_peso'), 5),
         ]);
     }
 

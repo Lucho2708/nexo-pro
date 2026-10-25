@@ -6,6 +6,8 @@ use App\Modules\IAM\Actions\Fortify\CreateNewUser;
 use App\Modules\IAM\Actions\Fortify\ResetUserPassword;
 use App\Modules\IAM\Actions\Fortify\UpdateUserPassword;
 use App\Modules\IAM\Actions\Fortify\UpdateUserProfileInformation;
+use App\Modules\IAM\Contracts\RoleRedirectionServiceInterface;
+use App\Modules\IAM\Services\RoleRedirectionService;
 use App\Modules\IAM\Responses\LoginResponse;
 use App\Modules\IAM\Responses\TwoFactorLoginResponse;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -25,6 +27,10 @@ class IAMServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(
+            RoleRedirectionServiceInterface::class,
+            RoleRedirectionService::class
+        );
         $this->registerFortifyResponses();
     }
 

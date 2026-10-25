@@ -7,4 +7,5 @@ return [
     App\Modules\Property\Providers\PropertyServiceProvider::class,
     App\Modules\Finance\Providers\FinanceServiceProvider::class,
     App\Modules\Operations\Providers\OperationsServiceProvider::class,
+    NexoPro\Infrastructure\Providers\NexoProServiceProvider::class,
 ];

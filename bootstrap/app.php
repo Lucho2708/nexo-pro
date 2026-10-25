@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -11,6 +12,15 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         channels: __DIR__.'/../routes/channels.php',
         health: '/up',
+        then: function () {
+            Route::middleware('web')->group(function () {
+                require base_path('routes/sysadmin.php');
+                require base_path('routes/backoffice.php');
+                require base_path('routes/admin.php');
+                require base_path('routes/portal.php');
+                require base_path('routes/porteria.php');
+            });
+        },
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
@@ -30,12 +40,15 @@ return Application::configure(basePath: dirname(__DIR__))
             'super-admin'  => \App\Http\Middleware\EnsureSuperAdmin::class,
             'ensure-admin' => \App\Http\Middleware\EnsureAdmin::class,
             'ensure-owner' => \App\Http\Middleware\EnsureOwner::class,
+            'ensure-security' => \App\Http\Middleware\EnsureSecurity::class,
+            'ensure-backoffice' => \App\Http\Middleware\EnsureBackoffice::class,
             'log-feature'  => \App\Http\Middleware\LogFeatureUsage::class,
             'check-license'      => \App\Http\Middleware\CheckLicenseStatus::class,
             'two-factor'         => \App\Http\Middleware\EnsureTwoFactorIsConfigured::class,
             'ensure-asamblea'    => \App\Http\Middleware\EnsureAsambleaIsActive::class,
             'ensure-legal'       => \App\Http\Middleware\EnsureLegalConsent::class,
             'standalone-gate'    => \App\Http\Middleware\RedirectStandaloneAdmin::class,
+            'permission'         => \App\Modules\IAM\Middleware\CheckPermission::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

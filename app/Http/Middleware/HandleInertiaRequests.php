@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Middleware;
 use App\Modules\Operations\Models\Announcement;
 use Illuminate\Support\Facades\Auth;
+use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -33,8 +34,14 @@ class HandleInertiaRequests extends Middleware
     {
         $user = $request->user();
 
+        $currentCopropiedad = $user && $user->current_copropiedad_id ? $user->currentCopropiedad : null;
+
         return [
             ...parent::share($request),
+            'ziggy' => fn () => [
+                ...(new Ziggy(null, $request->root()))->toArray(),
+                'location' => $request->url(),
+            ],
             'auth' => [
                 'user' => $user ? [
                     'id' => $user->id,
@@ -42,8 +49,8 @@ class HandleInertiaRequests extends Middleware
                     'email' => $user->email,
                     'role' => $user->role,
                     'is_standalone' => $user->is_standalone,
-                    'current_copropiedad' => $user->current_copropiedad_id ? $user->currentCopropiedad()->first() : null,
-                    'copropiedad_settings' => $user->current_copropiedad_id ? ($user->currentCopropiedad()->first()->settings ?? []) : [],
+                    'current_copropiedad' => $currentCopropiedad,
+                    'copropiedad_settings' => $currentCopropiedad ? ($currentCopropiedad->settings ?? []) : [],
                     'available_copropiedades' => $this->getAvailableProperties($user),
                     'is_impersonating' => session()->has('impersonator_id'),
                     'permissions' => $this->getSafePermissions($user),
@@ -60,8 +67,21 @@ class HandleInertiaRequests extends Middleware
     }
 
     protected function getSafePermissions($user) {
+        if (! $user) return [];
+
         try {
-            return $user->roles()->with('permissions')->get()->pluck('permissions')->flatten()->pluck('name')->unique()->values();
+            $permissions = $user->roles()->with('permissions')->get()->pluck('permissions')->flatten()->pluck('name')->unique()->values();
+
+            // Auto-heal / Fallback si el usuario tiene columna role pero no se ha poblado la tabla pivote iam.role_user
+            if ($permissions->isEmpty() && ! empty($user->role)) {
+                $role = \App\Modules\IAM\Models\Role::where('name', $user->role)->with('permissions')->first();
+                if ($role) {
+                    $user->roles()->syncWithoutDetaching([$role->id]);
+                    return $role->permissions->pluck('name')->unique()->values();
+                }
+            }
+
+            return $permissions;
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::error('Error in getSafePermissions: ' . $e->getMessage());
             return [];
@@ -69,8 +89,14 @@ class HandleInertiaRequests extends Middleware
     }
 
     protected function getSafeRoles($user) {
+        if (! $user) return [];
+
         try {
-            return $user->roles()->pluck('name');
+            $roles = $user->roles()->pluck('name');
+            if ($roles->isEmpty() && ! empty($user->role)) {
+                return collect([$user->role]);
+            }
+            return $roles;
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::error('Error in getSafeRoles: ' . $e->getMessage());
             return [];
@@ -144,7 +170,7 @@ class HandleInertiaRequests extends Middleware
             }
 
             if ($user->isOwner()) {
-                return $user->unidades()->with('copropiedad')->get()->pluck('copropiedad')->unique('id')->values();
+                return $user->unidades()->withoutGlobalScopes()->with('copropiedad')->get()->pluck('copropiedad')->filter()->unique('id')->values();
             }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::error('Error in getAvailableProperties: ' . $e->getMessage());

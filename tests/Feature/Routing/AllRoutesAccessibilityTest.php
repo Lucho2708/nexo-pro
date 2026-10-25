@@ -67,7 +67,7 @@ test('super admin routes are restricted correctly', function () {
  */
 test('admin routes are restricted correctly', function () {
     $routes = [
-        'dashboard',
+        'admin.dashboard',
         'cartera.index',
         'admin.zonas.index',
         'admin.reservas.index',
@@ -79,12 +79,14 @@ test('admin routes are restricted correctly', function () {
         $this->actingAs($this->admin)->get(route($routeName))->assertStatus(200);
         
         $response = $this->actingAs($this->owner)->get(route($routeName));
-        if ($routeName === 'dashboard') {
-            $response->assertStatus(302);
-        } else {
-            $response->assertStatus(403);
-        }
+        $response->assertStatus(403);
     }
+});
+
+test('central dashboard dispatcher redirects each role to its canonical home', function () {
+    $this->actingAs($this->admin)->get('/dashboard')->assertRedirect(route('admin.dashboard'));
+    $this->actingAs($this->owner)->get('/dashboard')->assertRedirect(route('owner.dashboard'));
+    $this->actingAs($this->superAdmin)->get('/dashboard')->assertRedirect(route('superadmin.dashboard'));
 });
 
 /**

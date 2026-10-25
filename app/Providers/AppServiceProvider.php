@@ -56,6 +56,28 @@ class AppServiceProvider extends ServiceProvider
                 );
             },
         );
+
+        // Operaciones & Captación de Leads (Clean Architecture)
+        $this->app->singleton(
+            \NexoPro\Operations\Contracts\LeadScoringServiceInterface::class,
+            \NexoPro\Operations\Services\LeadScoringService::class
+        );
+
+        // Módulo Portería / Garita (Clean Architecture & Repository Pattern)
+        $this->app->bind(
+            \NexoPro\Porteria\Contracts\PorteriaRepositoryInterface::class,
+            \NexoPro\Porteria\Repositories\PorteriaRepository::class
+        );
+        $this->app->bind(
+            \NexoPro\Porteria\Contracts\PorteriaServiceInterface::class,
+            \NexoPro\Porteria\Services\PorteriaService::class
+        );
+
+        // Módulo Backoffice / CRM Comercial
+        $this->app->bind(
+            \NexoPro\CRM\Contracts\LeadCrmServiceInterface::class,
+            \NexoPro\CRM\Services\LeadCrmService::class
+        );
     }
 
     /**

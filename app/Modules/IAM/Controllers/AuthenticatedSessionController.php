@@ -2,6 +2,7 @@
 
 namespace App\Modules\IAM\Controllers;
 
+use App\Modules\IAM\Contracts\RoleRedirectionServiceInterface;
 use App\Modules\IAM\Requests\LoginRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -12,6 +13,11 @@ use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
+    public function __construct(
+        private ?RoleRedirectionServiceInterface $redirectionService = null
+    ) {
+        $this->redirectionService = $redirectionService ?? app(RoleRedirectionServiceInterface::class);
+    }
     /**
      * Display the login view.
      */
@@ -37,11 +43,8 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
         
-        $url = match(true) {
-            $user->isSuperAdmin() => route('superadmin.dashboard'),
-            $user->isAdmin()      => route('dashboard'),
-            default               => route('owner.dashboard'),
-        };
+        $url = $this->redirectionService->getCanonicalUrl($user, false);
+        $this->redirectionService->sanitizeIntendedUrl($user, session()->get('url.intended'));
 
         return redirect()->intended($url);
     }

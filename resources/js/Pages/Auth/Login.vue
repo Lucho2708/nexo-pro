@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import Button from '@/Components/UI/Button.vue';
 import Input from '@/Components/UI/Input.vue';
 import Alert from '@/Components/UI/Alert.vue';
 import Logo from '@/Components/UI/Logo.vue';
+
+const showPassword = ref(false);
 
 const form = useForm({
     email: '',
@@ -13,7 +16,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('login'), {
+    form.post(route('login', undefined, false), {
         onFinish: () => form.reset('password'),
     });
 };
@@ -63,16 +66,26 @@ const submit = () => {
                             />
 
                             <div class="space-y-2">
-                                <Input 
-                                    v-model="form.password"
-                                    label="Contraseña"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    icon="lock"
-                                    required
-                                    :error="form.errors.password"
-                                    class="min-h-[44px]"
-                                />
+                                <div class="relative">
+                                    <Input 
+                                        v-model="form.password"
+                                        label="Contraseña"
+                                        :type="showPassword ? 'text' : 'password'"
+                                        placeholder="••••••••"
+                                        icon="lock"
+                                        required
+                                        :error="form.errors.password"
+                                        class="min-h-[44px]"
+                                    />
+                                    <button 
+                                        type="button" 
+                                        @click="showPassword = !showPassword" 
+                                        class="absolute right-4 top-9 z-10 text-slate-400 hover:text-primary transition-colors focus:outline-none"
+                                        :aria-label="showPassword ? 'Ocultar contraseña' : 'Ver contraseña'"
+                                    >
+                                        <span class="material-symbols-outlined text-xl">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                                    </button>
+                                </div>
                                 <div class="flex justify-end pt-1">
                                     <Link href="#" class="text-xs font-bold text-primary hover:text-primary/80 transition-colors">¿Olvidaste tu contraseña?</Link>
                                 </div>

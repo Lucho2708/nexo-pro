@@ -32,6 +32,6 @@ class OnboardingController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('dashboard')->with('success', '¡Registro completado con éxito! Bienvenido a PH360.');
+        return redirect()->route('dashboard')->with('success', '¡Registro completado con éxito! Bienvenido a NEXO PRO.');
     }
 }

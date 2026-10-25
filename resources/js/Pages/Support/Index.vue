@@ -180,61 +180,57 @@ const formatDate = (date: string) => {
         </div>
 
         <!-- Tactical Reporting Modal - 3 Tier Design -->
-        <Modal :show="showCreateModal" @close="showCreateModal = false" :max-width="'4xl'" title="Protocolo de Reporte de Incidencias">
-            <form @submit.prevent="submitTicket" class="space-y-12">
-                <div class="space-y-10">
+        <Modal :show="showCreateModal" @close="showCreateModal = false" :max-width="'3xl'" title="Reportar Incidencia a Soporte Técnico">
+            <form @submit.prevent="submitTicket" class="space-y-6">
+                <div class="space-y-5">
                     
-                    <!-- PC/Tablet Row 1: Subject (Always on top but more readable) -->
-                    <div class="space-y-2">
-                        <Input 
-                            v-model="form.subject"
-                            label="Asunto de la Incidencias"
-                            placeholder="Ej: Fallo crítico en el motor de reservas..."
-                            required
-                            icon="emergency"
-                            class="px-1"
-                        />
-                    </div>
+                    <!-- Asunto -->
+                    <Input 
+                        v-model="form.subject"
+                        label="Asunto de la Incidencia"
+                        placeholder="Ej: Inconsistencia al generar recibo de pago..."
+                        required
+                        icon="report_problem"
+                        :error="form.errors.subject"
+                    />
 
-                    <!-- PC/Tablet Row 2: Category & Priority (Side-by-side) -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 px-1">
+                    <!-- Categoría y Prioridad -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <Select 
                             v-model="form.category"
                             label="Módulo Afectado"
                             :options="categories"
-                            icon="settings_input_component"
+                            icon="category"
                         />
                         <Select 
                             v-model="form.priority"
-                            label="Criticidad Percibida"
+                            label="Nivel de Prioridad"
                             :options="priorityOptions"
-                            icon="bolt"
+                            icon="priority_high"
                         />
                     </div>
 
-                    <!-- PC/Tablet Row 3: Description (Expansive) -->
-                    <div class="space-y-4 px-1">
-                        <div class="flex items-center gap-3 ml-2">
-                             <div class="w-1 h-4 bg-primary rounded-full"></div>
-                             <label class="text-[10px] font-black text-on-surface-variant/50 dark:text-white/30 uppercase tracking-[0.3em] italic leading-none">Descripción Técnica y Evidencia del Fallo</label>
-                        </div>
+                    <!-- Descripción Detallada -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Descripción Detallada del Problema</label>
                         <textarea 
                             v-model="form.description" 
                             required 
-                            rows="8" 
-                            class="w-full bg-surface-container-low dark:bg-white/[0.03] border-2 border-outline-variant/10 dark:border-white/5 rounded-[3rem] p-10 text-[13px] font-medium text-on-surface dark:text-white/80 focus:ring-8 focus:ring-primary/5 outline-none transition-all placeholder:text-on-surface-variant/20 italic shadow-inner no-scrollbar resize-none" 
-                            placeholder="Describa los pasos exactos para reproducir el incidente técnico..."
+                            rows="5" 
+                            class="w-full bg-slate-50/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-sm font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" 
+                            placeholder="Describa los pasos para reproducir la incidencia y el comportamiento esperado..."
                         ></textarea>
+                        <p v-if="form.errors.description" class="text-xs text-red-500 font-semibold">{{ form.errors.description }}</p>
                     </div>
                 </div>
 
                 <!-- Footer Acciones -->
-                <div class="flex flex-col sm:flex-row gap-6 border-t border-outline-variant/10 dark:border-white/5 pt-12">
-                    <Button type="button" variant="ghost" class="order-2 sm:order-1 sm:w-1/3 !h-20 !rounded-3xl !text-[10px] font-black uppercase tracking-[0.3em] italic" @click="showCreateModal = false">
-                        Abortar Reporte
+                <div class="flex flex-col sm:flex-row gap-3 border-t border-slate-100 dark:border-slate-800 pt-4">
+                    <Button type="button" variant="ghost" class="order-2 sm:order-1 sm:w-1/3 text-slate-500 hover:text-slate-900 dark:hover:text-white" @click="showCreateModal = false">
+                        Cancelar
                     </Button>
-                    <Button type="submit" variant="primary" size="lg" class="order-1 sm:order-2 sm:w-2/3 !h-20 !rounded-3xl !text-xs font-black uppercase italic shadow-2xl shadow-primary/20" :disabled="form.processing" icon="rocket_launch">
-                        {{ form.processing ? 'SINCRONIZANDO...' : 'Lanzar al Equipo de Ingeniería' }}
+                    <Button type="submit" variant="primary" size="lg" class="order-1 sm:order-2 sm:w-2/3 !rounded-xl font-bold shadow-lg shadow-primary/20 min-h-[48px]" :disabled="form.processing" icon="send">
+                        {{ form.processing ? 'Enviando Ticket...' : 'Enviar Reporte a Soporte' }}
                     </Button>
                 </div>
             </form>

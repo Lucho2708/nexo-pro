@@ -27,7 +27,7 @@ const submit = () => {
     <div class="max-w-4xl mx-auto">
             <div class="mb-8">
                 <h1 class="text-3xl font-black text-primary tracking-tight">AÑADIR NUEVO CONJUNTO</h1>
-                <p class="text-on-surface-variant font-medium mt-1">Expande tu gestión registrando una nueva copropiedad en PH360.</p>
+                <p class="text-on-surface-variant font-medium mt-1">Expande tu gestión registrando una nueva copropiedad en NEXO PRO.</p>
             </div>
 
             <form @submit.prevent="submit" class="grid grid-cols-1 md:grid-cols-2 gap-8">

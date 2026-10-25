@@ -31,10 +31,13 @@ const props = defineProps<{
 const mainUnit = computed(() => props.unidades[0] || null);
 const tipo = computed(() => mainUnit.value?.tipo_unidad || null);
 
-// Formatear el nombre de la unidad para el estilo mockup (Torre X - Apto Y)
+// Formatear el nombre de la unidad para el estilo mockup (Torre X - Apto Y), evitando duplicaciones como "Torre Torre"
 const unitDisplayName = computed(() => {
     if (!mainUnit.value) return '';
-    return `${mainUnit.value.torre ? 'Torre ' + mainUnit.value.torre + ' - ' : ''}${mainUnit.value.nombre}`;
+    const torre = mainUnit.value.torre?.trim();
+    if (!torre) return mainUnit.value.nombre;
+    const prefix = /^torre\b/i.test(torre) ? '' : 'Torre ';
+    return `${prefix}${torre} - ${mainUnit.value.nombre}`;
 });
 </script>
 

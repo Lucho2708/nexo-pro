@@ -17,6 +17,7 @@ import ThemeToggle from '@/Components/UI/ThemeToggle.vue';
                 <nav class="hidden lg:flex items-center space-x-10">
                     <a class="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/60 hover:text-primary transition-all italic underline-offset-8 hover:underline" href="/#soluciones">Soluciones</a>
                     <a class="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/60 hover:text-primary transition-all italic underline-offset-8 hover:underline" href="/#roles">Roles</a>
+                    <a class="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/60 hover:text-primary transition-all italic underline-offset-8 hover:underline" href="/#calculadora-roi">Calculadora ROI</a>
                     <a class="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/60 hover:text-primary transition-all italic underline-offset-8 hover:underline" href="/#precios">Precios</a>
                     <a class="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/60 hover:text-primary transition-all italic underline-offset-8 hover:underline" href="/#contacto">Contacto</a>
                 </nav>

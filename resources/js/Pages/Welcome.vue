@@ -6,6 +6,7 @@ import GuestLayout from '@/Layouts/GuestLayout.vue';
 import HeroSection from '@/Components/Landing/HeroSection.vue';
 import RolesSection from '@/Components/Landing/RolesSection.vue';
 import FeaturesSection from '@/Components/Landing/FeaturesSection.vue';
+import RoiCalculatorSection from '@/Components/Landing/RoiCalculatorSection.vue';
 import PricingSection from '@/Components/Landing/PricingSection.vue';
 import ContactDemoSection from '@/Components/Landing/ContactDemoSection.vue';
 import CookieConsent from '@/Components/UI/CookieConsent.vue';
@@ -69,6 +70,10 @@ onMounted(() => {
             
             <div data-aos="fade-up">
                 <FeaturesSection :features="features" id="soluciones" />
+            </div>
+            
+            <div data-aos="fade-up">
+                <RoiCalculatorSection id="calculadora-roi" />
             </div>
             
             <div data-aos="fade-up" class="bg-primary/5 dark:bg-transparent">

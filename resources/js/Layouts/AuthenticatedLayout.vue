@@ -38,6 +38,15 @@ const isRouteActive = (name: string) => {
     }
 };
 
+const homeRoute = computed(() => {
+    if (user.value?.role === 'super_admin') return route('superadmin.dashboard');
+    if (user.value?.role === 'owner') return route('owner.dashboard');
+    if (user.value?.role === 'admin') return route('admin.dashboard');
+    if (user.value?.role === 'security') return route('porteria.dashboard');
+    if (user.value?.role === 'backoffice') return route('backoffice.leads.index');
+    return route('dashboard');
+});
+
 const navigationItems = computed(() => {
     const permissions = user.value?.permissions || [];
     const settings = user.value?.copropiedad_settings;
@@ -58,8 +67,13 @@ const navigationItems = computed(() => {
 
     const items = [];
 
-    // ── DASHBOARD INICIAL ───────────────────────────────────────
-    items.push({ name: 'Inicio', icon: 'dashboard', href: route(user.value?.role === 'owner' ? 'owner.dashboard' : 'dashboard'), active: isRouteActive('dashboard') || isRouteActive('owner.dashboard') });
+    // ── DASHBOARD INICIAL SEGÚN ENTORNO ─────────────────────────
+    items.push({ 
+        name: 'Inicio', 
+        icon: 'dashboard', 
+        href: homeRoute.value, 
+        active: isRouteActive('admin.dashboard') || isRouteActive('dashboard') || isRouteActive('owner.dashboard') 
+    });
 
     // ── FINANZAS / CARTERA ──────────────────────────────────────
     if (permissions.includes('finance:manage') || permissions.includes('finance:view')) {
@@ -143,7 +157,7 @@ const twoFactorStatus = computed(() => {
             ]"
         >
             <div class="px-6 py-12 flex items-center justify-center">
-                <Link :href="route('dashboard')" class="flex items-center gap-3">
+                <Link :href="homeRoute" class="flex items-center gap-3">
                     <Logo :width="isSidebarOpen ? '45px' : '35px'" :height="isSidebarOpen ? '45px' : '35px'" :show-text="isSidebarOpen" class="transition-all duration-500" />
                 </Link>
             </div>
@@ -214,10 +228,13 @@ const twoFactorStatus = computed(() => {
 
         <!-- Main Content -->
         <main 
-            class="flex-1 transition-all duration-500 min-h-screen w-full overflow-x-hidden"
+            class="flex-1 flex flex-col transition-all duration-500 min-h-screen w-full"
             :class="[isLargeScreen ? (isSidebarOpen ? 'ml-72' : 'ml-24') : 'ml-0']"
         >
-            <header class="sticky top-0 z-40 bg-surface/60 dark:bg-[#05070a]/60 backdrop-blur-2xl border-b border-outline-variant/10 px-6 md:px-10 py-6 flex justify-between items-center shadow-sm">
+            <header 
+                class="sticky z-40 bg-surface/90 dark:bg-[#0b0e14]/90 backdrop-blur-xl border-b border-outline-variant/15 dark:border-white/5 px-6 md:px-10 py-5 flex justify-between items-center shadow-sm transition-all duration-200"
+                :class="[user?.is_impersonating ? 'top-10' : 'top-0']"
+            >
                 <div class="flex items-center gap-6">
                     <button @click="isSidebarOpen = !isSidebarOpen" class="lg:hidden p-3 rounded-2xl bg-primary/5 text-primary">
                         <span class="material-symbols-rounded">{{ isSidebarOpen ? 'menu_open' : 'menu' }}</span>

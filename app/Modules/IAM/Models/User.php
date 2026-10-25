@@ -64,6 +64,16 @@ class User extends Authenticatable
         return $this->role === 'owner';
     }
 
+    public function isBackoffice(): bool
+    {
+        return $this->role === 'backoffice';
+    }
+
+    public function isSecurity(): bool
+    {
+        return $this->role === 'security';
+    }
+
     /**
      * Get the active/current copropiedad the user is managing or visiting.
      */

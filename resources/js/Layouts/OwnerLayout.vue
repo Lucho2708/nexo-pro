@@ -4,6 +4,7 @@ import { Link, usePage, router } from '@inertiajs/vue3';
 import ThemeToggle from '@/Components/UI/ThemeToggle.vue';
 import Logo from '@/Components/UI/Logo.vue';
 import Dropdown from '@/Components/UI/Dropdown.vue';
+import NotificationCenter from '@/Components/Nav/NotificationCenter.vue';
 
 const page = usePage();
 // @ts-ignore
@@ -143,21 +144,34 @@ const logout = () => {
                         />
                     </div>
 
-                    <div class="relative">
-                        <button @click="isNotificationsOpen = !isNotificationsOpen" class="p-2 rounded-full hover:bg-surface-container-high relative text-on-surface-variant">
-                            <span class="material-symbols-rounded">notifications</span>
-                            <span v-if="unreadCount > 0" class="absolute top-1 right-1 w-2.5 h-2.5 bg-error rounded-full ring-2 ring-surface"></span>
-                        </button>
-                    </div>
+                    <NotificationCenter />
 
-                    <div class="relative flex items-center border-l border-outline-variant/30 pl-3 md:pl-5">
-                        <button @click="showUserMenu = !showUserMenu" class="w-10 h-10 rounded-full border-2 border-primary/20 overflow-hidden hover:border-primary transition-all">
-                            <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=random&color=fff`" class="w-full h-full object-cover" />
+                    <div class="relative flex items-center gap-3 border-l border-outline-variant/30 pl-3 md:pl-5">
+                        <div class="hidden lg:flex flex-col text-right">
+                            <span class="text-xs font-black text-on-surface tracking-tight leading-none">{{ user?.name }}</span>
+                            <span class="text-[9px] font-bold text-primary uppercase tracking-widest mt-1">Propietario</span>
+                        </div>
+                        <button 
+                            @click="showUserMenu = !showUserMenu" 
+                            type="button"
+                            aria-label="Menú de usuario"
+                            :aria-expanded="showUserMenu"
+                            class="w-10 h-10 rounded-full border-2 border-primary/20 overflow-hidden hover:border-primary transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer shrink-0"
+                        >
+                            <img 
+                                :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=2563eb&color=fff&bold=true`" 
+                                class="w-full h-full object-cover" 
+                                :alt="user?.name || 'Usuario'"
+                            />
                         </button>
                         <Transition enter-active-class="transition ease-out duration-150" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition ease-in duration-100" leave-to-class="opacity-0 scale-95">
                             <div v-if="showUserMenu" class="absolute top-full right-0 mt-3 w-56 bg-surface-container-lowest rounded-2xl shadow-premium border border-outline-variant/30 py-2 z-50">
-                                <Link :href="route('profile.edit')" class="w-full px-4 py-2 hover:bg-surface-container text-sm flex gap-3 text-on-surface-variant hover:text-primary"><span class="material-symbols-rounded">person</span> Perfil</Link>
-                                <button @click="logout" class="w-full px-4 py-2 hover:bg-error/10 text-sm flex gap-3 text-error border-t border-outline-variant/10 pt-3"><span class="material-symbols-rounded">logout</span> Cerrar sesión</button>
+                                <div class="px-4 py-2 border-b border-outline-variant/10 mb-1 lg:hidden">
+                                    <p class="text-xs font-black text-on-surface truncate">{{ user?.name }}</p>
+                                    <p class="text-[9px] text-primary font-bold uppercase tracking-widest">Propietario</p>
+                                </div>
+                                <Link :href="route('profile.edit')" class="w-full px-4 py-2 hover:bg-surface-container text-sm flex gap-3 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-rounded">person</span> Perfil</Link>
+                                <button @click="logout" class="w-full px-4 py-2 hover:bg-error/10 text-sm flex gap-3 text-error border-t border-outline-variant/10 pt-2 transition-colors cursor-pointer"><span class="material-symbols-rounded">logout</span> Cerrar sesión</button>
                             </div>
                         </Transition>
                     </div>

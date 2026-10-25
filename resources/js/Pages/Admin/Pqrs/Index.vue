@@ -210,38 +210,35 @@ const getStatusLabel = (status: string): string => {
                               <span class="material-symbols-rounded text-xl">reply_all</span>
                          </div>
                          <div class="flex-1 space-y-6">
-                             <form @submit.prevent="submitResponse" class="space-y-8">
-                                <div class="space-y-3">
-                                    <label class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] ml-2 italic">Respuesta Técnica Oficial</label>
+                             <form @submit.prevent="submitResponse" class="space-y-6">
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Respuesta Oficial al Residente</label>
                                     <textarea 
                                         v-model="form.respuesta" 
-                                        rows="6" 
-                                        class="w-full bg-white dark:bg-white/[0.02] border-2 border-outline-variant/10 dark:border-white/5 rounded-[2rem] p-8 text-sm font-medium text-on-surface dark:text-white focus:ring-8 focus:ring-primary/5 outline-none transition-all placeholder:text-on-surface-variant/20 italic shadow-xl"
-                                        placeholder="Redacta la resolución formal detallada..."
+                                        rows="5" 
+                                        class="w-full bg-slate-50/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-sm font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                                        placeholder="Redacta la respuesta formal y clara para el copropietario..."
                                         required
                                     ></textarea>
                                 </div>
 
-                                <div class="flex items-center gap-5 bg-surface-container dark:bg-white/5 p-6 rounded-3xl border border-outline-variant/10 dark:border-white/5 group cursor-pointer hover:bg-primary/5 transition-colors">
-                                    <div class="relative flex items-center justify-center w-6 h-6">
-                                        <input type="checkbox" v-model="form.cerrar" id="cerrar-pqr" class="peer appearance-none w-6 h-6 rounded-lg bg-surface dark:bg-white/5 border-2 border-outline-variant/30 checked:bg-primary checked:border-primary transition-all cursor-pointer" />
-                                        <span class="material-symbols-rounded text-white text-base absolute transition-all opacity-0 peer-checked:opacity-100 scale-50 peer-checked:scale-100">check</span>
-                                    </div>
-                                    <label for="cerrar-pqr" class="text-[11px] font-black text-on-surface-variant dark:text-white/40 uppercase tracking-widest cursor-pointer select-none italic group-hover:text-primary transition-colors">Ejecutar Cierre de Caso y Notificar</label>
+                                <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700 group cursor-pointer hover:border-primary/40 transition-colors">
+                                    <input type="checkbox" v-model="form.cerrar" id="cerrar-pqr" class="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" />
+                                    <label for="cerrar-pqr" class="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">Marcar caso como Resuelto / Cerrado y notificar</label>
                                 </div>
 
-                                <div class="flex flex-col gap-4 pt-6">
+                                <div class="flex flex-col gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                                     <Button 
                                         type="submit" 
                                         variant="primary" 
                                         size="lg" 
-                                        class="w-full !h-16 !rounded-2xl !text-[11px] font-black uppercase italic shadow-2xl shadow-primary/20"
+                                        class="w-full !rounded-xl font-bold shadow-lg shadow-primary/20 min-h-[48px]"
                                         :disabled="form.processing"
-                                        icon="send_and_archive"
+                                        icon="send"
                                     >
-                                        {{ form.processing ? 'ENVIANDO PROTOCOLO...' : 'DESPACHAR RESPUESTA' }}
+                                        {{ form.processing ? 'Enviando...' : 'Enviar Respuesta al Residente' }}
                                     </Button>
-                                    <Button type="button" variant="ghost" class="w-full !text-[9px] font-black uppercase tracking-widest text-on-surface-variant/40" @click="selectedPqrs = null">Cancelar Operación</Button>
+                                    <Button type="button" variant="ghost" class="w-full text-slate-500 hover:text-slate-900 dark:hover:text-white" @click="selectedPqrs = null">Cancelar</Button>
                                 </div>
                             </form>
                          </div>

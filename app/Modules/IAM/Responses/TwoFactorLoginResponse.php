@@ -2,11 +2,18 @@
 
 namespace App\Modules\IAM\Responses;
 
+use App\Modules\IAM\Contracts\RoleRedirectionServiceInterface;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\Contracts\TwoFactorLoginResponse as TwoFactorLoginResponseContract;
 
 class TwoFactorLoginResponse implements TwoFactorLoginResponseContract
 {
+    public function __construct(
+        private ?RoleRedirectionServiceInterface $redirectionService = null
+    ) {
+        $this->redirectionService = $redirectionService ?? app(RoleRedirectionServiceInterface::class);
+    }
+
     /**
      * Create an HTTP response that represents the object.
      *
@@ -17,11 +24,8 @@ class TwoFactorLoginResponse implements TwoFactorLoginResponseContract
     {
         $user = Auth::user();
 
-        $home = match (true) {
-            $user->isSuperAdmin() => route('superadmin.dashboard'),
-            $user->isAdmin() => route('dashboard'),
-            default => route('owner.dashboard'),
-        };
+        $home = $this->redirectionService->getCanonicalUrl($user, false);
+        $this->redirectionService->sanitizeIntendedUrl($user, session()->get('url.intended'));
 
         return $request->wantsJson()
             ? response('', 204)

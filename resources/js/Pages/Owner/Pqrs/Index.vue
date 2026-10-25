@@ -151,7 +151,7 @@ const getTipoLabel = (tipo: string) => tipo.replace('_', ' ').toUpperCase();
                 <Select 
                     v-model="form.unidad_id"
                     label="¿Sobre qué unidad reportas?"
-                    :options="unidades.map(u => ({ value: u.id, label: `Torre ${u.torre} - ${u.nombre}` }))"
+                    :options="unidades.map(u => ({ value: u.id, label: (u.torre ? (/^torre\b/i.test(u.torre.trim()) ? u.torre.trim() : 'Torre ' + u.torre.trim()) + ' - ' : '') + u.nombre }))"
                     icon="apartment"
                     required
                 />
@@ -187,6 +187,7 @@ const getTipoLabel = (tipo: string) => tipo.replace('_', ' ').toUpperCase();
                     placeholder="Breve título de tu solicitud..."
                     icon="title"
                     required
+                    :error="form.errors.asunto"
                 />
 
                 <div class="space-y-2">
@@ -194,10 +195,12 @@ const getTipoLabel = (tipo: string) => tipo.replace('_', ' ').toUpperCase();
                     <textarea 
                         v-model="form.mensaje" 
                         rows="5" 
-                        class="w-full bg-surface-container-low border-2 border-outline-variant/10 rounded-[1.5rem] p-6 text-sm font-medium text-on-surface focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                        class="w-full bg-surface-container-low border-2 rounded-[1.5rem] p-5 text-sm font-medium text-on-surface focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-on-surface-variant/40"
+                        :class="form.errors.mensaje ? 'border-error/50 text-error' : 'border-outline-variant/10'"
                         placeholder="Explica detalladamente tu situación..."
                         required
                     ></textarea>
+                    <p v-if="form.errors.mensaje" class="text-xs text-error font-bold ml-1">{{ form.errors.mensaje }}</p>
                 </div>
 
                 <div class="flex flex-col gap-3 pt-4">

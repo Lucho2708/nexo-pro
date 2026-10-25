@@ -1,0 +1,119 @@
+version: '3.8'
+
+# ==============================================================================
+# NEXO PRO - STACK ORQUESTADO PARA COOLIFY (AMBIENTE QA)
+# Dominio objetivo: https://qa.nexo-pro.com.co
+# ==============================================================================
+
+services:
+  # ── SERVICIO 1: APLICACIÓN LARAVEL 11 + INERTIA SSR + NGINX + REVERB ──
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nexopro/qa-app:latest
+    container_name: nexopro_qa_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      APP_NAME: "NEXO PRO (QA)"
+      APP_ENV: staging
+      APP_KEY: "${APP_KEY}"
+      APP_DEBUG: "${APP_DEBUG:-false}"
+      APP_URL: "https://qa.nexo-pro.com.co"
+
+      # Base de Datos PostgreSQL en contenedor interno
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: nexopro_qa
+      DB_USERNAME: nexopro_qa_user
+      DB_PASSWORD: "${QA_DB_PASSWORD:-SuperSecretQaPass2026!}"
+      DB_SCHEMA: "public,iam,property,operations,finance,asamblea"
+
+      # Caché y Sesiones en Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CACHE_STORE: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
+
+      # WebSockets en Tiempo Real (Laravel Reverb)
+      BROADCAST_CONNECTION: reverb
+      REVERB_APP_ID: "${REVERB_APP_ID:-nexopro_qa_appid}"
+      REVERB_APP_KEY: "${REVERB_APP_KEY:-nexopro_qa_key}"
+      REVERB_APP_SECRET: "${REVERB_APP_SECRET:-nexopro_qa_secret}"
+      REVERB_HOST: "0.0.0.0"
+      REVERB_PORT: 8080
+      REVERB_SCHEME: https
+      VITE_REVERB_APP_KEY: "${REVERB_APP_KEY:-nexopro_qa_key}"
+      VITE_REVERB_HOST: "qa.nexo-pro.com.co"
+      VITE_REVERB_PORT: 443
+      VITE_REVERB_SCHEME: https
+
+      # Automatización de migraciones y arranque
+      RUN_MIGRATIONS: "true"
+      RUN_SEEDERS: "${RUN_SEEDERS:-true}"
+    volumes:
+      - qa_storage:/var/www/html/storage
+    networks:
+      - nexo_qa_net
+    labels:
+      - "coolify.managed=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.nexo-qa.rule=Host(`qa.nexo-pro.com.co`)"
+      - "traefik.http.routers.nexo-qa.entrypoints=websecure"
+      - "traefik.http.routers.nexo-qa.tls=true"
+      - "traefik.http.routers.nexo-qa.tls.certresolver=letsencrypt"
+      - "traefik.http.services.nexo-qa.loadbalancer.server.port=80"
+
+  # ── SERVICIO 2: CONTENEDOR DE BASE DE DATOS QA (PostgreSQL 16) ──
+  db:
+    image: postgres:16-alpine
+    container_name: nexopro_qa_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nexopro_qa
+      POSTGRES_USER: nexopro_qa_user
+      POSTGRES_PASSWORD: "${QA_DB_PASSWORD:-SuperSecretQaPass2026!}"
+    volumes:
+      - qa_postgres_data:/var/lib/postgresql/data
+      - ./database/schema:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexopro_qa_user -d nexopro_qa"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - nexo_qa_net
+
+  # ── SERVICIO 3: CONTENEDOR REDIS (Caché, Sesiones y Colas) ────
+  redis:
+    image: redis:7-alpine
+    container_name: nexopro_qa_redis
+    restart: unless-stopped
+    volumes:
+      - qa_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nexo_qa_net
+
+networks:
+  nexo_qa_net:
+    driver: bridge
+
+volumes:
+  qa_postgres_data:
+    driver: local
+  qa_redis_data:
+    driver: local
+  qa_storage:
+    driver: local

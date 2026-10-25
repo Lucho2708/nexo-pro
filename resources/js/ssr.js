@@ -3,8 +3,7 @@ import { renderToString } from '@vue/server-renderer';
 import { createInertiaApp } from '@inertiajs/vue3';
 import createServer from '@inertiajs/vue3/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/index.esm.js';
-import route from '../../vendor/tightenco/ziggy/dist/index.mjs';
+import { ZiggyVue, route } from '../../vendor/tightenco/ziggy/dist/index.esm.js';
 
 createServer((page) =>
     createInertiaApp({

@@ -337,36 +337,70 @@ const recalculateCoeficientes = () => {
             <div class="relative">
                 <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
                 
-                <form @submit.prevent="submit" class="space-y-8 mt-4">
+                <form @submit.prevent="submit" class="space-y-6 mt-4">
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Título de la Convocatoria</label>
+                        <input 
+                            v-model="form.titulo" 
+                            type="text" 
+                            class="w-full bg-slate-50/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 text-sm font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" 
+                            placeholder="Ej: Asamblea General Ordinaria 2026" 
+                            required 
+                        />
+                        <p v-if="form.errors.titulo" class="text-xs text-red-500 font-semibold">{{ form.errors.titulo }}</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Fecha Programada</label>
+                            <input 
+                                v-model="form.fecha" 
+                                type="date" 
+                                class="w-full bg-slate-50/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 text-sm font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all" 
+                                required 
+                            />
+                            <p v-if="form.errors.fecha" class="text-xs text-red-500 font-semibold">{{ form.errors.fecha }}</p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Hora de Inicio</label>
+                            <input 
+                                v-model="form.hora_inicio" 
+                                type="time" 
+                                class="w-full bg-slate-50/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3.5 text-sm font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all" 
+                                required 
+                            />
+                            <p v-if="form.errors.hora_inicio" class="text-xs text-red-500 font-semibold">{{ form.errors.hora_inicio }}</p>
+                        </div>
+                    </div>
+
                     <div class="space-y-3">
-                        <label class="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50 ml-1">NOMBRE DEL EVENTO</label>
-                        <input v-model="form.titulo" type="text" class="w-full bg-surface-container-high border-none rounded-2xl px-6 py-5 focus:ring-4 focus:ring-primary/10 transition-all font-bold text-on-surface placeholder:text-on-surface-variant/20 shadow-inner" placeholder="Ej: ASAMBLEA ORDINARIA 2026" required />
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-6">
-                        <div class="space-y-3">
-                            <label class="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50 ml-1">FECHA PROGRAMADA</label>
-                            <input v-model="form.fecha" type="date" class="w-full bg-surface-container-high border-none rounded-2xl px-6 py-5 focus:ring-4 focus:ring-primary/10 transition-all font-bold text-on-surface shadow-inner" required />
-                        </div>
-                        <div class="space-y-3">
-                            <label class="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50 ml-1">HORA DE INICIO</label>
-                            <input v-model="form.hora_inicio" type="time" class="w-full bg-surface-container-high border-none rounded-2xl px-6 py-5 focus:ring-4 focus:ring-primary/10 transition-all font-bold text-on-surface shadow-inner" required />
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
                         <div class="flex justify-between items-end">
-                            <label class="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50 ml-1">QUÓRUM MÍNIMO EXIGIDO</label>
-                            <span class="text-2xl font-black text-primary">{{ form.quorum_esperado }}%</span>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Quórum Mínimo Requerido</label>
+                            <span class="text-xl font-black text-primary tabular-nums">{{ form.quorum_esperado }}%</span>
                         </div>
-                        <div class="relative py-2">
-                             <input v-model="form.quorum_esperado" type="range" min="0" max="100" class="w-full h-2 bg-surface-container-high rounded-full appearance-none cursor-pointer accent-primary" />
+                        <input 
+                            v-model.number="form.quorum_esperado" 
+                            type="range" 
+                            min="10" 
+                            max="100" 
+                            step="1"
+                            class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-blue-600 focus:outline-none focus:ring-4 focus:ring-primary/10" 
+                        />
+                        <div class="flex gap-2">
+                            <button type="button" @click="form.quorum_esperado = 50.01" class="text-[11px] font-bold px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+                                Deliberatorio (50.01%)
+                            </button>
+                            <button type="button" @click="form.quorum_esperado = 70.0" class="text-[11px] font-bold px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+                                Calificado (70.00%)
+                            </button>
                         </div>
                     </div>
 
-                    <div class="pt-8 flex gap-4">
-                        <Button @click="showCreateModal = false" type="button" variant="outline" class="flex-1 !rounded-[1.5rem] !py-5 uppercase text-[10px] tracking-widest font-black">CANCELAR</Button>
-                        <Button type="submit" variant="primary" class="flex-1 !rounded-[1.5rem] !py-5 uppercase text-[10px] tracking-widest font-black shadow-xl shadow-primary/20" :loading="form.processing">PROGRAMAR EVENTO</Button>
+                    <div class="pt-4 flex gap-3 border-t border-slate-100 dark:border-slate-800">
+                        <Button @click="showCreateModal = false" type="button" variant="ghost" class="flex-1 text-slate-500 hover:text-slate-900 dark:hover:text-white">Cancelar</Button>
+                        <Button type="submit" variant="primary" class="flex-1 !rounded-xl font-bold shadow-lg shadow-primary/20 min-h-[48px]" :loading="form.processing">
+                            Programar Asamblea
+                        </Button>
                     </div>
                 </form>
             </div>

@@ -68,11 +68,19 @@ Gestión de eventos masivos mediante **Tablas On-Demand**:
    php artisan db:seed
    ```
 
-### Tests (TDD)
-La suite garantiza la estabilidad multi-tenant:
-```bash
-./vendor/bin/pest
-```
+### ⚙️ Configuración Paramétrica (Requisito de Arranque)
+Para que NEXO-PRO funcione correctamente, la base de datos **debe contar con registros** en las siguientes tablas críticas antes de iniciar sesión. Estas tablas son pobladas automáticamente por los seeders del sistema (`php artisan db:seed`):
+
+| Esquema | Tabla | Propósito |
+| :--- | :--- | :--- |
+| `iam` | `roles` | Roles del sistema (ej. `super_admin`, `admin`). |
+| `iam` | `permissions` | Permisos granulares de acceso. |
+| `iam` | `permission_role` | Vinculación entre roles y permisos. |
+| `iam` | `legal_documents` | Términos y condiciones activos. |
+| `operations` | `system_modules` | Registro de módulos activos para el menú. |
+| `operations` | `global_settings` | Configuración maestra (ej. `platform_name`). |
+
+> **IMPORTANTE:** La falta de registros en estas tablas provocará errores 500, bloqueos de acceso (`403 Forbidden`) o menús de navegación vacíos.
 
 ---
 

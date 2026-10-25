@@ -28,7 +28,7 @@ it('renders the dashboard with stats for authenticated users', function () {
         'role' => 'admin',
     ]);
 
-    $response = $this->actingAs($user)->get('/dashboard');
+    $response = $this->actingAs($user)->get(route('admin.dashboard'));
 
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page

@@ -197,30 +197,30 @@ const formatCurrency = (value: number) => {
             <div class="space-y-12 mt-12 pb-6">
                 <!-- Info Cluster -->
                 <div class="grid grid-cols-2 gap-6 bg-surface-container-low dark:bg-white/[0.03] p-8 rounded-[3rem] border border-outline-variant/10 dark:border-white/5 shadow-inner">
-                    <div class="space-y-2">
-                        <p class="text-[10px] font-black text-secondary uppercase tracking-[0.3em] mb-3 italic">ACTIVO DESTINO:</p>
-                        <p class="text-xl font-black text-on-surface dark:text-white uppercase leading-none italic">{{ selectedReserva.zona.nombre }}</p>
+                    <div class="space-y-1">
+                        <p class="text-xs font-bold text-primary uppercase tracking-wider">Zona Común:</p>
+                        <p class="text-lg font-black text-slate-900 dark:text-white uppercase">{{ selectedReserva.zona.nombre }}</p>
                     </div>
-                    <div class="text-right space-y-2">
-                        <p class="text-[10px] font-black text-secondary uppercase tracking-[0.3em] mb-3 italic">CRONOGRAMA:</p>
-                        <p class="text-sm font-black text-on-surface-variant dark:text-white/60 uppercase leading-none italic">{{ new Date(selectedReserva.fecha).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) }}</p>
+                    <div class="text-right space-y-1">
+                        <p class="text-xs font-bold text-primary uppercase tracking-wider">Fecha de Reserva:</p>
+                        <p class="text-sm font-bold text-slate-600 dark:text-slate-300 capitalize">{{ new Date(selectedReserva.fecha).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) }}</p>
                     </div>
                 </div>
 
-                <form @submit.prevent="submitUpdate" class="space-y-10">
-                    <div class="space-y-4">
-                        <label class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] ml-2 italic">Vector de Estado</label>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 px-1">
+                <form @submit.prevent="submitUpdate" class="space-y-8">
+                    <div class="space-y-3">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Estado de la Reserva</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             <button 
                                 v-for="st in ['pendiente', 'aprobada', 'pagada', 'rechazada', 'cancelada']"
                                 :key="st"
                                 type="button"
                                 @click="form.estado = st"
-                                class="h-14 px-4 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest transition-all duration-300 italic shadow-sm"
+                                class="h-12 px-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all duration-200"
                                 :class="[
                                     form.estado === st 
-                                        ? 'border-secondary bg-secondary text-white shadow-xl shadow-secondary/20 scale-105' 
-                                        : 'border-outline-variant/10 dark:border-white/5 bg-surface dark:bg-white/5 text-on-surface-variant/60 hover:border-secondary/40'
+                                        ? 'border-blue-600 bg-blue-600 text-white shadow-md shadow-blue-500/20' 
+                                        : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-blue-400'
                                 ]"
                             >
                                 {{ getStatusLabel(st) }}
@@ -228,28 +228,28 @@ const formatCurrency = (value: number) => {
                         </div>
                     </div>
 
-                    <div class="space-y-4">
-                        <label class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] ml-2 italic">Notas de Inspección</label>
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Observaciones para el Residente</label>
                         <textarea 
                             v-model="form.notes" 
                             rows="4" 
-                            class="w-full bg-white dark:bg-white/[0.02] border-2 border-outline-variant/10 dark:border-white/5 rounded-[2rem] p-8 text-sm font-medium text-on-surface dark:text-white focus:ring-8 focus:ring-secondary/5 outline-none transition-all placeholder:text-on-surface-variant/20 italic shadow-xl"
-                            placeholder="Aclaraciones técnicas para el residente o bitácora interna..."
+                            class="w-full bg-slate-50/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-sm font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                            placeholder="Aclaraciones sobre entrega de llaves, aforo permitido o motivos de rechazo..."
                         ></textarea>
                     </div>
 
-                    <div class="flex flex-col gap-4 pt-6 border-t border-outline-variant/10 dark:border-white/5">
+                    <div class="flex flex-col gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                         <Button 
                             type="submit" 
                             variant="primary" 
                             size="lg" 
-                            class="w-full !h-16 !rounded-2xl !text-[11px] font-black uppercase italic shadow-2xl shadow-primary/20"
+                            class="w-full !rounded-xl font-bold shadow-lg shadow-primary/20 min-h-[48px]"
                             :disabled="form.processing"
-                            icon="verified"
+                            icon="check_circle"
                         >
-                            {{ form.processing ? 'SINCRONIZANDO...' : 'EJECUTAR CAMBIO DE ESTADO' }}
+                            {{ form.processing ? 'Guardando...' : 'Actualizar Estado de Reserva' }}
                         </Button>
-                        <Button type="button" variant="ghost" class="w-full !text-[9px] font-black uppercase tracking-widest text-on-surface-variant/40" @click="selectedReserva = null">Abortar Gestión</Button>
+                        <Button type="button" variant="ghost" class="w-full text-slate-500 hover:text-slate-900 dark:hover:text-white" @click="selectedReserva = null">Cancelar</Button>
                     </div>
                 </form>
             </div>

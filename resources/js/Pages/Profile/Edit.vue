@@ -121,29 +121,34 @@ const getRoleConfig = (role: string) => {
                             </div>
                         </div>
 
-                        <form @submit.prevent="updateProfile" class="space-y-8">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <form @submit.prevent="updateProfile" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] ml-4">Nombre Completo</label>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Nombre Completo</label>
                                     <div class="relative group">
-                                        <span class="material-symbols-rounded absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 group-focus-within:text-primary transition-colors text-lg">person</span>
-                                        <input v-model="profileForm.name" class="w-full h-14 pl-12 pr-4 bg-white dark:bg-white/[0.03] border border-outline-variant/10 dark:border-white/5 rounded-2xl text-xs font-bold text-on-surface dark:text-white focus:ring-4 focus:ring-primary/5 outline-none transition-all shadow-sm" required />
+                                        <span class="material-symbols-rounded absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-lg">person</span>
+                                        <input v-model="profileForm.name" class="w-full h-12 pl-11 pr-4 bg-slate-50/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all shadow-sm" required />
                                     </div>
+                                    <p v-if="profileForm.errors.name" class="text-xs text-red-500 font-semibold">{{ profileForm.errors.name }}</p>
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] ml-4">Enlace de Comunicación</label>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Correo Electrónico</label>
                                     <div class="relative group">
-                                        <span class="material-symbols-rounded absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 group-focus-within:text-primary transition-colors text-lg">mail</span>
-                                        <input v-model="profileForm.email" type="email" class="w-full h-14 pl-12 pr-4 bg-white dark:bg-white/[0.03] border border-outline-variant/10 dark:border-white/5 rounded-2xl text-xs font-bold text-on-surface dark:text-white focus:ring-4 focus:ring-primary/5 outline-none transition-all shadow-sm" required />
+                                        <span class="material-symbols-rounded absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-lg">mail</span>
+                                        <input v-model="profileForm.email" type="email" class="w-full h-12 pl-11 pr-4 bg-slate-50/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all shadow-sm" required />
                                     </div>
+                                    <p v-if="profileForm.errors.email" class="text-xs text-red-500 font-semibold">{{ profileForm.errors.email }}</p>
                                 </div>
                             </div>
 
-                            <div class="flex items-center justify-between pt-6 border-t border-outline-variant/5 dark:border-white/5">
-                                <div class="flex items-center gap-4">
-                                     <p v-if="profileForm.recentlySuccessful" class="text-[10px] font-black text-emerald-500 uppercase tracking-widest animate-pulse italic">¡NÚCLEO ACTUALIZADO!</p>
+                            <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                                <div>
+                                     <p v-if="profileForm.recentlySuccessful" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 animate-in fade-in">
+                                         <span class="material-symbols-rounded text-sm">check_circle</span>
+                                         ¡Perfil actualizado correctamente!
+                                     </p>
                                 </div>
-                                <Button type="submit" variant="primary" :loading="profileForm.processing" icon="sync_saved_locally" class="!rounded-2xl !h-14 !px-10 !text-[11px] font-black uppercase shadow-xl shadow-primary/10">Sincronizar Perfil</Button>
+                                <Button type="submit" variant="primary" :loading="profileForm.processing" icon="save" class="!rounded-xl font-bold min-h-[44px]">Guardar Cambios</Button>
                             </div>
                         </form>
                     </Card>
@@ -151,33 +156,36 @@ const getRoleConfig = (role: string) => {
 
                 <!-- Security Section -->
                 <div class="lg:col-span-12 xl:col-span-5">
-                    <Card class="!p-10 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14]">
-                        <div class="flex justify-between items-start mb-10">
+                    <Card class="!p-8 !rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl dark:bg-[#0b0e14]">
+                        <div class="flex justify-between items-start mb-8">
                             <div>
-                                <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic">Cámara <span class="text-secondary font-black italic">Acorazada</span></h3>
-                                <p class="text-[11px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] mt-3 italic">Renovación de llaves de acceso</p>
+                                <h3 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Seguridad y Acceso</h3>
+                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Actualización de contraseña de usuario</p>
                             </div>
-                            <div class="w-14 h-14 bg-secondary/10 rounded-2xl flex items-center justify-center text-secondary shadow-inner">
-                                <span class="material-symbols-rounded text-2xl">shield_locked</span>
+                            <div class="w-12 h-12 bg-blue-50 dark:bg-blue-950/60 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900">
+                                <span class="material-symbols-rounded text-2xl">lock_reset</span>
                             </div>
                         </div>
 
-                        <form @submit.prevent="updatePassword" class="space-y-6">
+                        <form @submit.prevent="updatePassword" class="space-y-5">
                             <div class="space-y-2">
-                                <label class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] ml-4">Clave Técnica Actual</label>
-                                <input v-model="passwordForm.current_password" type="password" class="w-full h-14 px-6 bg-white dark:bg-white/[0.03] border border-outline-variant/10 dark:border-white/5 rounded-2xl text-xs font-bold text-on-surface dark:text-white focus:ring-4 focus:ring-secondary/5 outline-none transition-all" required />
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Contraseña Actual</label>
+                                <input v-model="passwordForm.current_password" type="password" class="w-full h-12 px-4 bg-slate-50/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all" required />
+                                <p v-if="passwordForm.errors.current_password" class="text-xs text-red-500 font-semibold">{{ passwordForm.errors.current_password }}</p>
                             </div>
                             <div class="space-y-2">
-                                <label class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] ml-4">Nueva Llave de Acceso</label>
-                                <input v-model="passwordForm.password" type="password" class="w-full h-14 px-6 bg-white dark:bg-white/[0.03] border border-outline-variant/10 dark:border-white/5 rounded-2xl text-xs font-bold text-on-surface dark:text-white focus:ring-4 focus:ring-secondary/5 outline-none transition-all" required />
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Nueva Contraseña</label>
+                                <input v-model="passwordForm.password" type="password" class="w-full h-12 px-4 bg-slate-50/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all" required />
+                                <p v-if="passwordForm.errors.password" class="text-xs text-red-500 font-semibold">{{ passwordForm.errors.password }}</p>
                             </div>
                             <div class="space-y-2">
-                                <label class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] ml-4">Validar Nueva Llave</label>
-                                <input v-model="passwordForm.password_confirmation" type="password" class="w-full h-14 px-6 bg-white dark:bg-white/[0.03] border border-outline-variant/10 dark:border-white/5 rounded-2xl text-xs font-bold text-on-surface dark:text-white focus:ring-4 focus:ring-secondary/5 outline-none transition-all" required />
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Confirmar Nueva Contraseña</label>
+                                <input v-model="passwordForm.password_confirmation" type="password" class="w-full h-12 px-4 bg-slate-50/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all" required />
+                                <p v-if="passwordForm.errors.password_confirmation" class="text-xs text-red-500 font-semibold">{{ passwordForm.errors.password_confirmation }}</p>
                             </div>
 
-                            <div class="pt-6">
-                                <Button type="submit" variant="secondary" :loading="passwordForm.processing" icon="key_visualizer" class="w-full !rounded-2xl !h-14 !text-[11px] font-black uppercase shadow-xl shadow-secondary/10">Renovar Credenciales</Button>
+                            <div class="pt-4">
+                                <Button type="submit" variant="primary" :loading="passwordForm.processing" icon="key" class="w-full !rounded-xl font-bold shadow-lg shadow-primary/20 min-h-[48px]">Actualizar Contraseña</Button>
                             </div>
                         </form>
                     </Card>

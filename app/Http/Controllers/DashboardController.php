@@ -7,7 +7,6 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 use App\Modules\Operations\Models\Notification;
-use App\Http\Controllers\SuperAdmin\CopropiedadController;
 use App\Services\Analytics\AnalyticsService;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -19,34 +18,39 @@ class DashboardController extends Controller
     ) {}
 
     /**
-     * Display the administrative dashboard (Dispatcher).
+     * Dispatcher central: Redirige a cada usuario autenticado a su URL canónica según su entorno/rol.
      */
     public function index(): mixed
     {
         $user = Auth::user();
 
-        // ── DASHBOARD DE SUPER ADMIN ─────────────────────────────────
-        if ($user->isSuperAdmin()) {
-            return app(CopropiedadController::class)->index();
-        }
+        return match (true) {
+            $user->isSuperAdmin() => redirect()->route('superadmin.dashboard'),
+            $user->isBackoffice() => redirect()->route('backoffice.leads.index'),
+            $user->isAdmin()      => redirect()->route('admin.dashboard'),
+            $user->isSecurity()    => redirect()->route('porteria.dashboard'),
+            default               => redirect()->route('owner.dashboard'),
+        };
+    }
 
-        // ── DASHBOARD DE PROPIETARIO ─────────────────────────────────
-        if ($user->isOwner()) {
-            return redirect()->route('owner.dashboard');
-        }
+    /**
+     * Dashboard canónico del Administrador de Copropiedad.
+     */
+    public function adminDashboard(): mixed
+    {
+        $user = Auth::user();
 
-        // ── DASHBOARD DE ADMINISTRADOR (Actual) ──────────────────────
         $copropiedadId = $user->current_copropiedad_id;
         $copropiedad = $user->currentCopropiedad;
 
-        // Redirección Standalone: Si es solo asamblea, no ve el dashboard general
+        // Redirección Standalone: Si es solo asamblea, redirigir al módulo de asambleas
         $isStandalone = $user->is_standalone || ($copropiedad && ($copropiedad->settings['is_standalone'] ?? false));
         if ($isStandalone) {
             return redirect()->route('admin.asambleas.index');
         }
 
         if (!$copropiedadId) {
-            // Si el admin no tiene conjunto activo, redirigir a creación o selección
+            // Si el admin no tiene conjunto asignado o seleccionado, vista de configuración
             return Inertia::render('Admin/Copropiedades/SetupRequired');
         }
 
@@ -59,7 +63,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Mark a notification as read.
+     * Marcar notificación administrativa como leída.
      */
     public function markNotificationAsRead(Notification $notification)
     {

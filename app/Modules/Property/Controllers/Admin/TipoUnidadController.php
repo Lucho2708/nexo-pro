@@ -25,9 +25,9 @@ class TipoUnidadController extends \App\Http\Controllers\Controller
 
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
-            'area_m2' => 'required|numeric|min:0',
+            'area_m2' => 'required|numeric|min:0.01',
             'componentes' => 'required|array|min:1',
-            'componentes.*.id' => 'required|exists:componentes_unidad,id',
+            'componentes.*.id' => 'required',
             'componentes.*.cantidad' => 'required|integer|min:1',
         ]);
 
@@ -151,5 +151,21 @@ class TipoUnidadController extends \App\Http\Controllers\Controller
         $copropiedad->update(['unit_types_locked' => false]);
 
         return back()->with('success', 'Configuración desbloqueada para edición.');
+    }
+
+    /**
+     * Store a new custom architectural component in the catalog.
+     */
+    public function storeComponente(Request $request)
+    {
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:100',
+        ]);
+
+        $componente = \App\Modules\Property\Models\ComponenteUnidad::firstOrCreate([
+            'nombre' => trim($validated['nombre'])
+        ]);
+
+        return back()->with('success', "Componente '{$componente->nombre}' agregado al catálogo.");
     }
 }

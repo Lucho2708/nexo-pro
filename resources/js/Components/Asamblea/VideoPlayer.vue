@@ -43,8 +43,13 @@ const connect = async () => {
                 track.attach(videoElement.value!);
             } else if (track.kind === Track.Kind.Audio) {
                 const audioEl = track.attach();
+                audioEl.classList.add('livekit-audio-track');
                 document.body.appendChild(audioEl);
             }
+        });
+
+        room.on(RoomEvent.TrackUnsubscribed, (track: RemoteTrack) => {
+            track.detach().forEach(el => el.remove());
         });
 
         room.on(RoomEvent.ConnectionStateChanged, (state: ConnectionState) => {
@@ -98,7 +103,10 @@ onMounted(() => {
 });
 
 onUnmounted(async () => {
-    await room.disconnect();
+    if (room) {
+        document.querySelectorAll('.livekit-audio-track').forEach(el => el.remove());
+        await room.disconnect();
+    }
 });
 </script>
 

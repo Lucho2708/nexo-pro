@@ -30,20 +30,27 @@ class AsambleaService
     /**
      * Generate an access token for LiveKit.
      */
-    public function generateToken(User $user, Unidad $unidad): string
+    public function generateToken(User $user, Unidad $unidad, ?Asamblea $asamblea = null): string
     {
-        $apiKey = config('services.livekit.key');
-        $apiSecret = config('services.livekit.secret');
-        $roomName = "asamblea_" . $user->current_copropiedad_id;
+        $apiKey = config('services.livekit.key') ?: 'devkey';
+        $apiSecret = config('services.livekit.secret') ?: 'secret';
+        
+        $copropiedadId = $asamblea ? $asamblea->copropiedad_id : ($user->current_copropiedad_id ?? $unidad->copropiedad_id);
+        $roomName = "asamblea_" . $copropiedadId;
 
         $identity = "T-{$unidad->torre} U-{$unidad->nombre} | {$user->name}";
 
         $tokenOptions = (new AccessTokenOptions())
             ->setIdentity($identity);
 
+        $isAdmin = $user->isAdmin() || $user->isSuperAdmin();
+
         $videoGrant = (new VideoGrant())
-            ->setRoomJoin()
-            ->setRoomName($roomName);
+            ->setRoomJoin(true)
+            ->setRoomName($roomName)
+            ->setCanPublish($isAdmin)
+            ->setCanSubscribe(true)
+            ->setCanPublishData(true);
 
         $token = (new AccessToken($apiKey, $apiSecret, $tokenOptions))
             ->setGrant($videoGrant);

@@ -8,6 +8,7 @@
         "ssr": "php artisan inertia:start-ssr",
         "reverb": "php artisan reverb:start",
         "livekit": "livekit-server --config livekit.yaml",
+        "test:frontend": "node --test tests/frontend/*.test.js",
         "dev:full": "concurrently \"npm run dev\" \"php artisan serve\" \"npm run reverb\" \"npm run ssr\" \"npm run livekit\""
     },
     "devDependencies": {

@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Modules\Property\Models\ComponenteUnidad;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class ComponenteUnidadSeeder extends Seeder
 {
@@ -21,16 +20,13 @@ class ComponenteUnidadSeeder extends Seeder
             'Estudio',
             'Zona de Ropas',
             'Patio',
-            'Parqueadero Privado',
+            'Parqueadero',
             'Depósito',
         ];
 
         foreach ($componentes as $nombre) {
-            DB::table('componentes_unidad')->insertOrIgnore([
-                'id' => Str::uuid(),
+            ComponenteUnidad::firstOrCreate([
                 'nombre' => $nombre,
-                'created_at' => now(),
-                'updated_at' => now(),
             ]);
         }
     }

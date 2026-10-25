@@ -51,7 +51,48 @@ const submit = () => {
     });
 };
 
-// --- Lógica de Hoja de Vida ---
+// --- Lógica de Hoja de Vida y Catálogo Arquitectónico ---
+const defaultCatalog = [
+    { id: 'default-1', nombre: 'Habitación' },
+    { id: 'default-2', nombre: 'Baño' },
+    { id: 'default-3', nombre: 'Cocina' },
+    { id: 'default-4', nombre: 'Sala' },
+    { id: 'default-5', nombre: 'Comedor' },
+    { id: 'default-6', nombre: 'Balcón' },
+    { id: 'default-7', nombre: 'Terraza' },
+    { id: 'default-8', nombre: 'Estudio' },
+    { id: 'default-9', nombre: 'Zona de Ropas' },
+    { id: 'default-10', nombre: 'Patio' },
+    { id: 'default-11', nombre: 'Parqueadero' },
+    { id: 'default-12', nombre: 'Depósito' }
+];
+
+const catalogoComponentes = computed(() => {
+    if (props.componentes_catalogo && props.componentes_catalogo.length > 0) {
+        return props.componentes_catalogo;
+    }
+    return defaultCatalog;
+});
+
+const customComponenteNombre = ref('');
+const isAddingCustom = ref(false);
+
+const addCustomComponent = () => {
+    const cleanName = customComponenteNombre.value.trim();
+    if (!cleanName) return;
+
+    useForm({
+        nombre: cleanName
+    }).post(route('admin.componentes.store'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            toast.add(`Componente '${cleanName}' agregado al catálogo`, 'success');
+            customComponenteNombre.value = '';
+            isAddingCustom.value = false;
+        }
+    });
+};
+
 const tipoUnidadForm = useForm({
     nombre: '',
     area_m2: '',
@@ -75,9 +116,22 @@ const updateCantidad = (compId: string, delta: number) => {
 };
 
 const saveTipoUnidad = () => {
+    if (!tipoUnidadForm.nombre.trim()) {
+        toast.add('Por favor ingresa el nombre del modelo (Ej: Apartamento Tipo A).', 'error');
+        return;
+    }
+    if (!tipoUnidadForm.area_m2 || Number(tipoUnidadForm.area_m2) <= 0) {
+        toast.add('Por favor ingresa un área privada válida mayor a 0 m².', 'error');
+        return;
+    }
+    if (tipoUnidadForm.componentes.length === 0) {
+        toast.add('Debes seleccionar al menos un componente (ej: Habitación, Baño).', 'error');
+        return;
+    }
+
     tipoUnidadForm.post(route('admin.unit-types.store'), {
         onSuccess: () => {
-            toast.add('Modelo de unidad registrado', 'success');
+            toast.add('Modelo de unidad registrado con éxito', 'success');
             tipoUnidadForm.reset();
         }
     });
@@ -379,28 +433,60 @@ const unlockConfiguration = () => {
                         </div>
 
                         <div class="space-y-6">
-                            <p class="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4">Selección de Componentes</p>
+                            <div class="flex items-center justify-between">
+                                <p class="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Selección de Componentes</p>
+                                <button 
+                                    @click="isAddingCustom = !isAddingCustom"
+                                    type="button"
+                                    class="text-[9px] font-bold text-primary hover:underline uppercase tracking-widest flex items-center gap-1 cursor-pointer"
+                                >
+                                    <span class="material-symbols-rounded text-sm">{{ isAddingCustom ? 'close' : 'add_circle' }}</span>
+                                    {{ isAddingCustom ? 'Cerrar' : '+ Personalizar Componente' }}
+                                </button>
+                            </div>
+
+                            <!-- Custom Component Quick Add -->
+                            <div v-if="isAddingCustom" class="p-4 bg-surface-container-high/40 rounded-2xl border border-primary/20 flex gap-3 items-center animate-in fade-in duration-200">
+                                <input 
+                                    v-model="customComponenteNombre"
+                                    type="text" 
+                                    placeholder="Ej: Jacuzzi, Altillo, Depósito Doble"
+                                    class="flex-1 bg-surface-container px-4 py-2.5 rounded-xl text-xs font-bold text-on-surface border border-outline-variant/20 focus:outline-none focus:border-primary"
+                                    @keyup.enter="addCustomComponent"
+                                />
+                                <Button @click="addCustomComponent" variant="primary" size="sm" class="!rounded-xl cursor-pointer">
+                                    Añadir
+                                </Button>
+                            </div>
+
+                            <!-- Catalogo Pills -->
                             <div class="flex flex-wrap gap-3">
                                 <button 
-                                    v-for="comp in componentes_catalogo" 
+                                    v-for="comp in catalogoComponentes" 
                                     :key="comp.id"
                                     @click="toggleComponente(comp)"
                                     type="button"
-                                    :class="tipoUnidadForm.componentes.some(c => c.id === comp.id) ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-surface-container-low dark:bg-white/5 text-on-surface-variant/60 dark:text-white/40 border-outline-variant/10 dark:border-white/5'"
-                                    class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all hover:border-primary/50"
+                                    :class="tipoUnidadForm.componentes.some(c => c.id === comp.id) ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30' : 'bg-surface-container-low dark:bg-white/5 text-on-surface-variant/80 dark:text-white/60 border-outline-variant/10 dark:border-white/5 hover:border-primary/50'"
+                                    class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all cursor-pointer select-none active:scale-95"
                                 >
                                     {{ comp.nombre }}
                                 </button>
                             </div>
 
                             <!-- Quantity Adjusters -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-                                <div v-for="comp in tipoUnidadForm.componentes" :key="comp.id" class="flex items-center justify-between p-4 bg-surface-container-lowest dark:bg-white/[0.02] rounded-2xl border border-outline-variant/10 dark:border-white/5 animate-in zoom-in-95 duration-300">
-                                    <span class="text-[10px] font-black text-on-surface/60 dark:text-white/60 uppercase tracking-widest">{{ comp.nombre }}</span>
-                                    <div class="flex items-center gap-4">
-                                        <button @click="updateCantidad(comp.id, -1)" type="button" class="w-8 h-8 rounded-lg bg-on-surface/5 dark:bg-white/5 text-on-surface dark:text-white flex items-center justify-center hover:bg-primary hover:text-white transition-all">-</button>
-                                        <span class="text-sm font-black text-on-surface dark:text-white w-4 text-center">{{ comp.cantidad }}</span>
-                                        <button @click="updateCantidad(comp.id, 1)" type="button" class="w-8 h-8 rounded-lg bg-on-surface/5 dark:bg-white/5 text-on-surface dark:text-white flex items-center justify-center hover:bg-primary hover:text-white transition-all">+</button>
+                            <div v-if="tipoUnidadForm.componentes.length > 0" class="space-y-3 mt-6">
+                                <p class="text-[9px] font-black text-on-surface-variant/50 uppercase tracking-widest">Cantidades por Componente Seleccionado</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div v-for="comp in tipoUnidadForm.componentes" :key="comp.id" class="flex items-center justify-between p-4 bg-surface-container-lowest dark:bg-white/[0.02] rounded-2xl border border-outline-variant/10 dark:border-white/5 shadow-sm animate-in zoom-in-95 duration-300">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-2 h-2 rounded-full bg-primary"></span>
+                                            <span class="text-[11px] font-black text-on-surface dark:text-white uppercase tracking-wider">{{ comp.nombre }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <button @click="updateCantidad(comp.id, -1)" type="button" class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-primary hover:text-white text-on-surface font-black transition-all flex items-center justify-center cursor-pointer">-</button>
+                                            <span class="text-sm font-black text-on-surface dark:text-white w-6 text-center tabular-nums">{{ comp.cantidad }}</span>
+                                            <button @click="updateCantidad(comp.id, 1)" type="button" class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-primary hover:text-white text-on-surface font-black transition-all flex items-center justify-center cursor-pointer">+</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

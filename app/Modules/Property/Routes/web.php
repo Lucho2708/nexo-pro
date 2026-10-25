@@ -38,5 +38,6 @@ Route::middleware(['auth', 'verified', 'ensure-legal', 'two-factor'])->group(fun
         Route::post('/admin/unit-types/lock', [TipoUnidadController::class, 'lock'])->name('admin.unit-types.lock');
         Route::post('/admin/unit-types/generate', [TipoUnidadController::class, 'generateUnits'])->name('admin.settings.generate_units');
         Route::post('/admin/unit-types/unlock', [TipoUnidadController::class, 'unlock'])->name('admin.unit-types.unlock');
+        Route::post('/admin/componentes', [TipoUnidadController::class, 'storeComponente'])->name('admin.componentes.store');
     });
 });

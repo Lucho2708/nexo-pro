@@ -38,10 +38,36 @@ class CopropiedadController extends \App\Http\Controllers\Controller
         $copropiedad = auth()->user()->currentCopropiedad;
         $copropiedad->load('tiposUnidad.componentes');
         
+        $componentes = \App\Modules\Property\Models\ComponenteUnidad::orderBy('nombre')->get();
+        if ($componentes->isEmpty()) {
+            $defaultNames = [
+                'Habitación',
+                'Baño',
+                'Cocina',
+                'Sala',
+                'Comedor',
+                'Balcón',
+                'Terraza',
+                'Estudio',
+                'Zona de Ropas',
+                'Patio',
+                'Parqueadero',
+                'Depósito',
+            ];
+            foreach ($defaultNames as $nombre) {
+                try {
+                    \App\Modules\Property\Models\ComponenteUnidad::firstOrCreate(['nombre' => $nombre]);
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning("Error auto-seeding component {$nombre}: " . $e->getMessage());
+                }
+            }
+            $componentes = \App\Modules\Property\Models\ComponenteUnidad::orderBy('nombre')->get();
+        }
+
         return Inertia::render('Admin/Settings/Index', [
             'copropiedad' => $copropiedad,
             'settings' => $copropiedad->settings ?? \App\Modules\Property\Models\Copropiedad::defaultSettings(),
-            'componentes_catalogo' => \App\Modules\Property\Models\ComponenteUnidad::all(),
+            'componentes_catalogo' => $componentes,
             'is_super_admin' => auth()->user()->role === 'super_admin'
         ]);
     }

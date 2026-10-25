@@ -109,12 +109,22 @@ const formatDate = (dateString: string) => {
                 <h2 class="text-2xl md:text-3xl font-black text-primary tracking-tighter uppercase leading-none">Panel de Propietario</h2>
                 <p class="text-[10px] md:text-xs text-on-surface-variant/60 font-bold uppercase tracking-widest mt-2 md:mt-1">Resumen consolidado de tus inversiones</p>
             </div>
-            <div class="flex items-center gap-4 hidden md:flex">
-                <button class="w-10 h-10 rounded-full bg-surface-container-lowest shadow-sm border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
-                    <span class="material-symbols-outlined">notifications</span>
+            <div class="flex items-center gap-3">
+                <button 
+                    v-if="total_saldo > 0"
+                    @click="handlePayment"
+                    type="button"
+                    class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary/90 text-white text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-95"
+                >
+                    <span class="material-symbols-rounded text-base">payments</span>
+                    <span>Pagar Expensas</span>
                 </button>
-                <div class="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-md uppercase tracking-tighter">
-                    {{ user.name.split(' ').map(n => n[0]).join('').substring(0, 2) }}
+                <div 
+                    v-else 
+                    class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold"
+                >
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="uppercase tracking-widest text-[10px] font-black">Al Día / Paz y Salvo</span>
                 </div>
             </div>
         </div>

@@ -192,63 +192,66 @@ const formatCurrency = (value: number) => {
                         <span class="material-symbols-rounded text-2xl">{{ editingZona ? 'edit_square' : 'add_circle' }}</span>
                     </div>
                     <div>
-                        <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">{{ editingZona ? 'Ajustes Técnicos' : 'Registro de Activo' }}</h3>
-                        <p class="text-[9px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-widest mt-1">Configuración de parámetros operativos</p>
+                        <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tight leading-none">{{ editingZona ? 'Editar Zona Común' : 'Nueva Zona Común' }}</h3>
+                        <p class="text-xs font-medium text-on-surface-variant/70 dark:text-slate-400 mt-1">Configuración de parámetros y tarifas de reserva</p>
                     </div>
                 </div>
             </template>
 
-            <form @submit.prevent="submitForm" class="space-y-8 mt-10">
+            <form @submit.prevent="submitForm" class="space-y-6 mt-6">
                 <Input 
                     v-model="form.nombre"
-                    label="IDENTIFICACIÓN DEL ACTIVO"
-                    placeholder="Ej: SALÓN TÁCTICO, FITNESS CENTER..."
+                    label="Nombre de la Zona Común"
+                    placeholder="Ej: Salón Social, Zona BBQ, Cancha de Tenis..."
                     icon="apartment"
                     required
-                    class="!rounded-2xl"
+                    :error="form.errors.nombre"
                 />
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Input 
                         v-model="form.capacidad_maxima"
-                        label="CAPACIDAD OPERATIVA (PAX)"
+                        label="Capacidad Máxima (Personas)"
                         type="number"
+                        placeholder="Ej: 50"
                         icon="groups"
                         required
-                        class="!rounded-2xl"
+                        :error="form.errors.capacidad_maxima"
                     />
                     <Input 
                         v-model="form.costo"
-                        label="CANON DE USO (COP)"
+                        label="Tarifa de Reserva (COP)"
                         type="number"
+                        placeholder="0"
                         icon="payments"
                         required
-                        class="!rounded-2xl"
+                        :error="form.errors.costo"
                     />
                 </div>
 
-                <div class="space-y-3">
-                    <label class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] ml-2 italic">Protocolos y Descripción</label>
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Normas de Uso y Descripción</label>
                     <textarea 
                         v-model="form.descripcion" 
                         rows="4" 
-                        class="w-full bg-surface-container-low dark:bg-white/[0.03] border border-outline-variant/10 dark:border-white/5 rounded-3xl p-6 text-sm font-medium text-on-surface dark:text-white focus:ring-4 focus:ring-primary/5 outline-none transition-all placeholder:text-on-surface-variant/20 italic"
-                        placeholder="Define los vectores de uso y normativas locales..."
+                        class="w-full bg-slate-50/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-sm font-medium text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                        placeholder="Describe los horarios permitidos, reglas de convivencia y condiciones de entrega..."
                     ></textarea>
+                    <p v-if="form.errors.descripcion" class="text-xs text-red-500 font-semibold">{{ form.errors.descripcion }}</p>
                 </div>
 
-                <div class="flex flex-col gap-4 pt-6 border-t border-outline-variant/10 dark:border-white/5">
+                <div class="flex flex-col gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                     <Button 
                         type="submit" 
                         variant="primary" 
                         size="lg" 
-                        class="w-full !h-16 !rounded-2xl !text-[11px] font-black uppercase italic shadow-2xl shadow-primary/20"
+                        class="w-full !rounded-xl font-bold shadow-lg shadow-primary/20 min-h-[48px]"
                         :disabled="form.processing"
-                        :icon="editingZona ? 'save' : 'deployment_unit'"
+                        :icon="editingZona ? 'save' : 'add_circle'"
                     >
-                        {{ form.processing ? 'PROCESANDO...' : (editingZona ? 'ACTUALIZAR PARÁMETROS' : 'VINCULAR ACTIVO') }}
+                        {{ form.processing ? 'Guardando...' : (editingZona ? 'Actualizar Zona Común' : 'Registrar Zona Común') }}
                     </Button>
-                    <Button variant="ghost" class="w-full !text-[9px] font-black uppercase tracking-widest text-on-surface-variant/40" @click="showModal = false">Abortar Operación</Button>
+                    <Button variant="ghost" class="w-full text-slate-500 hover:text-slate-900 dark:hover:text-white" @click="showModal = false">Cancelar</Button>
                 </div>
             </form>
         </Modal>
