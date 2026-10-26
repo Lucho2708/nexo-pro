@@ -24,9 +24,9 @@ COPY --from=vendor /app/vendor ./vendor
 RUN npm run build && npm run build -- --ssr
 
 # ==============================================================================
-# ETAPA 3: Runtime PHP-FPM 8.3 + Nginx + Reverb + Supervisor (Producción)
+# ETAPA 3: Runtime PHP-FPM 8.4 + Nginx + Reverb + Supervisor (Producción)
 # ==============================================================================
-FROM php:8.3-fpm-bookworm AS production
+FROM php:8.4-fpm-bookworm AS production
 
 ENV DEBIAN_FRONTEND=noninteractive \
     COMPOSER_ALLOW_SUPERUSER=1
@@ -87,14 +87,13 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 WORKDIR /var/www/html
 
-# Instalar dependencias de Composer primero (aprovecha la caché de Docker)
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
-
 # Copiar el código fuente completo del proyecto
 COPY . .
 
-# Copiar los bundles de Vite compilados desde la etapa frontend
+# Copiar las dependencias de vendor pre-instaladas en la Etapa 1
+COPY --from=vendor /app/vendor ./vendor
+
+# Copiar los bundles de Vite compilados desde la Etapa 2 (frontend)
 COPY --from=frontend /app/public/build ./public/build
 COPY --from=frontend /app/bootstrap/ssr ./bootstrap/ssr
 
