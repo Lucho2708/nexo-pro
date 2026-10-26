@@ -15,13 +15,29 @@ if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "null" ]; then
     export APP_KEY="base64:eB8+t11VlR8T2b6O0J7J2kF3o3/s7X6y0QeW7A4V+8w="
 fi
 
+# Probar si Redis está disponible antes de forzar su uso
+ACTIVE_CACHE_STORE="${CACHE_STORE:-redis}"
+ACTIVE_SESSION_DRIVER="${SESSION_DRIVER:-redis}"
+ACTIVE_QUEUE_CONNECTION="${QUEUE_CONNECTION:-redis}"
+
+if [ "$ACTIVE_CACHE_STORE" = "redis" ] || [ "$ACTIVE_SESSION_DRIVER" = "redis" ]; then
+    if ! nc -z -w 2 "${REDIS_HOST:-redis}" "${REDIS_PORT:-6379}" 2>/dev/null; then
+        echo "⚠️ Redis (${REDIS_HOST:-redis}:${REDIS_PORT:-6379}) no responde. Usando 'file' para evitar error 500..."
+        ACTIVE_CACHE_STORE="file"
+        ACTIVE_SESSION_DRIVER="file"
+        ACTIVE_QUEUE_CONNECTION="sync"
+    else
+        echo "✅ Redis detectado y accesible en ${REDIS_HOST:-redis}:${REDIS_PORT:-6379}."
+    fi
+fi
+
 # Generar archivo .env sincronizado para PHP-FPM, Supervisor y Artisan
 echo "📝 Sincronizando variables de entorno a /var/www/html/.env..."
 cat <<EOF > /var/www/html/.env
 APP_NAME="${APP_NAME:-NEXO PRO (QA)}"
 APP_ENV="${APP_ENV:-staging}"
 APP_KEY="${APP_KEY}"
-APP_DEBUG="${APP_DEBUG:-false}"
+APP_DEBUG="${APP_DEBUG:-true}"
 APP_URL="${APP_URL:-https://qa.nexo-pro.com.co}"
 
 DB_CONNECTION="${DB_CONNECTION:-pgsql}"
@@ -34,9 +50,9 @@ DB_SCHEMA="${DB_SCHEMA:-public,iam,property,operations,finance,asamblea}"
 
 REDIS_HOST="${REDIS_HOST:-redis}"
 REDIS_PORT="${REDIS_PORT:-6379}"
-CACHE_STORE="${CACHE_STORE:-redis}"
-SESSION_DRIVER="${SESSION_DRIVER:-redis}"
-QUEUE_CONNECTION="${QUEUE_CONNECTION:-redis}"
+CACHE_STORE="${ACTIVE_CACHE_STORE}"
+SESSION_DRIVER="${ACTIVE_SESSION_DRIVER}"
+QUEUE_CONNECTION="${ACTIVE_QUEUE_CONNECTION}"
 
 BROADCAST_CONNECTION="${BROADCAST_CONNECTION:-reverb}"
 REVERB_APP_ID="${REVERB_APP_ID:-nexopro_qa_appid}"
