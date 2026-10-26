@@ -38,6 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
     unzip \
+    nodejs \
     libpq-dev \
     libpng-dev \
     libjpeg-dev \

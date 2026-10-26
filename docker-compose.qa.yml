@@ -61,9 +61,11 @@ services:
       - qa_storage:/var/www/html/storage
     networks:
       - nexo_qa_net
+      - coolify
     labels:
       - "coolify.managed=true"
       - "traefik.enable=true"
+      - "traefik.docker.network=coolify"
       - "traefik.http.routers.nexo-qa.rule=Host(`qa.nexo-pro.com.co`)"
       - "traefik.http.routers.nexo-qa.entrypoints=websecure"
       - "traefik.http.routers.nexo-qa.tls=true"
@@ -108,6 +110,8 @@ services:
 networks:
   nexo_qa_net:
     driver: bridge
+  coolify:
+    external: true
 
 volumes:
   qa_postgres_data:
