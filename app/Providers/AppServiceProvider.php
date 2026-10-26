@@ -85,8 +85,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Force HTTPS if running on ngrok/cloudflare to avoid Mixed Content
-        if (str_contains(config('app.url'), 'ngrok') || str_contains(config('app.url'), 'trycloudflare.com') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
+        // Force HTTPS in production/staging or when APP_URL is https to prevent Mixed Content
+        if (app()->environment('production', 'staging') || str_starts_with((string) config('app.url'), 'https://') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 

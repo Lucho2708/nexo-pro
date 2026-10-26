@@ -77,6 +77,12 @@ RUN { \
     echo 'opcache.enable_cli=1'; \
 } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
+# Configurar PHP-FPM para permitir el paso de variables de entorno del contenedor al pool www
+RUN { \
+    echo '[www]'; \
+    echo 'clear_env = no'; \
+} > /usr/local/etc/php-fpm.d/zz-docker-env.conf
+
 # Instalar Composer binario oficial
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 

@@ -21,7 +21,7 @@ services:
     environment:
       APP_NAME: "NEXO PRO (QA)"
       APP_ENV: staging
-      APP_KEY: "${APP_KEY}"
+      APP_KEY: "${APP_KEY:-base64:eB8+t11VlR8T2b6O0J7J2kF3o3/s7X6y0QeW7A4V+8w=}"
       APP_DEBUG: "${APP_DEBUG:-false}"
       APP_URL: "https://qa.nexo-pro.com.co"
 

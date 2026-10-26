@@ -38,7 +38,10 @@ class SecurityHeaders
             $connectSources .= " {$httpList} {$wsList}";
         }
 
+        $upgradeInsecure = (! config('app.debug') || str_starts_with((string) config('app.url'), 'https://')) ? "upgrade-insecure-requests; " : "";
+
         $csp = "default-src 'self'; " .
+               $upgradeInsecure .
                "script-src {$scriptSources}; " .
                "style-src {$styleSources}; " .
                "font-src 'self' https://fonts.gstatic.com data:; " .
@@ -49,7 +52,7 @@ class SecurityHeaders
         
         $response->headers->set('Content-Security-Policy', $csp);
 
-        if ($request->isSecure()) {
+        if ($request->isSecure() || app()->environment('production', 'staging') || str_starts_with((string) config('app.url'), 'https://')) {
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 

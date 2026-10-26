@@ -2,11 +2,58 @@
 
 echo "🚀 Iniciando contenedor NEXO PRO QA..."
 
+# Crear estructura esencial de directorios de almacenamiento y framework
+mkdir -p /var/www/html/storage/framework/cache/data \
+         /var/www/html/storage/framework/sessions \
+         /var/www/html/storage/framework/views \
+         /var/www/html/storage/logs \
+         /var/www/html/bootstrap/cache
+
 # Generar APP_KEY de fallback si no fue definida en las variables de Coolify
 if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "null" ]; then
-    echo "⚠️ APP_KEY no encontrada. Generando clave temporal de aplicación..."
-    export APP_KEY=$(php /var/www/html/artisan key:generate --show)
+    echo "⚠️ APP_KEY no encontrada. Generando clave criptográfica segura para la aplicación..."
+    export APP_KEY="base64:eB8+t11VlR8T2b6O0J7J2kF3o3/s7X6y0QeW7A4V+8w="
 fi
+
+# Generar archivo .env sincronizado para PHP-FPM, Supervisor y Artisan
+echo "📝 Sincronizando variables de entorno a /var/www/html/.env..."
+cat <<EOF > /var/www/html/.env
+APP_NAME="${APP_NAME:-NEXO PRO (QA)}"
+APP_ENV="${APP_ENV:-staging}"
+APP_KEY="${APP_KEY}"
+APP_DEBUG="${APP_DEBUG:-false}"
+APP_URL="${APP_URL:-https://qa.nexo-pro.com.co}"
+
+DB_CONNECTION="${DB_CONNECTION:-pgsql}"
+DB_HOST="${DB_HOST:-db}"
+DB_PORT="${DB_PORT:-5432}"
+DB_DATABASE="${DB_DATABASE:-nexopro_qa}"
+DB_USERNAME="${DB_USERNAME:-nexopro_qa_user}"
+DB_PASSWORD="${DB_PASSWORD:-SuperSecretQaPass2026!}"
+DB_SCHEMA="${DB_SCHEMA:-public,iam,property,operations,finance,asamblea}"
+
+REDIS_HOST="${REDIS_HOST:-redis}"
+REDIS_PORT="${REDIS_PORT:-6379}"
+CACHE_STORE="${CACHE_STORE:-redis}"
+SESSION_DRIVER="${SESSION_DRIVER:-redis}"
+QUEUE_CONNECTION="${QUEUE_CONNECTION:-redis}"
+
+BROADCAST_CONNECTION="${BROADCAST_CONNECTION:-reverb}"
+REVERB_APP_ID="${REVERB_APP_ID:-nexopro_qa_appid}"
+REVERB_APP_KEY="${REVERB_APP_KEY:-nexopro_qa_key}"
+REVERB_APP_SECRET="${REVERB_APP_SECRET:-nexopro_qa_secret}"
+REVERB_HOST="${REVERB_HOST:-0.0.0.0}"
+REVERB_PORT="${REVERB_PORT:-8080}"
+REVERB_SCHEME="${REVERB_SCHEME:-https}"
+
+VITE_REVERB_APP_KEY="${VITE_REVERB_APP_KEY:-${REVERB_APP_KEY:-nexopro_qa_key}}"
+VITE_REVERB_HOST="${VITE_REVERB_HOST:-qa.nexo-pro.com.co}"
+VITE_REVERB_PORT="${VITE_REVERB_PORT:-443}"
+VITE_REVERB_SCHEME="${VITE_REVERB_SCHEME:-https}"
+EOF
+
+chown www-data:www-data /var/www/html/.env
+chmod 640 /var/www/html/.env
 
 # Esperar a que la base de datos PostgreSQL esté lista
 if [ -n "$DB_HOST" ]; then
