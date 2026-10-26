@@ -1,5 +1,15 @@
 # ==============================================================================
-# ETAPA 1: Construcción de Assets Frontend (Vite Client + Inertia SSR)
+# ETAPA 1: Resolución de Dependencias PHP y Paquetes de Vendor (Composer)
+# ==============================================================================
+FROM composer:2 AS vendor
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-interaction --prefer-dist --ignore-platform-reqs --no-scripts
+
+# ==============================================================================
+# ETAPA 2: Construcción de Assets Frontend (Vite Client + Inertia SSR)
 # ==============================================================================
 FROM node:20-bookworm-slim AS frontend
 
@@ -9,10 +19,12 @@ COPY package.json package-lock.json ./
 RUN npm ci --prefer-offline --no-audit
 
 COPY . .
+COPY --from=vendor /app/vendor ./vendor
+
 RUN npm run build && npm run build -- --ssr
 
 # ==============================================================================
-# ETAPA 2: Runtime PHP-FPM 8.3 + Nginx + Reverb + Supervisor
+# ETAPA 3: Runtime PHP-FPM 8.3 + Nginx + Reverb + Supervisor (Producción)
 # ==============================================================================
 FROM php:8.3-fpm-bookworm AS production
 
