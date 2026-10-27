@@ -59,6 +59,8 @@ services:
       RUN_MIGRATIONS: "true"
       RUN_SEEDERS: "${RUN_SEEDERS:-true}"
       FRESH_DATABASE: "${FRESH_DATABASE:-false}"
+    expose:
+      - "80"
     volumes:
       - qa_storage:/var/www/html/storage
     networks:
@@ -68,11 +70,17 @@ services:
       - "coolify.managed=true"
       - "traefik.enable=true"
       - "traefik.docker.network=coolify"
+      # Router HTTP (puerto 80)
+      - "traefik.http.routers.nexo-qa-http.rule=Host(`qa.nexo-pro.com.co`)"
+      - "traefik.http.routers.nexo-qa-http.entrypoints=http"
+      - "traefik.http.routers.nexo-qa-http.service=nexo-qa"
+      # Router HTTPS (puerto 443 con entrypoint https oficial de Coolify)
       - "traefik.http.routers.nexo-qa.rule=Host(`qa.nexo-pro.com.co`)"
-      - "traefik.http.routers.nexo-qa.entrypoints=websecure"
+      - "traefik.http.routers.nexo-qa.entrypoints=https"
       - "traefik.http.routers.nexo-qa.service=nexo-qa"
       - "traefik.http.routers.nexo-qa.tls=true"
       - "traefik.http.routers.nexo-qa.tls.certresolver=letsencrypt"
+      # Servicio Loadbalancer al puerto 80 interno (Nginx)
       - "traefik.http.services.nexo-qa.loadbalancer.server.port=80"
 
   # ── SERVICIO 2: CONTENEDOR DE BASE DE DATOS QA (PostgreSQL 16) ──
