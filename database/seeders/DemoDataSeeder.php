@@ -22,14 +22,16 @@ class DemoDataSeeder extends Seeder
         $password = Hash::make('password');
 
         // Anuncios Globales (Simulación)
-        Announcement::create([
-            'title' => 'Actualización de Plataforma 2.0',
-            'message' => 'Hemos lanzado nuevas funcionalidades en el módulo de reservas y pagos en línea.',
-            'type' => 'info',
-            'target_role' => 'all',
-            'starts_at' => now(),
-            'expires_at' => now()->addDays(30),
-        ]);
+        Announcement::firstOrCreate(
+            ['title' => 'Actualización de Plataforma 2.0'],
+            [
+                'message' => 'Hemos lanzado nuevas funcionalidades en el módulo de reservas y pagos en línea.',
+                'type' => 'info',
+                'target_role' => 'all',
+                'starts_at' => now(),
+                'expires_at' => now()->addDays(30),
+            ]
+        );
 
         // 2. Administrador que maneja 2 conjuntos
         $adminMulti = User::updateOrCreate(
@@ -109,9 +111,12 @@ class DemoDataSeeder extends Seeder
                 $numeroApto = $piso . '0' . $i;
                 
                 $unidad = Unidad::firstOrCreate(
-                    ['copropiedad_id' => $copro->id, 'nombre' => $numeroApto],
                     [
+                        'copropiedad_id' => $copro->id,
                         'torre' => $torre,
+                        'nombre' => $numeroApto,
+                    ],
+                    [
                         'piso' => $piso,
                         'saldo_actual' => rand(0, 1) ? 0 : rand(50000, 300000),
                     ]
@@ -167,19 +172,21 @@ class DemoDataSeeder extends Seeder
                 }
             }
 
-            // Simular logs de uso del sistema (Audit/Analytics)
-            FeatureUsageLog::create([
-                'user_id' => $admin->id,
-                'copropiedad_id' => $copro->id,
-                'feature' => 'dashboard',
-                'used_at' => now(),
-            ]);
-            FeatureUsageLog::create([
-                'user_id' => $admin->id,
-                'copropiedad_id' => $copro->id,
-                'feature' => 'cartera',
-                'used_at' => now()->subHours(2),
-            ]);
+            // Simular logs de uso del sistema (Audit/Analytics) si no existen
+            if (FeatureUsageLog::where('user_id', $admin->id)->where('copropiedad_id', $copro->id)->doesntExist()) {
+                FeatureUsageLog::create([
+                    'user_id' => $admin->id,
+                    'copropiedad_id' => $copro->id,
+                    'feature' => 'dashboard',
+                    'used_at' => now(),
+                ]);
+                FeatureUsageLog::create([
+                    'user_id' => $admin->id,
+                    'copropiedad_id' => $copro->id,
+                    'feature' => 'cartera',
+                    'used_at' => now()->subHours(2),
+                ]);
+            }
         }
 
         // 5. Usuario de Portería / Seguridad (Garita Operativa)
