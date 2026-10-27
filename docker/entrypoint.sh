@@ -15,19 +15,38 @@ if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "null" ]; then
     export APP_KEY="base64:eB8+t11VlR8T2b6O0J7J2kF3o3/s7X6y0QeW7A4V+8w="
 fi
 
-# Probar si Redis está disponible antes de forzar su uso
+# Probar si Redis está disponible y responde autenticación/ping antes de forzar su uso
 ACTIVE_CACHE_STORE="${CACHE_STORE:-redis}"
 ACTIVE_SESSION_DRIVER="${SESSION_DRIVER:-redis}"
 ACTIVE_QUEUE_CONNECTION="${QUEUE_CONNECTION:-redis}"
 
+REDIS_CHECK_SUCCESS=false
 if [ "$ACTIVE_CACHE_STORE" = "redis" ] || [ "$ACTIVE_SESSION_DRIVER" = "redis" ]; then
-    if ! nc -z -w 2 "${REDIS_HOST:-redis}" "${REDIS_PORT:-6379}" 2>/dev/null; then
-        echo "⚠️ Redis (${REDIS_HOST:-redis}:${REDIS_PORT:-6379}) no responde. Usando 'file' para evitar error 500..."
+    if php -r "
+        try {
+            \$r = new Redis();
+            if (!@\$r->connect('${REDIS_HOST:-redis}', (int)('${REDIS_PORT:-6379}'), 2)) {
+                exit(1);
+            }
+            \$pw = '${REDIS_PASSWORD:-}';
+            if (\$pw !== '' && \$pw !== 'null') {
+                if (!@\$r->auth(\$pw)) {
+                    exit(1);
+                }
+            }
+            \$res = \$r->ping();
+            exit(\$res ? 0 : 1);
+        } catch (Throwable \$e) {
+            exit(1);
+        }
+    " 2>/dev/null; then
+        REDIS_CHECK_SUCCESS=true
+        echo "✅ Redis (${REDIS_HOST:-redis}:${REDIS_PORT:-6379}) autenticado y operativo."
+    else
+        echo "⚠️ Redis (${REDIS_HOST:-redis}:${REDIS_PORT:-6379}) no responde o requiere autenticación (NOAUTH). Usando fallback 'file' para evitar caídas..."
         ACTIVE_CACHE_STORE="file"
         ACTIVE_SESSION_DRIVER="file"
         ACTIVE_QUEUE_CONNECTION="sync"
-    else
-        echo "✅ Redis detectado y accesible en ${REDIS_HOST:-redis}:${REDIS_PORT:-6379}."
     fi
 fi
 
@@ -50,6 +69,7 @@ DB_SCHEMA="${DB_SCHEMA:-public,iam,property,operations,finance,asamblea}"
 
 REDIS_HOST="${REDIS_HOST:-redis}"
 REDIS_PORT="${REDIS_PORT:-6379}"
+REDIS_PASSWORD="${REDIS_PASSWORD:-}"
 CACHE_STORE="${ACTIVE_CACHE_STORE}"
 SESSION_DRIVER="${ACTIVE_SESSION_DRIVER}"
 QUEUE_CONNECTION="${ACTIVE_QUEUE_CONNECTION}"
