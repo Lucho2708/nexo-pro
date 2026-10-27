@@ -1,167 +1,207 @@
 <script setup lang="ts">
+/**
+ * RolesSection.vue - Arquitectura de Roles B2B & B2C
+ * 
+ * SOLID Implementation:
+ * - SRP: Muestra los beneficios y funcionalidades diferenciadas por tipo de actor (Administradores vs Propietarios).
+ * - OCP: Listas de características desacopladas y extensibles mediante arrays tipados.
+ */
 import { ref } from 'vue';
 import Card from '@/Components/UI/Card.vue';
 
 const activeRole = ref<'admin' | 'owner'>('admin');
 
-const adminFeatures = [
+interface RoleFeature {
+    title: string;
+    desc: string;
+    icon: string;
+    color: string;
+}
+
+const adminFeatures: RoleFeature[] = [
     {
         title: 'Mando Central Financiero',
         desc: 'Visualización táctica de ingresos, egresos y proyecciones en tiempo real.',
         icon: 'analytics',
-        color: 'bg-primary/10 text-primary'
+        color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
     },
     {
         title: 'Gestión de Cartera Inteligente',
         desc: 'Liquidación automática de cuotas y control de mora con notificaciones push.',
         icon: 'account_balance_wallet',
-        color: 'bg-secondary/10 text-secondary'
+        color: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
     },
     {
         title: 'Dispatcher de Reservas',
         desc: 'Control total de zonas comunes con sistema de aprobación y política de uso.',
         icon: 'calendar_month',
-        color: 'bg-tertiary/10 text-tertiary'
+        color: 'bg-purple-500/10 text-purple-600 dark:text-purple-400'
     },
     {
         title: 'Auditoría Forense (Logs)',
         desc: 'Trazabilidad absoluta de cada acción realizada por el staff y residentes.',
         icon: 'rule',
-        color: 'bg-emerald-500/10 text-emerald-500'
+        color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
     },
     {
         title: 'Centro de Ingeniería',
         desc: 'Soporte técnico directo con ingenieros de Nexo-Pro para reportes de sistema.',
         icon: 'engineering',
-        color: 'bg-orange-500/10 text-orange-500'
+        color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
     }
 ];
 
-const ownerFeatures = [
+const ownerFeatures: RoleFeature[] = [
     {
         title: 'Pasarela Nexo-Pay',
         desc: 'Paga tu administración en segundos desde tu móvil con total seguridad.',
         icon: 'credit_card',
-        color: 'bg-primary/10 text-primary'
+        color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
     },
     {
         title: 'Reservas Express',
         desc: 'Agenda salones, canchas y zonas sociales en tiempo real desde la App.',
         icon: 'event_available',
-        color: 'bg-secondary/10 text-secondary'
+        color: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
     },
     {
         title: 'Muro de Copropiedad',
         desc: 'Comunicados oficiales y noticias de tu unidad residencial al instante.',
         icon: 'forum',
-        color: 'bg-tertiary/10 text-tertiary'
+        color: 'bg-purple-500/10 text-purple-600 dark:text-purple-400'
     },
     {
         title: 'Estado de Cuenta Digital',
         desc: 'Consulta tu saldo y descarga paz y salvos sin procesos administrativos.',
         icon: 'description',
-        color: 'bg-emerald-500/10 text-emerald-500'
+        color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
     },
     {
         title: 'Soporte de Usuario',
         desc: 'Reporta problemas técnicos y recibe asistencia prioritaria del equipo de ingenieros.',
         icon: 'support_agent',
-        color: 'bg-orange-500/10 text-orange-500'
+        color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
     }
 ];
 </script>
 
 <template>
-    <section class="py-32 bg-white dark:bg-[#080a0f] overflow-hidden">
-        <div class="max-w-7xl mx-auto px-6">
+    <section class="py-16 sm:py-24 lg:py-32 bg-white dark:bg-[#080a0f] overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Section Header -->
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-24">
-                <div class="space-y-6">
-                    <div class="flex items-center gap-3">
-                        <div class="w-2 h-8 bg-primary rounded-full"></div>
-                        <span class="text-[10px] font-black uppercase tracking-[0.5em] text-primary italic">Arquitectura de Roles</span>
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 sm:mb-16">
+                <div class="space-y-4 text-center sm:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                        <span>Experiencia por Rol</span>
                     </div>
-                    <h2 class="text-5xl md:text-6xl font-black text-on-surface dark:text-white uppercase italic tracking-tighter leading-none">
-                        Una plataforma, <br/> <span class="text-primary italic">dos mundos</span>
+                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white uppercase italic tracking-tight leading-none">
+                        Una plataforma, <br/> <span class="text-blue-600 dark:text-blue-400 italic">dos mundos integrados</span>
                     </h2>
                 </div>
                 
-                <!-- Selector de Roles Táctico -->
-                <div class="flex p-2 bg-surface-container-low dark:bg-white/5 rounded-[2rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl">
+                <!-- Selector de Roles Móvil Ergonómico (Touch Targets >= 44px) -->
+                <div class="w-full sm:w-auto max-w-sm sm:max-w-none mx-auto sm:mx-0 grid grid-cols-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm">
                     <button 
+                        type="button"
                         @click="activeRole = 'admin'"
                         :class="[
-                            'px-10 py-5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all italic',
-                            activeRole === 'admin' ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-105' : 'text-on-surface-variant/40 hover:text-on-surface'
+                            'px-4 sm:px-8 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all min-h-[44px] flex items-center justify-center text-center',
+                            activeRole === 'admin' 
+                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30' 
+                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                         ]"
                     >
-                        Para Administradores
+                        Administración
                     </button>
                     <button 
+                        type="button"
                         @click="activeRole = 'owner'"
                         :class="[
-                            'px-10 py-5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all italic',
-                            activeRole === 'owner' ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-105' : 'text-on-surface-variant/40 hover:text-on-surface'
+                            'px-4 sm:px-8 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all min-h-[44px] flex items-center justify-center text-center',
+                            activeRole === 'owner' 
+                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30' 
+                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                         ]"
                     >
-                        Para Propietarios
+                        Residentes
                     </button>
                 </div>
             </div>
 
             <!-- Features Grid -->
-            <div class="relative min-h-[600px]">
-                <!-- Background Decoration -->
-                <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none opacity-50"></div>
-                <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] pointer-events-none opacity-50"></div>
+            <div class="relative">
+                <!-- Resplandor ambiental contenido -->
+                <div class="absolute -top-12 -right-12 w-72 h-72 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+                <div class="absolute -bottom-12 -left-12 w-72 h-72 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-                <div v-show="activeRole === 'admin'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <Card v-for="(feat, i) in adminFeatures" :key="i" class="!p-10 !rounded-[3rem] border border-outline-variant/10 dark:border-white/5 shadow-xl hover:shadow-primary/20 transition-all duration-700 group relative overflow-hidden bg-white dark:bg-[#0b0e14]">
-                        <!-- Spot Glow Effect -->
-                        <div class="absolute -inset-24 bg-primary/5 blur-[80px] rounded-full translate-x-full translate-y-full group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-1000 pointer-events-none"></div>
-                        
-                        <div class="relative z-10">
-                            <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-10 transition-all group-hover:scale-110 group-hover:rotate-3 duration-500 shadow-lg" :class="feat.color">
-                                <span class="material-symbols-rounded text-3xl">{{ feat.icon }}</span>
+                <!-- Grid Administradores -->
+                <div v-show="activeRole === 'admin'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                    <div 
+                        v-for="(feat, i) in adminFeatures" 
+                        :key="i" 
+                        class="p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-[#0b0e14] group relative overflow-hidden flex flex-col justify-between"
+                    >
+                        <div>
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 duration-300" :class="feat.color">
+                                <span class="material-symbols-rounded text-2xl">{{ feat.icon }}</span>
                             </div>
-                            <h3 class="text-xl font-black text-on-surface dark:text-white uppercase italic tracking-tighter mb-4">{{ feat.title }}</h3>
-                            <p class="text-sm font-medium text-on-surface-variant/60 dark:text-white/40 leading-relaxed italic">{{ feat.desc }}</p>
+                            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase italic tracking-tight mb-2">{{ feat.title }}</h3>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 leading-relaxed">{{ feat.desc }}</p>
                         </div>
-                    </Card>
+                    </div>
                     
-                    <!-- Call to Action Card -->
-                    <Card class="!p-10 !rounded-[3rem] bg-primary flex flex-col justify-center items-center text-center text-white space-y-8 shadow-2xl shadow-primary/20 hover:scale-[1.02] transition-transform duration-500">
-                         <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center animate-pulse">
-                            <span class="material-symbols-rounded text-4xl">rocket_launch</span>
+                    <!-- Tarjeta de Conversión Administrador -->
+                    <div class="p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-700 flex flex-col justify-center items-center text-center text-white space-y-6 shadow-xl shadow-blue-600/25">
+                         <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
+                            <span class="material-symbols-rounded text-3xl">rocket_launch</span>
                          </div>
-                         <h3 class="text-2xl font-black uppercase italic tracking-tighter">¿Listo para tomar el control total?</h3>
-                         <button class="w-full py-5 bg-white text-primary rounded-2xl text-[11px] font-black uppercase italic shadow-xl hover:bg-neutral-100 transition-all">Empezar ahora</button>
-                    </Card>
+                         <div>
+                            <h3 class="text-xl font-black uppercase italic tracking-tight">¿Listo para modernizar tu administración?</h3>
+                            <p class="text-xs text-blue-100 mt-1">Configuración en menos de 48 horas con migración guiada.</p>
+                         </div>
+                         <a 
+                            href="/#contacto" 
+                            class="w-full py-3.5 px-4 bg-white text-blue-700 rounded-xl text-xs font-black uppercase tracking-wider shadow-lg active:scale-95 transition-all text-center min-h-[44px] flex items-center justify-center"
+                         >
+                            Solicitar Demo Personalizada
+                         </a>
+                    </div>
                 </div>
 
-                <div v-show="activeRole === 'owner'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <Card v-for="(feat, i) in ownerFeatures" :key="i" class="!p-10 !rounded-[3rem] border border-outline-variant/10 dark:border-white/5 shadow-xl hover:shadow-secondary/20 transition-all duration-700 group relative overflow-hidden bg-white dark:bg-[#0b0e14]">
-                        <!-- Spot Glow Effect -->
-                        <div class="absolute -inset-24 bg-secondary/5 blur-[80px] rounded-full translate-x-full translate-y-full group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-1000 pointer-events-none"></div>
-
-                        <div class="relative z-10">
-                            <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-10 transition-all group-hover:scale-110 group-hover:rotate-3 duration-500 shadow-lg" :class="feat.color">
-                                <span class="material-symbols-rounded text-3xl">{{ feat.icon }}</span>
+                <!-- Grid Propietarios -->
+                <div v-show="activeRole === 'owner'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                    <div 
+                        v-for="(feat, i) in ownerFeatures" 
+                        :key="i" 
+                        class="p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-[#0b0e14] group relative overflow-hidden flex flex-col justify-between"
+                    >
+                        <div>
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 duration-300" :class="feat.color">
+                                <span class="material-symbols-rounded text-2xl">{{ feat.icon }}</span>
                             </div>
-                            <h3 class="text-xl font-black text-on-surface dark:text-white uppercase italic tracking-tighter mb-4">{{ feat.title }}</h3>
-                            <p class="text-sm font-medium text-on-surface-variant/60 dark:text-white/40 leading-relaxed italic">{{ feat.desc }}</p>
+                            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase italic tracking-tight mb-2">{{ feat.title }}</h3>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 leading-relaxed">{{ feat.desc }}</p>
                         </div>
-                    </Card>
+                    </div>
 
-                    <!-- User Experience Card -->
-                    <Card class="!p-10 !rounded-[3rem] bg-secondary flex flex-col justify-center items-center text-center text-white space-y-8 shadow-2xl shadow-secondary/20 hover:scale-[1.02] transition-transform duration-500">
-                         <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center animate-pulse">
-                            <span class="material-symbols-rounded text-4xl">visibility</span>
+                    <!-- Tarjeta de Experiencia Residente -->
+                    <div class="p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-indigo-600 to-slate-900 flex flex-col justify-center items-center text-center text-white space-y-6 shadow-xl shadow-indigo-600/25">
+                         <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
+                            <span class="material-symbols-rounded text-3xl">smartphone</span>
                          </div>
-                         <h3 class="text-2xl font-black uppercase italic tracking-tighter">La tranquilidad que tu familia merece</h3>
-                         <button class="w-full py-5 bg-white text-secondary rounded-2xl text-[11px] font-black uppercase italic shadow-xl hover:bg-neutral-100 transition-all">Ver la Experiencia</button>
-                    </Card>
+                         <div>
+                            <h3 class="text-xl font-black uppercase italic tracking-tight">Experiencia Móvil para Residentes</h3>
+                            <p class="text-xs text-indigo-200 mt-1">Pagos, reservas y asambleas desde la palma de tu mano.</p>
+                         </div>
+                         <a 
+                            href="/#contacto" 
+                            class="w-full py-3.5 px-4 bg-white text-indigo-900 rounded-xl text-xs font-black uppercase tracking-wider shadow-lg active:scale-95 transition-all text-center min-h-[44px] flex items-center justify-center"
+                         >
+                            Recomendar a mi Administrador
+                         </a>
+                    </div>
                 </div>
             </div>
         </div>

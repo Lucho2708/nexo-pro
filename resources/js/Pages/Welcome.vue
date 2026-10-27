@@ -9,6 +9,7 @@ import FeaturesSection from '@/Components/Landing/FeaturesSection.vue';
 import RoiCalculatorSection from '@/Components/Landing/RoiCalculatorSection.vue';
 import PricingSection from '@/Components/Landing/PricingSection.vue';
 import ContactDemoSection from '@/Components/Landing/ContactDemoSection.vue';
+import MobileStickyBar from '@/Components/Landing/MobileStickyBar.vue';
 import CookieConsent from '@/Components/UI/CookieConsent.vue';
 
 const props = defineProps({
@@ -86,6 +87,7 @@ onMounted(() => {
         </div>
         
         <CookieConsent />
+        <MobileStickyBar />
     </GuestLayout>
 </template>
 

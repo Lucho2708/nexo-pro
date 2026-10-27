@@ -74,7 +74,7 @@ onMounted(() => {
                             <img src="/images/landing/recaudo.png" alt="Recaudo Automatizado" class="w-full h-auto transform transition-transform duration-1000 group-hover:scale-105" />
                         </div>
                         <!-- Floating Badge -->
-                        <div class="absolute -right-6 -bottom-6 bg-surface shadow-2xl p-4 rounded-2xl border border-outline-variant/10 z-10 animate-bounce duration-[4s]">
+                        <div class="absolute right-2 sm:-right-6 -bottom-4 sm:-bottom-6 bg-surface shadow-2xl p-4 rounded-2xl border border-outline-variant/10 z-10 animate-bounce duration-[4s]">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-success/10 text-success flex items-center justify-center">
                                     <span class="material-symbols-outlined">payments</span>

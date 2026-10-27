@@ -4,7 +4,7 @@ import Footer from '@/Components/Landing/Footer.vue';
 </script>
 
 <template>
-    <div class="min-h-screen bg-surface flex flex-col font-sans text-on-surface antialiased">
+    <div class="min-h-screen bg-surface flex flex-col font-sans text-on-surface antialiased overflow-x-hidden">
         <Header />
         
         <main class="flex-grow flex flex-col">
