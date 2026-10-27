@@ -58,6 +58,7 @@ services:
       # Automatización de migraciones y arranque
       RUN_MIGRATIONS: "true"
       RUN_SEEDERS: "${RUN_SEEDERS:-true}"
+      FRESH_DATABASE: "${FRESH_DATABASE:-false}"
     volumes:
       - qa_storage:/var/www/html/storage
     networks:

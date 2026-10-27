@@ -116,13 +116,19 @@ fi
 
 # Ejecutar migraciones automáticas en QA
 if [ "$RUN_MIGRATIONS" = "true" ] || [ -z "$RUN_MIGRATIONS" ]; then
-    echo "📦 Ejecutando migraciones de base de datos..."
-    php /var/www/html/artisan migrate --force || echo "⚠️ Advertencia en migraciones, continuando..."
+    if [ "$FRESH_DATABASE" = "true" ]; then
+        echo "🚨 FRESH_DATABASE=true detectado: Recreando base de datos limpia desde cero..."
+        php /var/www/html/artisan db:wipe --force || true
+        php /var/www/html/artisan migrate --force
+    else
+        echo "📦 Ejecutando migraciones de base de datos..."
+        php /var/www/html/artisan migrate --force || echo "⚠️ Advertencia en migraciones, continuando..."
+    fi
 fi
 
 # Ejecutar semilleros si está habilitado
 if [ "$RUN_SEEDERS" = "true" ]; then
-    echo "🌱 Ejecutando seeders paramétricos..."
+    echo "🌱 Ejecutando seeders paramétricos y del sistema..."
     php /var/www/html/artisan db:seed --force || echo "⚠️ Seeders omitidos o ya ejecutados."
 fi
 

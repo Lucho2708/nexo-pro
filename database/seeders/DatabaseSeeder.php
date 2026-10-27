@@ -11,7 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Datos Paramétricos (Indispensables para el arranque)
+        // 1. Datos Paramétricos y del Sistema (Indispensables para el arranque)
         $this->call([
             RolePermissionSeeder::class,
             GlobalSettingsSeeder::class,
@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
             ComponenteUnidadSeeder::class,
         ]);
 
-        // 2. Datos de Demostración (Entornos de desarrollo, pruebas y QA/staging)
-        if (app()->environment('local', 'testing', 'staging')) {
+        // 2. Datos de Demostración (ÚNICAMENTE en local si se solicita explícitamente)
+        if (app()->environment('local') && env('SEED_DEMO_DATA', false) === true) {
             $this->call([
                 DemoDataSeeder::class,
             ]);
