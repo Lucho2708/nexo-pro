@@ -61,15 +61,21 @@ class DemoDataSeeder extends Seeder
         ];
 
         foreach ($conjuntos as $index => $data) {
-            $copro = Copropiedad::factory()->create([
-                'nombre' => $data['nombre'],
-                'nit' => $data['nit'],
-                'plan' => 'pro',
-            ]);
+            $copro = Copropiedad::firstOrCreate(
+                ['nit' => $data['nit']],
+                [
+                    'nombre' => $data['nombre'],
+                    'plan' => 'pro',
+                    'direccion' => 'Calle Falsa 123',
+                    'ciudad' => 'Bogotá',
+                ]
+            );
 
             // Vincular al Admin correspondiente
             $admin = $data['admin'];
-            $admin->managedCopropiedades()->attach($copro->id);
+            if (!$admin->managedCopropiedades()->where('copropiedad_id', $copro->id)->exists()) {
+                $admin->managedCopropiedades()->attach($copro->id);
+            }
             
             // Setear current_copropiedad si no tiene
             if (is_null($admin->current_copropiedad_id)) {
@@ -78,10 +84,22 @@ class DemoDataSeeder extends Seeder
             }
 
             // Datos Base para Operación de la Copropiedad
-            $conceptoAdmin = ConceptoCobro::factory()->create(['copropiedad_id' => $copro->id, 'nombre' => 'Administración', 'codigo' => 'ADM']);
-            $conceptoParq = ConceptoCobro::factory()->create(['copropiedad_id' => $copro->id, 'nombre' => 'Parqueadero', 'codigo' => 'PARQ']);
-            $zonaComun1 = ZonaComun::factory()->create(['copropiedad_id' => $copro->id, 'nombre' => 'Salón Social', 'activa' => true]);
-            $zonaComun2 = ZonaComun::factory()->create(['copropiedad_id' => $copro->id, 'nombre' => 'Zona BBQ', 'activa' => true]);
+            $conceptoAdmin = ConceptoCobro::firstOrCreate(
+                ['copropiedad_id' => $copro->id, 'codigo' => 'ADM'],
+                ['nombre' => 'Administración', 'tipo' => 'fijo', 'monto_base' => 150000]
+            );
+            $conceptoParq = ConceptoCobro::firstOrCreate(
+                ['copropiedad_id' => $copro->id, 'codigo' => 'PARQ'],
+                ['nombre' => 'Parqueadero', 'tipo' => 'fijo', 'monto_base' => 50000]
+            );
+            $zonaComun1 = ZonaComun::firstOrCreate(
+                ['copropiedad_id' => $copro->id, 'nombre' => 'Salón Social'],
+                ['activa' => true, 'requiere_pago' => false, 'capacidad_maxima' => 50]
+            );
+            $zonaComun2 = ZonaComun::firstOrCreate(
+                ['copropiedad_id' => $copro->id, 'nombre' => 'Zona BBQ'],
+                ['activa' => true, 'requiere_pago' => false, 'capacidad_maxima' => 20]
+            );
 
             // Crear Unidades y Propietarios
             for ($i = 1; $i <= 5; $i++) {
@@ -90,53 +108,63 @@ class DemoDataSeeder extends Seeder
                 $piso = rand(1, 5);
                 $numeroApto = $piso . '0' . $i;
                 
-                $unidad = Unidad::factory()->create([
-                    'copropiedad_id' => $copro->id,
-                    'nombre' => $numeroApto,
-                    'torre' => $torre,
-                    'piso' => $piso,
-                    'saldo_actual' => rand(0, 1) ? 0 : rand(50000, 300000), // Algunos con mora, otros al día
-                ]);
+                $unidad = Unidad::firstOrCreate(
+                    ['copropiedad_id' => $copro->id, 'nombre' => $numeroApto],
+                    [
+                        'torre' => $torre,
+                        'piso' => $piso,
+                        'saldo_actual' => rand(0, 1) ? 0 : rand(50000, 300000),
+                    ]
+                );
 
                 // Propietario (Owner)
-                $owner = new User([
-                    'name' => 'Propietario ' . $torre . ' ' . $numeroApto,
-                    'email' => 'propietario' . $numeroApto . '_' . $index . '_' . $i . '@nexo.pro',
-                    'password' => $password,
-                    'email_verified_at' => now(),
-                ]);
-                $owner->role = 'owner';
-                $owner->current_copropiedad_id = $copro->id;
-                $owner->save();
+                $owner = User::firstOrCreate(
+                    ['email' => 'propietario' . $numeroApto . '_' . $index . '_' . $i . '@nexo.pro'],
+                    [
+                        'name' => 'Propietario ' . $torre . ' ' . $numeroApto,
+                        'password' => $password,
+                        'role' => 'owner',
+                        'email_verified_at' => now(),
+                        'current_copropiedad_id' => $copro->id,
+                    ]
+                );
 
                 // Vincular propietario a la unidad
-                $owner->unidades()->attach($unidad->id, ['role' => 'owner']);
+                if (!$owner->unidades()->where('unidad_id', $unidad->id)->exists()) {
+                    $owner->unidades()->attach($unidad->id, ['role' => 'owner']);
+                }
 
-                // Generar Transacciones (Pagos) para la unidad
-                Transaccion::factory()->count(2)->create([
-                    'unidad_id' => $unidad->id,
-                    'concepto_id' => $conceptoAdmin->id,
-                    'tipo' => 'abono',
-                    'monto' => 150000,
-                    'fecha' => now()->subDays(rand(1, 30)),
-                ]);
+                // Generar Transacciones (Pagos) para la unidad si no existen
+                if (Transaccion::where('unidad_id', $unidad->id)->doesntExist()) {
+                    Transaccion::factory()->count(2)->create([
+                        'unidad_id' => $unidad->id,
+                        'concepto_id' => $conceptoAdmin->id,
+                        'tipo' => 'abono',
+                        'monto' => 150000,
+                        'fecha' => now()->subDays(rand(1, 30)),
+                    ]);
+                }
 
-                // Generar Reservas (Aleatorias a futuro y pasado)
-                Reserva::factory()->create([
-                    'zona_id' => rand(0,1) ? $zonaComun1->id : $zonaComun2->id,
-                    'user_id' => $owner->id,
-                    'unidad_id' => $unidad->id,
-                    'fecha' => now()->addDays(rand(-5, 10))->toDateString(),
-                    'estado' => rand(0, 1) ? 'aprobada' : 'pendiente',
-                ]);
+                // Generar Reservas si no existen
+                if (Reserva::where('unidad_id', $unidad->id)->doesntExist()) {
+                    Reserva::factory()->create([
+                        'zona_id' => rand(0,1) ? $zonaComun1->id : $zonaComun2->id,
+                        'user_id' => $owner->id,
+                        'unidad_id' => $unidad->id,
+                        'fecha' => now()->addDays(rand(-5, 10))->toDateString(),
+                        'estado' => rand(0, 1) ? 'aprobada' : 'pendiente',
+                    ]);
+                }
 
-                // Generar PQRS (Casos de atención al cliente)
-                Pqrs::factory()->create([
-                    'unidad_id' => $unidad->id,
-                    'user_id' => $owner->id,
-                    'asunto' => 'Inconveniente en ' . $zonaComun1->nombre,
-                    'estado' => rand(0, 1) ? 'abierto' : 'cerrado',
-                ]);
+                // Generar PQRS si no existen
+                if (Pqrs::where('unidad_id', $unidad->id)->doesntExist()) {
+                    Pqrs::factory()->create([
+                        'unidad_id' => $unidad->id,
+                        'user_id' => $owner->id,
+                        'asunto' => 'Inconveniente en ' . $zonaComun1->nombre,
+                        'estado' => rand(0, 1) ? 'abierto' : 'cerrado',
+                    ]);
+                }
             }
 
             // Simular logs de uso del sistema (Audit/Analytics)

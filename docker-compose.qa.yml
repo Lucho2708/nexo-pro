@@ -69,6 +69,7 @@ services:
       - "traefik.docker.network=coolify"
       - "traefik.http.routers.nexo-qa.rule=Host(`qa.nexo-pro.com.co`)"
       - "traefik.http.routers.nexo-qa.entrypoints=websecure"
+      - "traefik.http.routers.nexo-qa.service=nexo-qa"
       - "traefik.http.routers.nexo-qa.tls=true"
       - "traefik.http.routers.nexo-qa.tls.certresolver=letsencrypt"
       - "traefik.http.services.nexo-qa.loadbalancer.server.port=80"
