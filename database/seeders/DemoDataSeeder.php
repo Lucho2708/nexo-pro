@@ -4,14 +4,12 @@ namespace Database\Seeders;
 
 use App\Modules\Operations\Models\Announcement;
 use App\Modules\IAM\Models\User;
+use App\Modules\IAM\Models\Role;
 use App\Modules\Property\Models\Copropiedad;
 use App\Modules\Property\Models\Unidad;
 use App\Modules\Finance\Models\ConceptoCobro;
 use App\Modules\Property\Models\ZonaComun;
-use App\Modules\Operations\Models\Reserva;
 use App\Modules\Finance\Models\Transaccion;
-use App\Modules\Operations\Models\Pqrs;
-use App\Modules\Operations\Models\FeatureUsageLog;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,19 +19,11 @@ class DemoDataSeeder extends Seeder
     {
         $password = Hash::make('password');
 
-        // Anuncios Globales (Simulación)
-        Announcement::firstOrCreate(
-            ['title' => 'Actualización de Plataforma 2.0'],
-            [
-                'message' => 'Hemos lanzado nuevas funcionalidades en el módulo de reservas y pagos en línea.',
-                'type' => 'info',
-                'target_role' => 'all',
-                'starts_at' => now(),
-                'expires_at' => now()->addDays(30),
-            ]
-        );
+        // Roles RBAC
+        $adminRole = Role::where('name', 'admin')->first();
+        $ownerRole = Role::where('name', 'owner')->first();
 
-        // 2. Administrador que maneja 2 conjuntos
+        // 1. Administrador que maneja varios conjuntos (2 conjuntos)
         $adminMulti = User::updateOrCreate(
             ['email' => 'admin_multi@nexo.pro'],
             [
@@ -43,184 +33,228 @@ class DemoDataSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        if ($adminRole) {
+            $adminMulti->roles()->syncWithoutDetaching([$adminRole->id]);
+        }
 
-        // 3. Administrador que maneja 1 conjunto
+        // 2. Administrador que maneja 1 solo conjunto
         $adminSimple = User::updateOrCreate(
             ['email' => 'admin_simple@nexo.pro'],
             [
-                'name' => 'Administrador Simple',
+                'name' => 'Administrador Simple (1 Conjunto)',
                 'password' => $password,
                 'role' => 'admin',
                 'email_verified_at' => now(),
             ]
         );
+        if ($adminRole) {
+            $adminSimple->roles()->syncWithoutDetaching([$adminRole->id]);
+        }
 
-        // 4. Copropiedades
-        $conjuntos = [
-            ['nombre' => 'Residencial El Roble', 'nit' => '900.123.456-1', 'admin' => $adminMulti],
-            ['nombre' => 'Altos del Valle', 'nit' => '900.789.012-2', 'admin' => $adminMulti],
-            ['nombre' => 'Portal de la Sabana', 'nit' => '900.456.789-3', 'admin' => $adminSimple],
-        ];
+        // 3. Copropiedades requeridas para la matriz de pruebas
+        $coproRoble = Copropiedad::firstOrCreate(
+            ['nit' => '900.123.456-1'],
+            [
+                'nombre' => 'Residencial El Roble',
+                'plan' => 'pro',
+                'direccion' => 'Calle Falsa 123',
+                'ciudad' => 'Bogotá',
+                'unidades_totales' => 10,
+                'torres' => 2,
+            ]
+        );
 
-        foreach ($conjuntos as $index => $data) {
-            $copro = Copropiedad::firstOrCreate(
-                ['nit' => $data['nit']],
-                [
-                    'nombre' => $data['nombre'],
-                    'plan' => 'pro',
-                    'direccion' => 'Calle Falsa 123',
-                    'ciudad' => 'Bogotá',
-                ]
-            );
+        $coproValle = Copropiedad::firstOrCreate(
+            ['nit' => '900.789.012-2'],
+            [
+                'nombre' => 'Altos del Valle',
+                'plan' => 'pro',
+                'direccion' => 'Carrera 45 # 67-89',
+                'ciudad' => 'Medellín',
+                'unidades_totales' => 8,
+                'torres' => 2,
+            ]
+        );
 
-            // Vincular al Admin correspondiente
-            $admin = $data['admin'];
-            if (!$admin->managedCopropiedades()->where('copropiedad_id', $copro->id)->exists()) {
-                $admin->managedCopropiedades()->attach($copro->id);
-            }
-            
-            // Setear current_copropiedad si no tiene
-            if (is_null($admin->current_copropiedad_id)) {
-                $admin->current_copropiedad_id = $copro->id;
-                $admin->save();
-            }
+        $coproSabana = Copropiedad::firstOrCreate(
+            ['nit' => '900.456.789-3'],
+            [
+                'nombre' => 'Portal de la Sabana',
+                'plan' => 'pro',
+                'direccion' => 'Avenida Principal # 12-34',
+                'ciudad' => 'Chía',
+                'unidades_totales' => 15,
+                'torres' => 1,
+            ]
+        );
 
-            // Datos Base para Operación de la Copropiedad
-            $conceptoAdmin = ConceptoCobro::firstOrCreate(
+        // Asignación de conjuntos a administradores:
+        // Admin Multi -> 2 conjuntos (Residencial El Roble y Altos del Valle)
+        $adminMulti->managedCopropiedades()->syncWithoutDetaching([$coproRoble->id, $coproValle->id]);
+        if (is_null($adminMulti->current_copropiedad_id)) {
+            $adminMulti->current_copropiedad_id = $coproRoble->id;
+            $adminMulti->save();
+        }
+
+        // Admin Simple -> 1 conjunto (Portal de la Sabana)
+        $adminSimple->managedCopropiedades()->syncWithoutDetaching([$coproSabana->id]);
+        if (is_null($adminSimple->current_copropiedad_id)) {
+            $adminSimple->current_copropiedad_id = $coproSabana->id;
+            $adminSimple->save();
+        }
+
+        // Datos operativos base para cada copropiedad (conceptos y amenidades)
+        foreach ([$coproRoble, $coproValle, $coproSabana] as $copro) {
+            ConceptoCobro::firstOrCreate(
                 ['copropiedad_id' => $copro->id, 'codigo' => 'ADM'],
                 ['nombre' => 'Administración', 'tipo' => 'fijo', 'monto_base' => 150000]
             );
-            $conceptoParq = ConceptoCobro::firstOrCreate(
+            ConceptoCobro::firstOrCreate(
                 ['copropiedad_id' => $copro->id, 'codigo' => 'PARQ'],
                 ['nombre' => 'Parqueadero', 'tipo' => 'fijo', 'monto_base' => 50000]
             );
-            $zonaComun1 = ZonaComun::firstOrCreate(
+            ZonaComun::firstOrCreate(
                 ['copropiedad_id' => $copro->id, 'nombre' => 'Salón Social'],
                 ['activa' => true, 'requiere_pago' => false, 'capacidad_maxima' => 50]
             );
-            $zonaComun2 = ZonaComun::firstOrCreate(
+            ZonaComun::firstOrCreate(
                 ['copropiedad_id' => $copro->id, 'nombre' => 'Zona BBQ'],
                 ['activa' => true, 'requiere_pago' => false, 'capacidad_maxima' => 20]
             );
+        }
 
-            // Crear Unidades y Propietarios
-            for ($i = 1; $i <= 5; $i++) {
-                // Identificadores limpios por torre/piso sin colisión
-                $torre = $i <= 3 ? 'Torre A' : 'Torre B';
-                $piso = rand(1, 5);
-                $numeroApto = $piso . '0' . $i;
-                
-                $unidad = Unidad::firstOrCreate(
-                    [
-                        'copropiedad_id' => $copro->id,
-                        'torre' => $torre,
-                        'nombre' => $numeroApto,
-                    ],
-                    [
-                        'piso' => $piso,
-                        'saldo_actual' => rand(0, 1) ? 0 : rand(50000, 300000),
-                    ]
-                );
+        // 4. Creación de Unidades específicas para los Propietarios de Prueba
+        // Unidad 1: Apto 101 en Residencial El Roble
+        $unidadSimple101 = Unidad::firstOrCreate(
+            [
+                'copropiedad_id' => $coproRoble->id,
+                'torre' => 'Torre A',
+                'nombre' => '101',
+            ],
+            [
+                'piso' => '1',
+                'coeficiente' => 0.05000,
+                'propietario_nombre' => 'Propietario Simple',
+                'email_contacto' => 'propietario_simple@nexo.pro',
+                'saldo_actual' => 0,
+            ]
+        );
 
-                // Propietario (Owner)
-                $owner = User::firstOrCreate(
-                    ['email' => 'propietario' . $numeroApto . '_' . $index . '_' . $i . '@nexo.pro'],
-                    [
-                        'name' => 'Propietario ' . $torre . ' ' . $numeroApto,
-                        'password' => $password,
-                        'role' => 'owner',
-                        'email_verified_at' => now(),
-                        'current_copropiedad_id' => $copro->id,
-                    ]
-                );
+        // Unidades para Propietario Multi (2 propiedades):
+        // Unidad 2: Apto 102 en Residencial El Roble (Copropiedad 1)
+        $unidadMulti102 = Unidad::firstOrCreate(
+            [
+                'copropiedad_id' => $coproRoble->id,
+                'torre' => 'Torre A',
+                'nombre' => '102',
+            ],
+            [
+                'piso' => '1',
+                'coeficiente' => 0.05000,
+                'propietario_nombre' => 'Propietario Multi',
+                'email_contacto' => 'propietario_multi@nexo.pro',
+                'saldo_actual' => 150000,
+            ]
+        );
 
-                // Vincular propietario a la unidad
-                if (!$owner->unidades()->where('unidad_id', $unidad->id)->exists()) {
-                    $owner->unidades()->attach($unidad->id, ['role' => 'owner']);
-                }
+        // Unidad 3: Apto 201 en Altos del Valle (Copropiedad 2)
+        $unidadMulti201 = Unidad::firstOrCreate(
+            [
+                'copropiedad_id' => $coproValle->id,
+                'torre' => 'Torre B',
+                'nombre' => '201',
+            ],
+            [
+                'piso' => '2',
+                'coeficiente' => 0.06250,
+                'propietario_nombre' => 'Propietario Multi',
+                'email_contacto' => 'propietario_multi@nexo.pro',
+                'saldo_actual' => 0,
+            ]
+        );
 
-                // Generar Transacciones (Pagos) para la unidad si no existen
-                if (Transaccion::where('unidad_id', $unidad->id)->doesntExist()) {
-                    Transaccion::factory()->count(2)->create([
-                        'unidad_id' => $unidad->id,
-                        'concepto_id' => $conceptoAdmin->id,
-                        'tipo' => 'abono',
-                        'monto' => 150000,
-                        'fecha' => now()->subDays(rand(1, 30)),
-                    ]);
-                }
+        // 5. Usuario que tiene 1 sola propiedad
+        $ownerSimple = User::updateOrCreate(
+            ['email' => 'propietario_simple@nexo.pro'],
+            [
+                'name' => 'Propietario Simple (1 Propiedad)',
+                'password' => $password,
+                'role' => 'owner',
+                'email_verified_at' => now(),
+                'current_copropiedad_id' => $coproRoble->id,
+            ]
+        );
+        if ($ownerRole) {
+            $ownerSimple->roles()->syncWithoutDetaching([$ownerRole->id]);
+        }
+        $ownerSimple->unidades()->syncWithoutDetaching([
+            $unidadSimple101->id => ['role' => 'owner'],
+        ]);
 
-                // Generar Reservas si no existen
-                if (Reserva::where('unidad_id', $unidad->id)->doesntExist()) {
-                    Reserva::factory()->create([
-                        'zona_id' => rand(0,1) ? $zonaComun1->id : $zonaComun2->id,
-                        'user_id' => $owner->id,
-                        'unidad_id' => $unidad->id,
-                        'fecha' => now()->addDays(rand(-5, 10))->toDateString(),
-                        'estado' => rand(0, 1) ? 'aprobada' : 'pendiente',
-                    ]);
-                }
+        // 6. Usuario que tiene 2 propiedades (multi-propiedad y multi-copropiedad)
+        $ownerMulti = User::updateOrCreate(
+            ['email' => 'propietario_multi@nexo.pro'],
+            [
+                'name' => 'Propietario Multi-Propiedad (2 Propiedades)',
+                'password' => $password,
+                'role' => 'owner',
+                'email_verified_at' => now(),
+                'current_copropiedad_id' => $coproRoble->id,
+            ]
+        );
+        if ($ownerRole) {
+            $ownerMulti->roles()->syncWithoutDetaching([$ownerRole->id]);
+        }
+        $ownerMulti->unidades()->syncWithoutDetaching([
+            $unidadMulti102->id => ['role' => 'owner'],
+            $unidadMulti201->id => ['role' => 'owner'],
+        ]);
 
-                // Generar PQRS si no existen
-                if (Pqrs::where('unidad_id', $unidad->id)->doesntExist()) {
-                    Pqrs::factory()->create([
-                        'unidad_id' => $unidad->id,
-                        'user_id' => $owner->id,
-                        'asunto' => 'Inconveniente en ' . $zonaComun1->nombre,
-                        'estado' => rand(0, 1) ? 'abierto' : 'cerrado',
-                    ]);
-                }
-            }
-
-            // Simular logs de uso del sistema (Audit/Analytics) si no existen
-            if (FeatureUsageLog::where('user_id', $admin->id)->where('copropiedad_id', $copro->id)->doesntExist()) {
-                FeatureUsageLog::create([
-                    'user_id' => $admin->id,
-                    'copropiedad_id' => $copro->id,
-                    'feature' => 'dashboard',
-                    'used_at' => now(),
+        // Transacciones contables de demostración
+        $conceptoAdmRoble = ConceptoCobro::where('copropiedad_id', $coproRoble->id)->where('codigo', 'ADM')->first();
+        if ($conceptoAdmRoble) {
+            if (Transaccion::where('unidad_id', $unidadSimple101->id)->doesntExist()) {
+                Transaccion::factory()->create([
+                    'unidad_id' => $unidadSimple101->id,
+                    'concepto_id' => $conceptoAdmRoble->id,
+                    'tipo' => 'abono',
+                    'monto' => 150000,
+                    'fecha' => now()->subDays(5),
                 ]);
-                FeatureUsageLog::create([
-                    'user_id' => $admin->id,
-                    'copropiedad_id' => $copro->id,
-                    'feature' => 'cartera',
-                    'used_at' => now()->subHours(2),
+            }
+            if (Transaccion::where('unidad_id', $unidadMulti102->id)->doesntExist()) {
+                Transaccion::factory()->create([
+                    'unidad_id' => $unidadMulti102->id,
+                    'concepto_id' => $conceptoAdmRoble->id,
+                    'tipo' => 'cargo',
+                    'monto' => 150000,
+                    'fecha' => now()->subDays(10),
                 ]);
             }
         }
 
-        // 5. Usuario de Portería / Seguridad (Garita Operativa)
-        $firstCopropiedad = Copropiedad::first();
-        User::updateOrCreate(
-            ['email' => 'seguridad@nexo.pro'],
+        // Anuncio informativo inicial
+        Announcement::firstOrCreate(
+            ['title' => 'Bienvenido a NEXO-PRO'],
             [
-                'name' => 'Oficial de Seguridad Portería',
-                'password' => $password,
-                'role' => 'security',
-                'email_verified_at' => now(),
-                'current_copropiedad_id' => $firstCopropiedad ? $firstCopropiedad->id : null,
+                'message' => 'Plataforma integral de gestión de propiedad horizontal activa y operativa.',
+                'type' => 'info',
+                'target_role' => 'all',
+                'starts_at' => now(),
+                'expires_at' => now()->addDays(30),
             ]
         );
 
-        // 6. Usuario de Backoffice / Comercial
-        User::updateOrCreate(
-            ['email' => 'backoffice@nexo.pro'],
-            [
-                'name' => 'Especialista Backoffice Comercial',
-                'password' => $password,
-                'role' => 'backoffice',
-                'email_verified_at' => now(),
-            ]
-        );
-
-        // Pre-aprobar términos legales y asegurar email verificado para todos los usuarios demo
+        // Pre-aprobar términos legales para acceso inmediato sin bloqueos de onboarding
         $activeDocs = \App\Modules\IAM\Models\LegalDocument::where('is_active', true)->get();
-        foreach (User::all() as $demoUser) {
-            if (! $demoUser->email_verified_at) {
-                $demoUser->email_verified_at = now();
-                $demoUser->save();
-            }
+        $targetEmails = [
+            'admin_multi@nexo.pro',
+            'admin_simple@nexo.pro',
+            'propietario_simple@nexo.pro',
+            'propietario_multi@nexo.pro',
+        ];
 
+        foreach (User::whereIn('email', $targetEmails)->get() as $demoUser) {
             foreach ($activeDocs as $doc) {
                 \App\Modules\IAM\Models\LegalConsent::firstOrCreate([
                     'user_id' => $demoUser->id,
