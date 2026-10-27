@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
             ComponenteUnidadSeeder::class,
         ]);
 
-        // 2. Datos de Demostración (Solo en entornos de desarrollo/pruebas)
-        if (app()->environment('local', 'testing')) {
+        // 2. Datos de Demostración (Entornos de desarrollo, pruebas y QA/staging)
+        if (app()->environment('local', 'testing', 'staging')) {
             $this->call([
                 DemoDataSeeder::class,
             ]);

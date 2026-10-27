@@ -38,6 +38,7 @@ class DemoDataSeeder extends Seeder
                 'name' => 'Administrador Multi-Conjunto',
                 'password' => $password,
                 'role' => 'admin',
+                'email_verified_at' => now(),
             ]
         );
 
@@ -48,6 +49,7 @@ class DemoDataSeeder extends Seeder
                 'name' => 'Administrador Simple',
                 'password' => $password,
                 'role' => 'admin',
+                'email_verified_at' => now(),
             ]
         );
 
@@ -101,6 +103,7 @@ class DemoDataSeeder extends Seeder
                     'name' => 'Propietario ' . $torre . ' ' . $numeroApto,
                     'email' => 'propietario' . $numeroApto . '_' . $index . '_' . $i . '@nexo.pro',
                     'password' => $password,
+                    'email_verified_at' => now(),
                 ]);
                 $owner->role = 'owner';
                 $owner->current_copropiedad_id = $copro->id;
@@ -151,9 +154,38 @@ class DemoDataSeeder extends Seeder
             ]);
         }
 
-        // Pre-aprobar términos legales para usuarios demo
+        // 5. Usuario de Portería / Seguridad (Garita Operativa)
+        $firstCopropiedad = Copropiedad::first();
+        User::updateOrCreate(
+            ['email' => 'seguridad@nexo.pro'],
+            [
+                'name' => 'Oficial de Seguridad Portería',
+                'password' => $password,
+                'role' => 'security',
+                'email_verified_at' => now(),
+                'current_copropiedad_id' => $firstCopropiedad ? $firstCopropiedad->id : null,
+            ]
+        );
+
+        // 6. Usuario de Backoffice / Comercial
+        User::updateOrCreate(
+            ['email' => 'backoffice@nexo.pro'],
+            [
+                'name' => 'Especialista Backoffice Comercial',
+                'password' => $password,
+                'role' => 'backoffice',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // Pre-aprobar términos legales y asegurar email verificado para todos los usuarios demo
         $activeDocs = \App\Modules\IAM\Models\LegalDocument::where('is_active', true)->get();
         foreach (User::all() as $demoUser) {
+            if (! $demoUser->email_verified_at) {
+                $demoUser->email_verified_at = now();
+                $demoUser->save();
+            }
+
             foreach ($activeDocs as $doc) {
                 \App\Modules\IAM\Models\LegalConsent::firstOrCreate([
                     'user_id' => $demoUser->id,

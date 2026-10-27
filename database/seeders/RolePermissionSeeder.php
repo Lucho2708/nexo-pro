@@ -16,6 +16,8 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'admin', 'display_name' => 'Administrador PH', 'description' => 'Admin de propiedad'],
             ['name' => 'owner', 'display_name' => 'Propietario', 'description' => 'Acceso propietario'],
             ['name' => 'resident', 'display_name' => 'Residente', 'description' => 'Acceso residente'],
+            ['name' => 'security', 'display_name' => 'Personal de Portería', 'description' => 'Control de garita y accesos'],
+            ['name' => 'backoffice', 'display_name' => 'Comercial / Backoffice', 'description' => 'Gestión de prospectos y telemetría'],
         ];
 
         foreach ($roles as $role) {
