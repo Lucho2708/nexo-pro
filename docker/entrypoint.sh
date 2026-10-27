@@ -25,7 +25,7 @@ if [ "$ACTIVE_CACHE_STORE" = "redis" ] || [ "$ACTIVE_SESSION_DRIVER" = "redis" ]
     if php -r "
         try {
             \$r = new Redis();
-            if (!@\$r->connect('${REDIS_HOST:-redis}', (int)('${REDIS_PORT:-6379}'), 2)) {
+            if (!@\$r->connect('${REDIS_HOST:-nexo_redis}', (int)('${REDIS_PORT:-6379}'), 2)) {
                 exit(1);
             }
             \$pw = '${REDIS_PASSWORD:-}';
@@ -41,9 +41,9 @@ if [ "$ACTIVE_CACHE_STORE" = "redis" ] || [ "$ACTIVE_SESSION_DRIVER" = "redis" ]
         }
     " 2>/dev/null; then
         REDIS_CHECK_SUCCESS=true
-        echo "✅ Redis (${REDIS_HOST:-redis}:${REDIS_PORT:-6379}) autenticado y operativo."
+        echo "✅ Redis (${REDIS_HOST:-nexo_redis}:${REDIS_PORT:-6379}) autenticado y operativo."
     else
-        echo "⚠️ Redis (${REDIS_HOST:-redis}:${REDIS_PORT:-6379}) no responde o requiere autenticación (NOAUTH). Usando fallback 'file' para evitar caídas..."
+        echo "⚠️ Redis (${REDIS_HOST:-nexo_redis}:${REDIS_PORT:-6379}) no responde o requiere autenticación (NOAUTH). Usando fallback 'file' para evitar caídas..."
         ACTIVE_CACHE_STORE="file"
         ACTIVE_SESSION_DRIVER="file"
         ACTIVE_QUEUE_CONNECTION="sync"
@@ -60,14 +60,14 @@ APP_DEBUG="${APP_DEBUG:-true}"
 APP_URL="${APP_URL:-https://qa.nexo-pro.com.co}"
 
 DB_CONNECTION="${DB_CONNECTION:-pgsql}"
-DB_HOST="${DB_HOST:-db}"
+DB_HOST="${DB_HOST:-nexo_db}"
 DB_PORT="${DB_PORT:-5432}"
 DB_DATABASE="${DB_DATABASE:-nexopro_qa}"
 DB_USERNAME="${DB_USERNAME:-nexopro_qa_user}"
 DB_PASSWORD="${DB_PASSWORD:-SuperSecretQaPass2026!}"
 DB_SCHEMA="${DB_SCHEMA:-public,iam,property,operations,finance,asamblea}"
 
-REDIS_HOST="${REDIS_HOST:-redis}"
+REDIS_HOST="${REDIS_HOST:-nexo_redis}"
 REDIS_PORT="${REDIS_PORT:-6379}"
 REDIS_PASSWORD="${REDIS_PASSWORD:-}"
 CACHE_STORE="${ACTIVE_CACHE_STORE}"

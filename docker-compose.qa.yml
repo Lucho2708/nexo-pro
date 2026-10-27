@@ -14,9 +14,9 @@ services:
     container_name: nexopro_qa_app
     restart: unless-stopped
     depends_on:
-      db:
+      nexo_db:
         condition: service_healthy
-      redis:
+      nexo_redis:
         condition: service_healthy
     environment:
       APP_NAME: "NEXO PRO (QA)"
@@ -27,7 +27,7 @@ services:
 
       # Base de Datos PostgreSQL en contenedor interno
       DB_CONNECTION: pgsql
-      DB_HOST: db
+      DB_HOST: nexo_db
       DB_PORT: 5432
       DB_DATABASE: nexopro_qa
       DB_USERNAME: nexopro_qa_user
@@ -35,7 +35,7 @@ services:
       DB_SCHEMA: "public,iam,property,operations,finance,asamblea"
 
       # Caché y Sesiones en Redis
-      REDIS_HOST: "${REDIS_HOST:-redis}"
+      REDIS_HOST: "${REDIS_HOST:-nexo_redis}"
       REDIS_PORT: "${REDIS_PORT:-6379}"
       REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
       CACHE_STORE: "${CACHE_STORE:-redis}"
@@ -74,7 +74,7 @@ services:
       - "traefik.http.services.nexo-qa.loadbalancer.server.port=80"
 
   # ── SERVICIO 2: CONTENEDOR DE BASE DE DATOS QA (PostgreSQL 16) ──
-  db:
+  nexo_db:
     image: postgres:16-alpine
     container_name: nexopro_qa_db
     restart: unless-stopped
@@ -94,7 +94,7 @@ services:
       - nexo_qa_net
 
   # ── SERVICIO 3: CONTENEDOR REDIS (Caché, Sesiones y Colas) ────
-  redis:
+  nexo_redis:
     image: redis:7-alpine
     container_name: nexopro_qa_redis
     restart: unless-stopped
