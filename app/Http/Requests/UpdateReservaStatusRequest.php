@@ -22,7 +22,7 @@ class UpdateReservaStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'estado' => 'required|string|in:aprobada,rechazada,cancelada,pagada',
+            'estado' => 'required|string|in:pendiente,aprobada,rechazada,cancelada,pagada',
             'notas' => 'nullable|string'
         ];
     }

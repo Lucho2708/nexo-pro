@@ -20,4 +20,8 @@ interface ReservationRepositoryInterface
     public function checkOverlap(string $zonaId, string $fecha, string $inicio, string $fin, ?string $excludeId = null): bool;
 
     public function countByUnitAndMonth(string $unidadId, string $zonaId, string $year, string $month): int;
+
+    public function getCountsByStatus(string $copropiedadId): array;
+
+    public function getRevenueTotal(string $copropiedadId): float;
 }

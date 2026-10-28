@@ -15,8 +15,9 @@ class EloquentReservationRepository implements ReservationRepositoryInterface
 
     public function getByCopropiedad(string $copropiedadId): Collection
     {
-        return Reserva::whereHas('zona', function($q) use ($copropiedadId) {
-                $q->where('copropiedad_id', $copropiedadId);
+        return Reserva::where(function($q) use ($copropiedadId) {
+                $q->where('copropiedad_id', $copropiedadId)
+                  ->orWhereHas('zona', fn($z) => $z->where('copropiedad_id', $copropiedadId));
             })
             ->with(['zona', 'user', 'unidad'])
             ->orderByDesc('fecha')
@@ -62,5 +63,27 @@ class EloquentReservationRepository implements ReservationRepositoryInterface
             ->whereMonth('fecha', $month)
             ->whereIn('estado', ['pendiente', 'aprobada', 'pagada'])
             ->count();
+    }
+
+    public function getCountsByStatus(string $copropiedadId): array
+    {
+        return Reserva::where(function($q) use ($copropiedadId) {
+                $q->where('copropiedad_id', $copropiedadId)
+                  ->orWhereHas('zona', fn($z) => $z->where('copropiedad_id', $copropiedadId));
+            })
+            ->select('estado', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('estado')
+            ->pluck('total', 'estado')
+            ->toArray();
+    }
+
+    public function getRevenueTotal(string $copropiedadId): float
+    {
+        return (float) Reserva::where(function($q) use ($copropiedadId) {
+                $q->where('copropiedad_id', $copropiedadId)
+                  ->orWhereHas('zona', fn($z) => $z->where('copropiedad_id', $copropiedadId));
+            })
+            ->whereIn('estado', ['aprobada', 'pagada'])
+            ->sum('monto_pagado');
     }
 }

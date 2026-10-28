@@ -105,4 +105,31 @@ class ReservationService
     {
         return $this->repository->getByCopropiedad($copropiedadId);
     }
+
+    public function getDashboardMetrics(string $copropiedadId): array
+    {
+        $rawCounts = $this->repository->getCountsByStatus($copropiedadId);
+
+        $pendiente = (int) ($rawCounts['pendiente'] ?? 0);
+        $aprobada = (int) ($rawCounts['aprobada'] ?? 0);
+        $pagada = (int) ($rawCounts['pagada'] ?? 0);
+        $rechazada = (int) ($rawCounts['rechazada'] ?? 0);
+        $cancelada = (int) ($rawCounts['cancelada'] ?? 0);
+
+        $total = $pendiente + $aprobada + $pagada + $rechazada + $cancelada;
+        $totalAprobadas = $aprobada + $pagada;
+        $tasaAprobacion = $total > 0 ? round(($totalAprobadas / $total) * 100, 1) : 0.0;
+        $recaudoTotal = $this->repository->getRevenueTotal($copropiedadId);
+
+        return [
+            'pendiente' => $pendiente,
+            'aprobada' => $aprobada,
+            'pagada' => $pagada,
+            'rechazada' => $rechazada,
+            'cancelada' => $cancelada,
+            'total' => $total,
+            'recaudo_total' => $recaudoTotal,
+            'tasa_aprobacion' => $tasaAprobacion,
+        ];
+    }
 }

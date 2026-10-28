@@ -64,6 +64,14 @@ Route::middleware(['auth', 'verified', 'ensure-legal'])->group(function () {
         Route::get('/pqrs/{pqrs}/download', [\App\Http\Controllers\PqrsController::class, 'downloadPdf'])->name('pqrs.download');
         Route::patch('/pqrs/{pqrs}', [\App\Http\Controllers\PqrsController::class, 'update'])->name('pqrs.update');
 
+        // ── GESTIÓN DE RESERVAS (Dispatcher Canónico) ─────────────
+        Route::get('/reservas', function (\Illuminate\Http\Request $request) {
+            if (auth()->user() && (auth()->user()->isAdmin() || auth()->user()->isSuperAdmin())) {
+                return redirect()->route('admin.reservas.index');
+            }
+            return app(\App\Http\Controllers\ReservaController::class)->index();
+        })->middleware(['check-license', 'log-feature:reservas'])->name('reservas.index');
+
         // ── SOPORTE TÉCNICO (Errores del Sistema) ──────────────────
         Route::get('/soporte', [\App\Http\Controllers\SupportController::class, 'index'])->name('support.index');
         Route::post('/soporte', [\App\Http\Controllers\SupportController::class, 'store'])->name('support.store');

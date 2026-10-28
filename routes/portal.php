@@ -26,8 +26,7 @@ Route::middleware([
         Route::get('/payments', [OwnerPortalController::class, 'payments'])->middleware('log-feature:payments')->name('payments');
     });
 
-    // Reservas del Propietario
-    Route::get('/reservas', [ReservaController::class, 'index'])->middleware('log-feature:reservas')->name('reservas.index');
+    // Acciones de Reservas del Propietario
     Route::post('/reservas', [ReservaController::class, 'store'])->name('reservas.store');
     Route::post('/reservas/{reserva}/cancel', [ReservaController::class, 'cancel'])->name('reservas.cancel');
 });

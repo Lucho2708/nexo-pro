@@ -89,10 +89,16 @@ class ReservaController extends Controller
     public function adminIndex()
     {
         $user = auth()->user();
-        $reservas = $this->reservationService->getAllForAdmin($user->current_copropiedad_id);
+        $copropiedadId = $user->current_copropiedad_id;
+
+        $reservas = $this->reservationService->getAllForAdmin($copropiedadId);
+        $zonas = $this->zonaRepository->getActiveByCopropiedad($copropiedadId);
+        $metrics = $this->reservationService->getDashboardMetrics($copropiedadId);
 
         return Inertia::render('Admin/Reservas/Manager', [
-            'reservas' => $reservas
+            'reservas' => $reservas,
+            'zonas' => $zonas,
+            'metrics' => $metrics,
         ]);
     }
 
