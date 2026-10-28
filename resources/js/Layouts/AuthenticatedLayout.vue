@@ -13,7 +13,7 @@ const user = computed(() => page.props.auth?.user);
 
 const isSidebarOpen = ref(false);
 const showUserMenu = ref(false);
-const isLargeScreen = ref(false);
+const isLargeScreen = ref(typeof window !== 'undefined' ? window.innerWidth >= 1024 : false);
 
 onMounted(() => {
     isLargeScreen.value = window.innerWidth >= 1024;

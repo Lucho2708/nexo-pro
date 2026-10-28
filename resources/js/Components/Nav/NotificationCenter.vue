@@ -85,7 +85,7 @@ const formatDate = (date: string) => {
             <Transition name="slide-up">
                 <div 
                     v-if="isOpen" 
-                    class="fixed inset-x-3 top-20 max-w-sm mx-auto bg-surface dark:bg-[#0b0e14] rounded-[2rem] shadow-2xl border border-outline-variant/20 dark:border-white/10 overflow-hidden z-[130] sm:hidden flex flex-col max-h-[80vh]"
+                    class="fixed inset-x-3 top-16 sm:top-20 max-w-sm mx-auto bg-surface dark:bg-[#0b0e14] rounded-[2rem] shadow-2xl border border-outline-variant/20 dark:border-white/10 overflow-hidden z-[130] sm:hidden flex flex-col max-h-[80vh]"
                     role="dialog"
                     aria-label="Panel de Notificaciones Móvil"
                 >

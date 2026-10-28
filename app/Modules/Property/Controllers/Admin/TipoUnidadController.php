@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Modules\Property\Models\Unidad;
 use App\Modules\Property\Services\CoeficienteCalculator;
+use App\Services\Property\CopropiedadSettingsService;
 use NexoPro\Property\Services\SpreadsheetUnitTemplateService;
 use NexoPro\Property\Services\SpreadsheetUnitImportService;
 use NexoPro\Property\Services\UnitBulkImportExecutor;
@@ -47,6 +48,28 @@ class TipoUnidadController extends \App\Http\Controllers\Controller
         });
 
         return back()->with('success', 'Modelo de unidad creado correctamente.');
+    }
+
+    /**
+     * Delete an unlinked unit model.
+     */
+    public function destroy(TipoUnidad $tipoUnidad, CopropiedadSettingsService $settingsService)
+    {
+        $copropiedad = auth()->user()->currentCopropiedad;
+        if ($tipoUnidad->copropiedad_id !== $copropiedad->id) {
+            abort(403);
+        }
+
+        if ($copropiedad->unit_types_locked && auth()->user()->role !== 'super_admin') {
+            return back()->with('error', 'La configuración está blindada.');
+        }
+
+        try {
+            $settingsService->deleteTipoUnidad($tipoUnidad);
+            return back()->with('success', 'Modelo arquitectónico eliminado correctamente.');
+        } catch (\DomainException $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     /**

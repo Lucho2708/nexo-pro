@@ -5,6 +5,7 @@ namespace App\Modules\Property\Controllers\Admin;
 use App\Http\Requests\Admin\StoreCopropiedadRequest;
 use App\Http\Requests\Admin\UpdateCopropiedadSettingsRequest;
 use App\Modules\Property\Actions\AddCopropiedadAction;
+use App\Services\Property\CopropiedadSettingsService;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -33,7 +34,7 @@ class CopropiedadController extends \App\Http\Controllers\Controller
     /**
      * Show the settings page for the current copropiedad.
      */
-    public function settings(): Response
+    public function settings(CopropiedadSettingsService $settingsService): Response
     {
         $copropiedad = auth()->user()->currentCopropiedad;
         $copropiedad->load('tiposUnidad.componentes');
@@ -64,30 +65,25 @@ class CopropiedadController extends \App\Http\Controllers\Controller
             $componentes = \App\Modules\Property\Models\ComponenteUnidad::orderBy('nombre')->get();
         }
 
+        $metrics = $settingsService->getSettingsMetrics($copropiedad);
+
         return Inertia::render('Admin/Settings/Index', [
             'copropiedad' => $copropiedad,
             'settings' => $copropiedad->settings ?? \App\Modules\Property\Models\Copropiedad::defaultSettings(),
             'componentes_catalogo' => $componentes,
-            'is_super_admin' => auth()->user()->role === 'super_admin'
+            'is_super_admin' => auth()->user()->role === 'super_admin',
+            'metrics' => $metrics,
         ]);
     }
 
     /**
      * Update the settings for the current copropiedad.
      */
-    public function updateSettings(UpdateCopropiedadSettingsRequest $request)
+    public function updateSettings(UpdateCopropiedadSettingsRequest $request, CopropiedadSettingsService $settingsService)
     {
         $copropiedad = auth()->user()->currentCopropiedad;
 
-        $validated = $request->validated();
-
-        $currentSettings = $copropiedad->settings ?? \App\Modules\Property\Models\Copropiedad::defaultSettings();
-        
-        // Merge settings and properties
-        $copropiedad->update([
-            'settings' => array_merge($currentSettings, $validated['settings']),
-            'area_construida_total' => $validated['area_construida_total'] ?? $copropiedad->area_construida_total,
-        ]);
+        $settingsService->updateSettings($copropiedad, $request->validated());
 
         return back()->with('success', 'Configuración actualizada correctamente.');
     }

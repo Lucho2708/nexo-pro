@@ -11,7 +11,7 @@ class UpdateCopropiedadSettingsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user() && $this->user()->isAdmin();
+        return $this->user() && ($this->user()->isAdmin() || $this->user()->isSuperAdmin());
     }
 
     /**
@@ -23,14 +23,17 @@ class UpdateCopropiedadSettingsRequest extends FormRequest
     {
         return [
             'settings' => 'required|array',
-            'settings.payments_enabled' => 'boolean',
+            'settings.payments_enabled' => 'nullable|boolean',
             'settings.wompi_public_key' => 'nullable|string',
             'settings.wompi_private_key' => 'nullable|string',
             'settings.wompi_integrity_key' => 'nullable|string',
             'settings.wompi_webhook_secret' => 'nullable|string',
+            'settings.pqrs_enabled' => 'nullable|boolean',
+            'settings.reservas_enabled' => 'nullable|boolean',
+            'settings.interes_mora' => 'nullable|numeric|min:0|max:100',
             'settings.gateways' => 'nullable|array',
-            'settings.gateways.*.enabled' => 'boolean',
-            'settings.gateways.*.url' => 'nullable|url',
+            'settings.gateways.*.enabled' => 'nullable|boolean',
+            'settings.gateways.*.url' => 'nullable|string',
             'area_construida_total' => 'nullable|numeric|min:0',
         ];
     }

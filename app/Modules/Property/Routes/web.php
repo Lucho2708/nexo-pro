@@ -36,6 +36,7 @@ Route::middleware(['auth', 'verified', 'ensure-legal', 'two-factor'])->group(fun
 
         // Gestión de Tipos de Unidad (Hoja de Vida)
         Route::post('/admin/unit-types', [TipoUnidadController::class, 'store'])->name('admin.unit-types.store');
+        Route::delete('/admin/unit-types/{tipoUnidad}', [TipoUnidadController::class, 'destroy'])->name('admin.unit-types.destroy');
         Route::post('/admin/unit-types/lock', [TipoUnidadController::class, 'lock'])->name('admin.unit-types.lock');
         Route::post('/admin/unit-types/generate', [TipoUnidadController::class, 'generateUnits'])->name('admin.settings.generate_units');
         Route::post('/admin/unit-types/unlock', [TipoUnidadController::class, 'unlock'])->name('admin.unit-types.unlock');
