@@ -37,6 +37,7 @@ const openLegalModal = (type: 'privacy' | 'terms') => {
 
 const acceptLegalModal = () => {
     form.terms = true;
+    form.clearErrors('terms');
     showLegalModal.value = false;
 };
 
@@ -96,6 +97,22 @@ const prevStep = () => {
 };
 
 const submit = () => {
+    form.clearErrors();
+    if (!form.name) form.setError('name', 'El nombre del administrador es requerido.');
+    if (!form.email) form.setError('email', 'El correo electrónico corporativo es requerido.');
+    if (!form.password) form.setError('password', 'La contraseña de acceso es requerida.');
+    if (form.password && form.password.length < 8) form.setError('password', 'La contraseña debe contener al menos 8 caracteres.');
+    if (form.password && form.password_confirmation && form.password !== form.password_confirmation) {
+        form.setError('password_confirmation', 'Las contraseñas no coinciden.');
+    }
+    if (!form.terms) {
+        form.setError('terms', 'Debes autorizar el tratamiento de datos y aceptar los Términos del Servicio para continuar.');
+    }
+
+    if (Object.keys(form.errors).length > 0) {
+        return;
+    }
+
     form.billing_cycle = billingCycle.value;
     form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
@@ -299,7 +316,7 @@ const selectPlan = (slug: string) => {
                             <div class="space-y-4 pt-2">
                                 <Input 
                                     v-model="form.nit" 
-                                    label="NIT de la Copropiedad *" 
+                                    label="NIT de la Copropiedad" 
                                     placeholder="900.XXX.XXX-X" 
                                     icon="badge" 
                                     required 
@@ -308,7 +325,7 @@ const selectPlan = (slug: string) => {
                                 />
                                 <Input 
                                     v-model="form.nombre_copropiedad" 
-                                    label="Nombre del Edificio / Conjunto *" 
+                                    label="Nombre del Edificio / Conjunto" 
                                     placeholder="Ej: Residencial El Sol" 
                                     icon="corporate_fare" 
                                     required 
@@ -317,7 +334,7 @@ const selectPlan = (slug: string) => {
                                 />
                                 <Input 
                                     v-model="form.direccion" 
-                                    label="Dirección Física *" 
+                                    label="Dirección Física" 
                                     placeholder="Calle 123 # 45-67" 
                                     icon="location_on" 
                                     required 
@@ -329,7 +346,7 @@ const selectPlan = (slug: string) => {
                                     <Select 
                                         v-model="form.departamento" 
                                         :options="departamentosList"
-                                        label="Departamento *" 
+                                        label="Departamento" 
                                         placeholder="Seleccionar departamento..." 
                                         icon="map" 
                                         searchable
@@ -339,7 +356,7 @@ const selectPlan = (slug: string) => {
                                     <Select 
                                         v-model="form.ciudad" 
                                         :options="availableMunicipios"
-                                        label="Municipio / Ciudad *" 
+                                        label="Municipio / Ciudad" 
                                         :placeholder="form.departamento ? 'Seleccionar municipio...' : 'Primero selecciona departamento...'" 
                                         icon="location_city" 
                                         searchable
@@ -377,7 +394,7 @@ const selectPlan = (slug: string) => {
                             <div class="space-y-4 pt-2">
                                 <Input 
                                     v-model="form.name" 
-                                    label="Nombre del Administrador *" 
+                                    label="Nombre del Administrador" 
                                     placeholder="Nombre completo" 
                                     icon="person" 
                                     required 
@@ -387,7 +404,7 @@ const selectPlan = (slug: string) => {
                                 <Input 
                                     v-model="form.email" 
                                     type="email" 
-                                    label="Correo Electrónico Corporativo *" 
+                                    label="Correo Electrónico Corporativo" 
                                     placeholder="admin@tuconjunto.com" 
                                     icon="alternate_email" 
                                     required 
@@ -399,7 +416,7 @@ const selectPlan = (slug: string) => {
                                         <Input 
                                             v-model="form.password" 
                                             :type="showPassword ? 'text' : 'password'" 
-                                            label="Contraseña de Acceso *" 
+                                            label="Contraseña de Acceso" 
                                             placeholder="••••••••" 
                                             icon="lock" 
                                             required 
@@ -419,10 +436,11 @@ const selectPlan = (slug: string) => {
                                         <Input 
                                             v-model="form.password_confirmation" 
                                             :type="showPasswordConfirm ? 'text' : 'password'" 
-                                            label="Confirmar Contraseña *" 
+                                            label="Confirmar Contraseña" 
                                             placeholder="••••••••" 
                                             icon="verified_user" 
                                             required 
+                                            :error="form.errors.password_confirmation"
                                             class="!rounded-2xl pr-12"
                                         />
                                         <button 
@@ -437,7 +455,7 @@ const selectPlan = (slug: string) => {
                                 </div>
 
                                 <div class="p-3.5 rounded-2xl bg-surface-container-low dark:bg-white/[0.02] border border-outline-variant/10">
-                                    <Checkbox v-model:checked="form.terms" required :error="form.errors.terms">
+                                    <Checkbox v-model="form.terms" required :error="form.errors.terms">
                                         <template #description>
                                             <span class="text-[11px] leading-relaxed">
                                                 Autorizo a NEXO-PRO para el tratamiento de datos personales conforme a la 

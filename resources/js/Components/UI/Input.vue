@@ -43,6 +43,11 @@ const emit = defineEmits<{
 
 const inputId = `input-${Math.random().toString(36).substring(2, 9)}`;
 
+const displayLabel = computed(() => {
+    if (!props.label) return '';
+    return props.label.trim().replace(/\s*\*+$/, '');
+});
+
 const onInput = (event: Event) => {
     emit('update:modelValue', (event.target as HTMLInputElement).value);
 };
@@ -76,7 +81,7 @@ const labelStateConfig = {
                 :for="inputId" 
                 class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2"
             >
-                {{ label }} <span v-if="required" class="text-red-500 ml-0.5">*</span>
+                {{ displayLabel }} <span v-if="required" class="text-red-500 ml-0.5">*</span>
             </label>
             <div class="relative flex items-center">
                 <!-- Icon -->
@@ -157,7 +162,7 @@ const labelStateConfig = {
                         labelStateConfig[currentState]
                     ]"
                 >
-                    {{ label }} <span v-if="required" class="text-red-500 ml-0.5">*</span>
+                    {{ displayLabel }} <span v-if="required" class="text-red-500 ml-0.5">*</span>
                 </label>
             </div>
         </template>

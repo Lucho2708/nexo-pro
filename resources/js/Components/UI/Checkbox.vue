@@ -2,7 +2,8 @@
 import { computed } from 'vue';
 
 interface Props {
-    modelValue: boolean;
+    modelValue?: boolean;
+    checked?: boolean;
     label?: string;
     description?: string;
     error?: string;
@@ -13,6 +14,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     modelValue: false,
+    checked: undefined,
     disabled: false,
     required: false,
     state: 'default'
@@ -20,9 +22,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
     (e: 'update:modelValue', value: boolean): void;
+    (e: 'update:checked', value: boolean): void;
+    (e: 'change', value: boolean): void;
 }>();
 
 const inputId = `checkbox-${Math.random().toString(36).substring(2, 9)}`;
+
+const isChecked = computed(() => {
+    if (props.checked !== undefined) return Boolean(props.checked);
+    return Boolean(props.modelValue);
+});
 
 const currentState = computed(() => {
     if (props.error) return 'error';
@@ -44,7 +53,10 @@ const checkboxStateConfig = {
 };
 
 const onInput = (event: Event) => {
-    emit('update:modelValue', (event.target as HTMLInputElement).checked);
+    const val = (event.target as HTMLInputElement).checked;
+    emit('update:modelValue', val);
+    emit('update:checked', val);
+    emit('change', val);
 };
 </script>
 
@@ -62,7 +74,7 @@ const onInput = (event: Event) => {
                 <input 
                     :id="inputId"
                     type="checkbox" 
-                    :checked="modelValue"
+                    :checked="isChecked"
                     @change="onInput"
                     :disabled="disabled"
                     :required="required"

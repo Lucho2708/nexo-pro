@@ -53,4 +53,29 @@ class StoreOnboardingRequest extends FormRequest
             'terms' => 'accepted'
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'terms.accepted' => 'Debes autorizar el tratamiento de datos y aceptar los Términos del Servicio para continuar.',
+            'nit.required' => 'El NIT de la copropiedad es obligatorio.',
+            'nit.unique' => 'Ya existe una copropiedad registrada con este NIT.',
+            'nombre_copropiedad.required' => 'El nombre del conjunto o edificio es obligatorio.',
+            'direccion.required' => 'La dirección física es obligatoria.',
+            'departamento.required' => 'El departamento es obligatorio.',
+            'ciudad.required' => 'El municipio o ciudad es obligatorio.',
+            'name.required' => 'El nombre del administrador es obligatorio.',
+            'email.required' => 'El correo electrónico corporativo es obligatorio.',
+            'email.email' => 'Debes ingresar un correo electrónico válido.',
+            'email.unique' => 'Ya existe una cuenta registrada con este correo electrónico.',
+            'password.required' => 'La contraseña de acceso es obligatoria.',
+            'password.min' => 'La contraseña debe contener al menos 8 caracteres.',
+            'plan.required' => 'Debes seleccionar un plan de suscripción.',
+        ];
+    }
 }
