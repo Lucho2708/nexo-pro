@@ -11,17 +11,20 @@ import PropertySwitcher from '@/Components/Nav/PropertySwitcher.vue';
 const page = usePage<any>();
 const user = computed(() => page.props.auth?.user);
 
-const isSidebarOpen = ref(true);
+const isSidebarOpen = ref(false);
 const showUserMenu = ref(false);
-const isLargeScreen = ref(true);
+const isLargeScreen = ref(false);
 
 onMounted(() => {
     isLargeScreen.value = window.innerWidth >= 1024;
     isSidebarOpen.value = isLargeScreen.value;
     
     window.addEventListener('resize', () => {
-        isLargeScreen.value = window.innerWidth >= 1024;
-        if (isLargeScreen.value) isSidebarOpen.value = true;
+        const large = window.innerWidth >= 1024;
+        if (large !== isLargeScreen.value) {
+            isLargeScreen.value = large;
+            isSidebarOpen.value = large;
+        }
     });
 });
 
@@ -205,10 +208,11 @@ const mobileBottomNavItems = computed(() => {
 
         <!-- Sidebar Pro & Mobile Drawer -->
         <aside 
-            class="fixed inset-y-0 left-0 bg-surface-container-low dark:bg-[#0b0e14]/98 backdrop-blur-3xl border-r border-outline-variant/10 flex flex-col transition-all duration-300 z-[70] no-scrollbar shadow-2xl lg:translate-x-0"
+            class="fixed inset-y-0 left-0 bg-surface-container-low dark:bg-[#0b0e14]/98 backdrop-blur-3xl border-r border-outline-variant/10 flex flex-col transition-all duration-300 z-[70] no-scrollbar shadow-2xl overflow-hidden"
             :class="[
-                isSidebarOpen ? 'w-80 sm:w-72 translate-x-0 max-w-[85vw]' : 'w-24 -translate-x-full lg:translate-x-0',
-                !isSidebarOpen && 'lg:w-24'
+                isSidebarOpen 
+                    ? 'w-80 max-w-[85vw] translate-x-0 lg:w-72' 
+                    : 'w-80 max-w-[85vw] -translate-x-full invisible pointer-events-none lg:visible lg:pointer-events-auto lg:w-24 lg:translate-x-0'
             ]"
         >
             <div class="px-5 pt-6 pb-4 sm:py-10 flex items-center justify-between lg:justify-center">
@@ -218,7 +222,7 @@ const mobileBottomNavItems = computed(() => {
                 <button 
                     v-if="!isLargeScreen"
                     @click="isSidebarOpen = false"
-                    class="p-2.5 rounded-2xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant transition-all active:scale-95 cursor-pointer"
+                    class="p-2.5 rounded-2xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant transition-all active:scale-95 cursor-pointer lg:hidden"
                     aria-label="Cerrar menú"
                 >
                     <span class="material-symbols-rounded text-xl">close</span>
@@ -226,7 +230,7 @@ const mobileBottomNavItems = computed(() => {
             </div>
 
             <!-- Mobile Condominium Switcher inside Drawer -->
-            <div v-if="user?.role !== 'super_admin' && !isLargeScreen" class="px-4 pb-4">
+            <div v-if="user?.role !== 'super_admin' && !isLargeScreen" class="px-4 pb-4 lg:hidden">
                 <div class="p-1 bg-surface-container-high/40 rounded-2xl border border-outline-variant/10">
                     <PropertySwitcher />
                 </div>
@@ -290,7 +294,7 @@ const mobileBottomNavItems = computed(() => {
             <button 
                 v-if="isLargeScreen"
                 @click="isSidebarOpen = !isSidebarOpen"
-                class="absolute bottom-6 -right-3 w-8 h-8 bg-surface dark:bg-[#0b0e14] border border-outline-variant/20 rounded-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-2xl z-50 text-on-surface-variant cursor-pointer"
+                class="hidden lg:flex absolute bottom-6 -right-3 w-8 h-8 bg-surface dark:bg-[#0b0e14] border border-outline-variant/20 rounded-xl items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-2xl z-50 text-on-surface-variant cursor-pointer"
                 aria-label="Colapsar barra lateral"
             >
                 <span class="material-symbols-rounded text-xs transition-transform duration-300" :class="{'rotate-180': !isSidebarOpen}">chevron_left</span>

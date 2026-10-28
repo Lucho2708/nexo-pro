@@ -40,25 +40,27 @@ onUnmounted(() => {
         <!-- Trigger Button -->
         <button 
             @click="isOpen = !isOpen"
-            class="flex items-center gap-4 px-6 py-3 rounded-2xl bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/20 transition-all group overflow-hidden relative"
+            class="w-full flex items-center justify-between gap-3 px-4 py-2.5 sm:py-3 rounded-2xl bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/20 transition-all group overflow-hidden relative cursor-pointer"
         >
             <div class="absolute inset-0 bg-emerald-500/5 translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
             
-            <div class="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0 relative z-10">
-                <span class="material-symbols-rounded text-lg">apartment</span>
-            </div>
-            
-            <div class="text-left relative z-10 hidden sm:block">
-                <div class="flex items-center gap-2 mb-1">
-                    <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
-                    <p class="text-[8px] font-black text-emerald-500 uppercase tracking-[0.2em] leading-none">Activo</p>
+            <div class="flex items-center gap-3 min-w-0 relative z-10">
+                <div class="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0">
+                    <span class="material-symbols-rounded text-lg">apartment</span>
                 </div>
-                <h3 class="text-[11px] font-black text-on-surface dark:text-white uppercase tracking-tighter italic flex items-center gap-2">
-                    {{ currentCopropiedad?.nombre || 'Seleccionar Conjunto' }}
-                </h3>
+                
+                <div class="text-left min-w-0">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)] shrink-0"></div>
+                        <p class="text-[8px] font-black text-emerald-500 uppercase tracking-[0.2em] leading-none">Activo</p>
+                    </div>
+                    <h3 class="text-[11px] font-black text-on-surface dark:text-white uppercase tracking-tighter italic truncate">
+                        {{ currentCopropiedad?.nombre || 'Seleccionar Conjunto' }}
+                    </h3>
+                </div>
             </div>
             
-            <span class="material-symbols-rounded text-emerald-500 transition-transform duration-300 relative z-10 ml-1" :class="{'rotate-180': isOpen}">expand_more</span>
+            <span class="material-symbols-rounded text-emerald-500 transition-transform duration-300 relative z-10 shrink-0 ml-1" :class="{'rotate-180': isOpen}">expand_more</span>
         </button>
 
         <!-- Dropdown Menu -->
