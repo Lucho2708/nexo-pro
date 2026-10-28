@@ -20,6 +20,7 @@ Siempre que implementes una nueva funcionalidad o corrijas un bug que requiera c
 
 ## Reglas complementarias
 - **Cobertura mínima del 80%** en lógica de negocio (excluye UI simple, getters/setters triviales).
+- **Blindaje Full-Stack para Formularios y UI**: Para funcionalidades con interfaz de usuario (formularios, inputs, selects, switches, checkboxes, modales transaccionales), las pruebas HTTP de backend (`php artisan test`) no son suficientes porque inyectan arrays PHP sin ejecutar el DOM. Debes acompañarlas obligatoriamente de pruebas de contrato en cliente (`npm run test:frontend`) que verifiquen que la interacción del usuario (`v-model`, `v-model:checked`, `@change`) efectivamente actualiza el estado reactivo antes del envío.
 - Usa **mocks/stubs** para aislar la unidad bajo prueba (bases de datos, APIs, etc.).
 - Las pruebas deben ser **deterministas** (sin aleatoriedad, sin dependencia del tiempo real no controlado).
 - Agrupa pruebas por contexto usando `describe` / `it` (o equivalente en tu lenguaje).

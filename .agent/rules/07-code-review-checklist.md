@@ -10,6 +10,7 @@ Cuando se te pida revisar un fragmento de código (ya sea escrito por humano o p
 - [ ] **SOLID y POO**: cada clase/función tiene una única responsabilidad. ¿Se aplica inyección de dependencias?
 - [ ] **TDD**: ¿Existen pruebas unitarias que cubren el comportamiento? ¿Siguen el ciclo Red-Green-Refactor?
 - [ ] **Frontend premium**: ¿TypeScript sin `any`? ¿Accesibilidad básica? ¿Rendimiento razonable?
+- [ ] **Contratos Full-Stack UI**: ¿Los componentes de formulario tienen contratos bidireccionales (`v-model`, `checked`, `update:modelValue`) y prueba frontend que valide que el estado reactivo realmente se actualiza?
 - [ ] **UX/UI**: ¿El feedback al usuario es claro? ¿Es responsive?
 - [ ] **Base de datos**: ¿Los nombres siguen snake_case? ¿Hay índices adecuados? ¿Se evita `SELECT *`?
 - [ ] **Seguridad**: ¿Se parametrizan consultas? ¿No hay secretos hardcodeados? ¿Se validan entradas?
