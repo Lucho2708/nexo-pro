@@ -64,7 +64,7 @@ class LandingController extends Controller
     }
 
     /**
-     * Get the subscription plans data.
+     * Get the subscription plans data aligned with the B2B high-conversion strategy.
      * 
      * @return array
      */
@@ -72,42 +72,51 @@ class LandingController extends Controller
     {
         return [
             [
-                'name' => 'BASIC CORE',
+                'name' => 'BOUTIQUE',
                 'price_monthly' => 189000,
                 'price_annual' => 151200,
-                'description' => 'Potencia esencial para edificios boutique.',
+                'period_label' => 'Por Copropiedad / Mes',
+                'description' => 'Solución completa para edificios y conjuntos pequeños.',
                 'features' => [
-                    'Soporte de hasta 50 unidades',
-                    'Recaudo Pasarela Base',
-                    'App Residentes (iOS/Android)',
-                    'Monitor de Salud Financiera'
+                    'Hasta 60 unidades privadas',
+                    'Recaudo PSE, Wompi y Nequi',
+                    'App móvil para residentes',
+                    'Citofonía virtual y portería',
+                    'Liquidación automática de cuotas',
+                    'Paz y salvos digitales con QR'
                 ],
                 'is_recommended' => false,
             ],
             [
-                'name' => 'ELITE MONITOR',
-                'price_monthly' => 389000,
-                'price_annual' => 311200,
-                'description' => 'El estándar de oro para grandes copropiedades.',
+                'name' => 'CONDOMINIO PRO',
+                'price_monthly' => 289000,
+                'price_annual' => 231200,
+                'period_label' => 'Por Copropiedad / Mes',
+                'description' => 'El estándar de oro para administradores profesionales y consejos.',
                 'features' => [
-                    'Unidades Ilimitadas',
-                    'Asambleas Virtuales Full',
-                    'Dispatcher de Reservas Pro',
-                    'Soporte Prioritario de Ingeniería',
-                    'Auditoría Forense de Logs'
+                    'Hasta 150 unidades privadas',
+                    'Asambleas Virtuales Ley 675 en vivo',
+                    'Votación atómica en tiempo real',
+                    'Conciliación bancaria automática',
+                    'Cobranza por WhatsApp con link directo',
+                    'Dispatcher de reservas de zonas comunes',
+                    'Auditoría forense de operaciones'
                 ],
                 'is_recommended' => true,
             ],
             [
-                'name' => 'ENTERPRISE',
-                'price_monthly' => null,
-                'price_annual' => null,
-                'description' => 'Soluciones a medida para corporativos y constructoras.',
+                'name' => 'MACRO-CONJUNTO',
+                'price_monthly' => 420000,
+                'price_annual' => 336000,
+                'period_label' => 'Por Copropiedad / Mes',
+                'description' => 'Máxima potencia para grandes copropiedades y urbanizaciones multitorre.',
                 'features' => [
-                    'Integraciones vía API API-Nexo',
-                    'Account Manager dedicado',
-                    'Implementación In-Site',
-                    'SLA de Respuesta Industrial'
+                    'Hasta 350 unidades privadas',
+                    'Múltiples torres y porterías simultáneas',
+                    'Migración asistida de datos Excel en 24h',
+                    'Soporte técnico prioritario en asambleas',
+                    'Acceso multi-administrador y consejo',
+                    'Control vehicular y de parqueaderos'
                 ],
                 'is_recommended' => false,
             ],

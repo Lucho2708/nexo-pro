@@ -132,10 +132,10 @@ const formatPrice = (price: number | null) => {
                             </span>
                             <span
                                 v-if="plan.price_monthly !== null"
-                                class="text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-60 ml-0.5"
+                                class="text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-80 ml-0.5"
                                 :class="plan.is_recommended ? 'text-slate-300' : 'text-slate-500 dark:text-slate-400'"
                             >
-                                Por Unidad / Mes
+                                {{ plan.period_label || 'Por Copropiedad / Mes' }}
                             </span>
                         </div>
                         
@@ -190,6 +190,27 @@ const formatPrice = (price: number | null) => {
                         {{ plan.price_monthly === null ? 'Contactar Ingeniería' : 'Activar Licencia' }}
                     </Button>
                 </article>
+            </div>
+
+            <!-- Banner Corporativo para Empresas Administradoras y Constructoras -->
+            <div class="mt-12 sm:mt-16 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-700/60 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-2 text-center md:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                        <span>Multi-Copropiedad & Constructoras</span>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-black tracking-tight">¿Administras más de 3 conjuntos o eres constructora?</h3>
+                    <p class="text-xs sm:text-sm text-slate-300 max-w-2xl font-normal">
+                        Mando Central unificado para gestionar todos tus edificios desde una sola cuenta maestra, descuentos por volumen desde la 4ta copropiedad y migración de bases de datos asistida sin costo.
+                    </p>
+                </div>
+                <a
+                    href="/#contacto"
+                    class="px-6 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-extrabold text-xs uppercase tracking-wider shadow-lg active:scale-95 transition-all shrink-0 min-h-[48px] flex items-center justify-center gap-2"
+                >
+                    <span>Cotizar Plan Empresa</span>
+                    <span class="material-symbols-rounded text-base">arrow_forward</span>
+                </a>
             </div>
         </div>
     </section>
