@@ -454,18 +454,16 @@ const selectPlan = (slug: string) => {
                                     </div>
                                 </div>
 
-                                <div class="p-3.5 rounded-2xl bg-surface-container-low dark:bg-white/[0.02] border border-outline-variant/10">
-                                    <Checkbox v-model="form.terms" required :error="form.errors.terms">
-                                        <template #description>
-                                            <span class="text-[11px] leading-relaxed">
-                                                Autorizo a NEXO-PRO para el tratamiento de datos personales conforme a la 
-                                                <button type="button" @click.prevent.stop="openLegalModal('privacy')" class="text-primary font-bold hover:underline">Política de Privacidad</button> 
-                                                y acepto los 
-                                                <button type="button" @click.prevent.stop="openLegalModal('terms')" class="text-primary font-bold hover:underline">Términos del Servicio</button>.
-                                            </span>
-                                        </template>
-                                    </Checkbox>
-                                </div>
+                                <Checkbox v-model="form.terms" required :error="form.errors.terms">
+                                    <template #description>
+                                        <span class="text-[11px] leading-relaxed">
+                                            Autorizo a NEXO-PRO para el tratamiento de datos personales conforme a la 
+                                            <button type="button" @click.prevent.stop="openLegalModal('privacy')" class="text-primary font-bold hover:underline">Política de Privacidad</button> 
+                                            y acepto los 
+                                            <button type="button" @click.prevent.stop="openLegalModal('terms')" class="text-primary font-bold hover:underline">Términos del Servicio</button>.
+                                        </span>
+                                    </template>
+                                </Checkbox>
                             </div>
 
                             <div class="pt-6 border-t border-outline-variant/10 flex flex-col sm:flex-row justify-between items-center gap-3">

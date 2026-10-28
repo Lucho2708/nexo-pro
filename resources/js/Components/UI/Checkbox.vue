@@ -1,20 +1,23 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, useSlots } from 'vue';
 
 interface Props {
     modelValue?: boolean;
     checked?: boolean;
+    id?: string;
     label?: string;
     description?: string;
     error?: string;
     state?: 'success' | 'warning' | 'error' | 'default';
     disabled?: boolean;
     required?: boolean;
+    class?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     modelValue: false,
     checked: undefined,
+    id: undefined,
     disabled: false,
     required: false,
     state: 'default'
@@ -26,31 +29,24 @@ const emit = defineEmits<{
     (e: 'change', value: boolean): void;
 }>();
 
-const inputId = `checkbox-${Math.random().toString(36).substring(2, 9)}`;
+const slots = useSlots();
+const generatedId = `checkbox-${Math.random().toString(36).substring(2, 9)}`;
+const elementId = computed(() => props.id || generatedId);
+
+const hasContent = computed(() => {
+    return Boolean(
+        props.label || 
+        props.description || 
+        slots.label || 
+        slots.description || 
+        slots.default
+    );
+});
 
 const isChecked = computed(() => {
     if (props.checked !== undefined) return Boolean(props.checked);
     return Boolean(props.modelValue);
 });
-
-const currentState = computed(() => {
-    if (props.error) return 'error';
-    return props.state;
-});
-
-const stateConfig = {
-    error: 'border-error/50 hover:border-error focus:ring-error/20 bg-error/5',
-    success: 'border-success/50 hover:border-success focus:ring-success/20 bg-success/5',
-    warning: 'border-warning/50 hover:border-warning focus:ring-warning/20 bg-warning/5',
-    default: 'border-outline-variant/30 hover:border-primary/50 focus:ring-primary/20 bg-surface-container-low/30'
-};
-
-const checkboxStateConfig = {
-    error: 'border-error text-error focus:ring-error/20 accent-error',
-    success: 'border-success text-success focus:ring-success/20 accent-success',
-    warning: 'border-warning text-warning focus:ring-warning/20 accent-warning',
-    default: 'border-outline-variant/30 text-primary focus:ring-primary/20 accent-primary',
-};
 
 const onInput = (event: Event) => {
     const val = (event.target as HTMLInputElement).checked;
@@ -61,49 +57,106 @@ const onInput = (event: Event) => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-1.5 w-full" :class="props.class">
+        <!-- MODE 1: Rich Card with Label & Description -->
         <label 
-            :for="inputId"
-            class="flex items-start gap-4 p-4 rounded-xl border cursor-pointer transition-colors"
+            v-if="hasContent"
+            :for="elementId"
+            class="flex items-start gap-3.5 p-4 rounded-2xl border-2 transition-all cursor-pointer group select-none"
             :class="[
-                stateConfig[currentState],
+                error 
+                    ? 'border-red-500/50 bg-red-50/5 dark:bg-red-950/10' 
+                    : isChecked
+                        ? 'border-primary/50 bg-primary/5 dark:bg-primary/[0.04]'
+                        : 'border-slate-300 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-900/40 hover:border-primary/50 dark:hover:border-primary/50',
                 disabled ? 'opacity-50 cursor-not-allowed' : ''
             ]"
         >
-            <div class="pt-0.5 relative flex items-center justify-center">
-                <input 
-                    :id="inputId"
-                    type="checkbox" 
-                    :checked="isChecked"
-                    @change="onInput"
-                    :disabled="disabled"
-                    :required="required"
-                    class="peer w-5 h-5 rounded outline-none transition-all cursor-pointer appearance-none border-2 checked:bg-current"
-                    :class="checkboxStateConfig[currentState]"
-                />
-                <span class="material-symbols-outlined text-white text-[14px] absolute pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+            <input 
+                :id="elementId"
+                type="checkbox" 
+                :checked="isChecked"
+                @change="onInput"
+                :disabled="disabled"
+                :required="required"
+                class="sr-only peer"
+            />
+            
+            <!-- Checkbox Box (High Contrast) -->
+            <div 
+                class="mt-0.5 w-5 h-5 min-w-[20px] min-h-[20px] rounded-lg border-2 flex items-center justify-center transition-all duration-150 shadow-xs"
+                :class="[
+                    isChecked 
+                        ? 'bg-primary border-primary text-white shadow-sm shadow-primary/30' 
+                        : error
+                            ? 'bg-white dark:bg-slate-900 border-red-500'
+                            : 'bg-white dark:bg-slate-950 border-slate-400 dark:border-slate-500 group-hover:border-primary dark:group-hover:border-primary',
+                    'peer-focus-visible:ring-4 peer-focus-visible:ring-primary/20'
+                ]"
+            >
+                <svg 
+                    v-if="isChecked" 
+                    class="w-3.5 h-3.5 text-white stroke-[3.5] fill-none drop-shadow-xs" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
             </div>
             
-            <div class="flex flex-col gap-1">
-                <div v-if="label || $slots.label" class="text-sm font-bold text-on-surface leading-snug">
+            <div class="flex flex-col gap-0.5 flex-1 pt-0.5">
+                <div v-if="label || $slots.label" class="text-sm font-bold text-slate-900 dark:text-white leading-snug">
                     <slot name="label">{{ label }}</slot>
-                    <span v-if="required" class="text-error ml-0.5">*</span>
+                    <span v-if="required" class="text-red-500 ml-0.5">*</span>
                 </div>
-                <div v-if="description || $slots.description" class="text-xs text-on-surface-variant font-medium leading-relaxed">
+                <div v-if="description || $slots.description" class="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                     <slot name="description">{{ description }}</slot>
                 </div>
+                <slot />
+            </div>
+        </label>
+
+        <!-- MODE 2: Standalone Compact Checkbox (No Label/Description) -->
+        <label 
+            v-else 
+            :for="elementId"
+            class="relative inline-flex items-center justify-center cursor-pointer select-none group"
+            :class="disabled ? 'opacity-50 cursor-not-allowed' : ''"
+        >
+            <input 
+                :id="elementId"
+                type="checkbox" 
+                :checked="isChecked"
+                @change="onInput"
+                :disabled="disabled"
+                :required="required"
+                class="sr-only peer"
+            />
+            <div 
+                class="w-5 h-5 min-w-[20px] min-h-[20px] rounded-lg border-2 flex items-center justify-center transition-all duration-150 shadow-xs"
+                :class="[
+                    isChecked 
+                        ? 'bg-primary border-primary text-white shadow-sm shadow-primary/30' 
+                        : error
+                            ? 'bg-white dark:bg-slate-900 border-red-500'
+                            : 'bg-white dark:bg-slate-950 border-slate-400 dark:border-slate-500 group-hover:border-primary dark:group-hover:border-primary',
+                    'peer-focus-visible:ring-4 peer-focus-visible:ring-primary/20'
+                ]"
+            >
+                <svg 
+                    v-if="isChecked" 
+                    class="w-3.5 h-3.5 text-white stroke-[3.5] fill-none drop-shadow-xs" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
             </div>
         </label>
         
-        <p v-if="error" class="text-error text-xs font-bold px-2 mt-1 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+        <p v-if="error" class="text-red-500 text-xs font-bold px-2 mt-1 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
             <span class="material-symbols-outlined text-[14px]" aria-hidden="true">error</span>
             {{ error }}
         </p>
     </div>
 </template>
-
-<style scoped>
-.material-symbols-outlined {
-    font-variation-settings: 'opsz' 20, 'wght' 600;
-}
-</style>
