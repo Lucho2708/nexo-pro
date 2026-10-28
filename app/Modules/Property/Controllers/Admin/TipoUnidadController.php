@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Modules\Property\Models\Unidad;
 use App\Modules\Property\Services\CoeficienteCalculator;
 use App\Services\Property\CopropiedadSettingsService;
+use App\Services\Subscription\PlanService;
 use NexoPro\Property\Services\SpreadsheetUnitTemplateService;
 use NexoPro\Property\Services\SpreadsheetUnitImportService;
 use NexoPro\Property\Services\UnitBulkImportExecutor;
@@ -150,6 +151,12 @@ class TipoUnidadController extends \App\Http\Controllers\Controller
             }
         }
 
+        // Validar límite de capacidad según el plan contratado
+        $capacityCheck = app(PlanService::class)->validateUnitCapacity($copropiedad, count($unitsData));
+        if (!$capacityCheck['allowed']) {
+            return back()->with('error', $capacityCheck['message']);
+        }
+
         DB::transaction(function () use ($copropiedad, $unitsData) {
             foreach (array_chunk($unitsData, 500) as $chunk) {
                 Unidad::insert($chunk);
@@ -242,7 +249,16 @@ class TipoUnidadController extends \App\Http\Controllers\Controller
         $filePath = $request->file('file')->getRealPath();
         $result = $importService->parseSpreadsheetFile($filePath, $modelosCatalog);
 
-        return response()->json($result->toArray());
+        $capacityCheck = app(PlanService::class)->validateUnitCapacity($copropiedad, count($result->validRows));
+        $responseArray = $result->toArray();
+        $responseArray['capacity_check'] = $capacityCheck;
+
+        if (!$capacityCheck['allowed']) {
+            $responseArray['is_valid'] = false;
+            $responseArray['errors'][] = $capacityCheck['message'];
+        }
+
+        return response()->json($responseArray);
     }
 
     /**
@@ -275,6 +291,12 @@ class TipoUnidadController extends \App\Http\Controllers\Controller
 
         if (!$result->isValid) {
             return back()->with('error', 'El archivo contiene errores de validación. Por favor verifique el reporte.');
+        }
+
+        // Validar límite de capacidad según el plan contratado
+        $capacityCheck = app(PlanService::class)->validateUnitCapacity($copropiedad, count($result->validRows));
+        if (!$capacityCheck['allowed']) {
+            return back()->with('error', $capacityCheck['message']);
         }
 
         $count = $executor->execute($copropiedad, $result->validRows, $modelosCatalog);

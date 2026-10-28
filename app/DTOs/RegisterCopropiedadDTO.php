@@ -10,12 +10,13 @@ class RegisterCopropiedadDTO
         public readonly string $direccion,
         public readonly string $ciudad,
         public readonly string $plan,
-        public readonly int $unidades_totales,
-        public readonly int $torres,
-        public readonly string $name,
-        public readonly string $email,
-        public readonly string $password,
-        public readonly bool $is_standalone = false
+        public readonly int $unidades_totales = 0,
+        public readonly int $torres = 0,
+        public readonly string $name = '',
+        public readonly string $email = '',
+        public readonly string $password = '',
+        public readonly bool $is_standalone = false,
+        public readonly string $billing_cycle = 'monthly'
     ) {}
 
     public static function fromRequest(array $validatedData): self
@@ -26,12 +27,13 @@ class RegisterCopropiedadDTO
             direccion: $validatedData['direccion'],
             ciudad: $validatedData['ciudad'],
             plan: $validatedData['plan'],
-            unidades_totales: (int) $validatedData['unidades_totales'],
-            torres: (int) $validatedData['torres'],
+            unidades_totales: isset($validatedData['unidades_totales']) ? (int) $validatedData['unidades_totales'] : 0,
+            torres: isset($validatedData['torres']) ? (int) $validatedData['torres'] : 0,
             name: $validatedData['name'],
             email: $validatedData['email'],
             password: $validatedData['password'],
-            is_standalone: (bool) ($validatedData['is_standalone'] ?? false)
+            is_standalone: (bool) ($validatedData['is_standalone'] ?? false),
+            billing_cycle: $validatedData['billing_cycle'] ?? 'monthly'
         );
     }
 }

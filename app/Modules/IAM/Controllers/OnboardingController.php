@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Modules\IAM\Requests\StoreOnboardingRequest;
 use App\DTOs\RegisterCopropiedadDTO;
+use App\Services\Subscription\PlanService;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -16,9 +17,16 @@ class OnboardingController extends Controller
     /**
      * Show the onboarding wizard page.
      */
-    public function index(): Response
+    public function index(Request $request, PlanService $planService): Response
     {
-        return Inertia::render('Auth/Onboarding');
+        $selectedPlanSlug = $request->query('plan', 'condominio_pro');
+        $billingCycle = $request->query('billing', 'monthly');
+
+        return Inertia::render('Auth/Onboarding', [
+            'available_plans' => array_values($planService->getPlans()),
+            'selected_plan_slug' => $selectedPlanSlug,
+            'initial_billing_cycle' => $billingCycle,
+        ]);
     }
 
     /**

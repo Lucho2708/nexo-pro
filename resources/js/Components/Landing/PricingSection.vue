@@ -178,7 +178,7 @@ const formatPrice = (price: number | null) => {
                     
                     <!-- Botón de Conversión CTA con Ergonomía Táctil (>= 48px) -->
                     <Button 
-                        :href="plan.price_monthly === null ? '/#contacto' : route('register')"
+                        :href="plan.price_monthly === null ? '/#contacto' : route('register', { plan: plan.slug, billing: isAnnual ? 'annual' : 'monthly' })"
                         variant="primary"
                         class="w-full !min-h-[50px] !h-auto py-3.5 !rounded-xl !text-xs font-black uppercase italic shadow-md transition-all cursor-pointer"
                         :class="[

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Frontend\StoreDemoRequest;
+use App\Services\Subscription\PlanService;
 use Inertia\Inertia;
 
 class LandingController extends Controller
@@ -14,11 +15,11 @@ class LandingController extends Controller
      *
      * @return \Inertia\Response
      */
-    public function index()
+    public function index(PlanService $planService)
     {
         return Inertia::render('Welcome', [
             'features' => $this->getFeatures(),
-            'plans' => $this->getPlans(),
+            'plans' => array_values($planService->getPlans()),
         ]);
     }
 

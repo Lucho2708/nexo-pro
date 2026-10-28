@@ -23,15 +23,20 @@ class StoreOnboardingRequest extends FormRequest
     {
         return [
             // Property Info
-            'nit' => 'required|string|unique:copropiedades,nit',
+            'nit' => [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::unique(\App\Modules\Property\Models\Copropiedad::class, 'nit'),
+            ],
             'nombre_copropiedad' => 'required|string|max:255',
             'direccion' => 'required|string|max:255',
             'ciudad' => 'required|string|max:255',
             
-            // Operation
-            'plan' => 'required|string|in:basic,pro,enterprise,standalone',
-            'unidades_totales' => 'required|integer|min:0',
-            'torres' => 'required|integer|min:0',
+            // Operation & Subscription
+            'plan' => 'required|string|in:boutique,condominio_pro,macro_conjunto,basic,pro,enterprise,standalone',
+            'billing_cycle' => 'nullable|string|in:monthly,annual',
+            'unidades_totales' => 'nullable|integer|min:0',
+            'torres' => 'nullable|integer|min:0',
             'is_standalone' => 'nullable|boolean',
             
             // Admin Account

@@ -27,12 +27,15 @@ class RegisterCopropiedadAction
                 'nombre' => $dto->nombre_copropiedad,
                 'direccion' => $dto->direccion,
                 'ciudad' => $dto->ciudad,
-                'plan' => $dto->is_standalone ? 'standalone' : ($dto->plan ?? 'basic'),
+                'plan' => $dto->is_standalone ? 'standalone' : ($dto->plan ?? 'condominio_pro'),
                 'unidades_totales' => $dto->unidades_totales ?? 0,
                 'torres' => $dto->torres ?? 0,
+                'license_status' => 'active',
+                'license_expires_at' => $dto->billing_cycle === 'annual' ? now()->addYear() : now()->addMonth(),
                 'settings' => array_merge(Copropiedad::defaultSettings(), [
                     'is_standalone' => $dto->is_standalone,
-                    'asamblea_virtual_active' => $dto->is_standalone // Forzado si es standalone
+                    'asamblea_virtual_active' => $dto->is_standalone, // Forzado si es standalone
+                    'billing_cycle' => $dto->billing_cycle,
                 ])
             ]);
 
