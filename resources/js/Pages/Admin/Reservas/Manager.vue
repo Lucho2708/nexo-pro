@@ -81,33 +81,33 @@ const formatCurrency = (value: number) => {
 <template>
     <Head title="Dispatcher Reservas — NEXO-PRO" />
 
-    <div class="space-y-12 pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div class="space-y-8 sm:space-y-12 pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
         <!-- Tactical Header -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 px-1">
-            <div class="space-y-3">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 px-1">
+            <div class="space-y-2 sm:space-y-3">
                 <div class="flex items-center gap-3">
                     <div class="w-1.5 h-6 bg-secondary rounded-full shadow-[0_0_10px_rgba(var(--secondary),0.3)]"></div>
-                    <p class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.4em] italic leading-none">Módulo de Ocupación y Comunal</p>
+                    <p class="text-[9px] sm:text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] sm:tracking-[0.4em] italic leading-none">Módulo de Ocupación y Comunal</p>
                 </div>
-                <h2 class="text-5xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none">Gestor de <span class="text-secondary italic">Reservas</span></h2>
-                <p class="text-[11px] font-bold text-on-surface-variant/40 dark:text-white/10 uppercase tracking-[0.2em] mt-2 leading-relaxed italic">Dispatcher de disponibilidad, aprobación de vectores de tiempo y liquidación de activos</p>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none">Gestor de <span class="text-secondary italic">Reservas</span></h2>
+                <p class="text-[10px] sm:text-[11px] font-bold text-on-surface-variant/40 dark:text-white/10 uppercase tracking-[0.15em] sm:tracking-[0.2em] mt-1 sm:mt-2 leading-relaxed italic">Dispatcher de disponibilidad, aprobación de vectores de tiempo y liquidación de activos</p>
             </div>
-            <div class="flex items-center gap-3">
-                 <Button variant="outline" icon="calendar_view_day" class="!rounded-2xl !h-14 !px-8 text-[11px] font-black uppercase italic" @click="router.get(route('admin.zonas.index'))">Configurar Espacios</Button>
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                 <Button variant="outline" icon="calendar_view_day" class="!rounded-xl sm:!rounded-2xl h-12 sm:!h-14 px-6 sm:!px-8 text-[10px] sm:text-[11px] font-black uppercase italic w-full sm:w-auto" @click="router.get(route('admin.zonas.index'))">Configurar Espacios</Button>
             </div>
         </div>
 
         <!-- Main Operational Table -->
-        <Card class="!p-0 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14] overflow-hidden">
+        <Card class="!p-0 rounded-[2rem] sm:rounded-[2.8rem] md:!rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14] overflow-hidden">
             <template #header>
-                <div class="p-10 flex items-center gap-5">
-                    <div class="w-14 h-14 bg-secondary/10 rounded-2xl flex items-center justify-center text-secondary border border-secondary/20 shadow-inner">
+                <div class="p-5 sm:p-8 md:p-10 flex items-center gap-4 sm:gap-5">
+                    <div class="w-12 sm:w-14 h-12 sm:h-14 bg-secondary/10 rounded-2xl flex items-center justify-center text-secondary border border-secondary/20 shadow-inner">
                         <span class="material-symbols-rounded text-2xl">event_available</span>
                     </div>
                     <div>
-                        <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Cronograma <span class="text-secondary italic">Tactical</span></h3>
-                        <p class="text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] mt-3 italic">Control maestro de ocupación por zona común</p>
+                        <h3 class="text-xl sm:text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Cronograma <span class="text-secondary italic">Tactical</span></h3>
+                        <p class="text-[9px] sm:text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.25em] sm:tracking-[0.3em] mt-2 sm:mt-3 italic">Control maestro de ocupación por zona común</p>
                     </div>
                 </div>
             </template>

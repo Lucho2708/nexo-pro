@@ -90,29 +90,29 @@ const runLiquidation = () => {
 <template>
     <Head title="Mando Central — NEXO-PRO" />
 
-    <div class="space-y-12 pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div class="space-y-6 sm:space-y-10 md:space-y-12 pb-24 sm:pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
         <!-- Interactive Header & Tactical Actions -->
-        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 sm:gap-8">
             <div class="space-y-2">
-                <div class="flex items-center gap-3">
-                    <div class="w-1.5 h-6 bg-primary rounded-full"></div>
-                    <h2 class="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-[0.4em] italic">Módulo de Administración Operativa</h2>
+                <div class="flex items-center gap-2.5">
+                    <div class="w-1.5 h-5 sm:h-6 bg-primary rounded-full"></div>
+                    <h2 class="text-[9px] sm:text-[10px] font-black text-on-surface-variant/40 uppercase tracking-[0.3em] sm:tracking-[0.4em] italic">Módulo de Administración Operativa</h2>
                 </div>
-                <h1 class="text-5xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none">
                     Centro de <span class="text-primary italic">Control</span>
                 </h1>
             </div>
 
-            <div class="flex flex-wrap items-center gap-3 bg-white dark:bg-white/[0.02] p-2 rounded-[2rem] border border-outline-variant/10 shadow-xl">
-                 <Button variant="ghost" size="md" icon="sync" class="!rounded-2xl" @click="toast.add('Sincronizando con base de datos...', 'primary')">Sincronizar</Button>
-                 <Button variant="outline" size="md" icon="receipt_long" class="!rounded-2xl" href="#">Reportes</Button>
-                 <Button variant="primary" size="md" icon="auto_awesome" class="!rounded-2xl shadow-lg shadow-primary/20" @click="runLiquidation">Liquidación Masiva</Button>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3 bg-white dark:bg-white/[0.02] p-1.5 sm:p-2 rounded-2xl sm:rounded-[2rem] border border-outline-variant/10 shadow-xl w-full lg:w-auto">
+                 <Button variant="ghost" size="md" icon="sync" class="!rounded-xl sm:!rounded-2xl flex-1 sm:flex-none text-xs" @click="toast.add('Sincronizando con base de datos...', 'primary')">Sincronizar</Button>
+                 <Button variant="outline" size="md" icon="receipt_long" class="!rounded-xl sm:!rounded-2xl flex-1 sm:flex-none text-xs" href="#">Reportes</Button>
+                 <Button variant="primary" size="md" icon="auto_awesome" class="!rounded-xl sm:!rounded-2xl shadow-lg shadow-primary/20 w-full sm:w-auto text-xs" @click="runLiquidation">Liquidación Masiva</Button>
             </div>
         </div>
 
         <!-- KPI Operational Grid -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <StatCard 
                 v-for="(stat, index) in stats" 
                 :key="index"
@@ -122,7 +122,7 @@ const runLiquidation = () => {
                 :trend-up="stat.trend_up"
                 :progress="stat.progress"
                 :color-class="stat.color"
-                class="!rounded-[2.5rem] border border-outline-variant/5 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14]"
+                class="!rounded-[2rem] sm:!rounded-[2.5rem] border border-outline-variant/5 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14]"
             />
         </section>
 
@@ -130,13 +130,13 @@ const runLiquidation = () => {
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <!-- Flujo de Recaudo Real-time -->
-            <Card class="lg:col-span-8 !p-10 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14]">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+            <Card class="lg:col-span-8 p-4 sm:p-7 md:!p-10 rounded-[2rem] sm:rounded-[2.8rem] md:!rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14]">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-10">
                     <div>
-                        <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Flujo de <span class="text-primary">Capital</span></h3>
-                        <p class="text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] mt-3 italic">Indicadores de recaudo mensual vs facturación</p>
+                        <h3 class="text-xl sm:text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Flujo de <span class="text-primary">Capital</span></h3>
+                        <p class="text-[9px] sm:text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.25em] sm:tracking-[0.3em] mt-2 sm:mt-3 italic">Indicadores de recaudo mensual vs facturación</p>
                     </div>
-                    <div class="flex items-center gap-6 bg-surface-container-low dark:bg-white/5 px-6 py-3 rounded-2xl border border-outline-variant/10">
+                    <div class="flex items-center gap-4 sm:gap-6 bg-surface-container-low dark:bg-white/5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl border border-outline-variant/10 w-fit">
                          <div class="flex items-center gap-2">
                              <div class="w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_10px_rgba(0,97,255,0.5)]"></div>
                              <span class="text-[9px] font-black text-on-surface-variant dark:text-white/40 uppercase tracking-widest">Recaudo</span>
@@ -148,7 +148,7 @@ const runLiquidation = () => {
                     </div>
                 </div>
 
-                <div class="h-80 -mx-4 group">
+                <div class="h-64 sm:h-80 -mx-2 sm:-mx-4 group">
                     <VueApexCharts 
                         type="area" 
                         height="100%" 
@@ -159,16 +159,16 @@ const runLiquidation = () => {
             </Card>
 
             <!-- Tactical Quick Actions -->
-            <div class="lg:col-span-4 flex flex-col gap-8">
-                <div class="flex-1 bg-primary p-12 rounded-[3.5rem] relative overflow-hidden flex flex-col justify-between group cursor-pointer shadow-3xl shadow-primary/20 transition-all hover:scale-[1.02] border border-white/10">
+            <div class="lg:col-span-4 flex flex-col gap-6 sm:gap-8">
+                <div class="flex-1 bg-primary p-6 sm:p-8 md:p-12 rounded-[2rem] sm:rounded-[2.8rem] md:rounded-[3.5rem] relative overflow-hidden flex flex-col justify-between group cursor-pointer shadow-3xl shadow-primary/20 transition-all hover:scale-[1.01] border border-white/10">
                     <img class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-[3s]" src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070" />
-                    <div class="relative z-10 space-y-4">
+                    <div class="relative z-10 space-y-3 sm:space-y-4">
                         <Badge variant="neutral" class="!bg-white/20 !text-white !border-white/30 backdrop-blur-md !text-[9px] font-black tracking-widest">SISTEMA INTELIGENTE</Badge>
-                        <h4 class="text-white text-3xl font-black tracking-tighter leading-tight italic uppercase">Optimización de <br/> Carteras</h4>
+                        <h4 class="text-white text-2xl sm:text-3xl font-black tracking-tighter leading-tight italic uppercase">Optimización de <br/> Carteras</h4>
                     </div>
-                    <div class="relative z-10 pt-8 border-t border-white/10 mt-8">
+                    <div class="relative z-10 pt-6 sm:pt-8 border-t border-white/10 mt-6 sm:mt-8">
                         <p class="text-white/60 text-[10px] font-bold uppercase tracking-widest leading-relaxed">El recaudo aumentó un 22% este mes mediante cobros automáticos.</p>
-                        <Button variant="ghost" class="mt-8 w-full !bg-white/10 !text-white border border-white/20 hover:!bg-white/20 !text-[11px] font-black uppercase italic !rounded-2xl">Dashboard de Cobro</Button>
+                        <Button variant="ghost" class="mt-6 sm:mt-8 w-full !bg-white/10 !text-white border border-white/20 hover:!bg-white/20 !text-[11px] font-black uppercase italic !rounded-2xl">Dashboard de Cobro</Button>
                     </div>
                 </div>
             </div>
@@ -179,10 +179,10 @@ const runLiquidation = () => {
             title="Saldos Críticos" 
             subtitle="Monitor de unidades con mora superior a 60 días"
             icon="warning"
-            class="!p-0 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14] overflow-hidden"
+            class="!p-0 rounded-[2rem] sm:rounded-[2.8rem] md:!rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14] overflow-hidden"
         >
             <template #header>
-                <div class="p-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="p-5 sm:p-8 md:p-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
                     <div>
                         <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Monitoreo de <span class="text-error">Impagos</span></h3>
                         <p class="text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] mt-3 italic">Registro técnico de unidades en estado de mora</p>

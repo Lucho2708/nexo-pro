@@ -216,25 +216,25 @@ const processImportFile = async (file: File) => {
 <template>
     <Head title="Configuración — NEXO-PRO" />
 
-    <div class="space-y-12 pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div class="space-y-6 sm:space-y-10 md:space-y-12 pb-24 sm:pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
         <!-- Interactive Header -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 px-1">
-            <div class="space-y-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-2 h-6 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)]"></div>
-                    <p class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.4em] italic leading-none">Dispatcher de Parámetros Globales</p>
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 px-1">
+            <div class="space-y-2 sm:space-y-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-1.5 sm:w-2 h-5 sm:h-6 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)]"></div>
+                    <p class="text-[9px] sm:text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] sm:tracking-[0.4em] italic leading-none">Dispatcher de Parámetros Globales</p>
                 </div>
-                <h2 class="text-5xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none">Sala de <span class="text-primary italic">Máquinas</span></h2>
-                <p class="text-[11px] font-bold text-on-surface-variant/40 dark:text-white/10 uppercase tracking-[0.2em] mt-2 leading-relaxed italic">Gestión de llaves de integración, módulos y reglas financieras del conjunto</p>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none">Sala de <span class="text-primary italic">Máquinas</span></h2>
+                <p class="text-[10px] sm:text-[11px] font-bold text-on-surface-variant/40 dark:text-white/10 uppercase tracking-[0.15em] sm:tracking-[0.2em] mt-1 sm:mt-2 leading-relaxed italic">Gestión de llaves de integración, módulos y reglas financieras del conjunto</p>
             </div>
             
             <!-- Tab Switcher Premium -->
-            <div class="flex bg-on-surface/5 dark:bg-white/5 p-1.5 rounded-2xl border border-outline-variant/10 dark:border-white/5 backdrop-blur-xl">
+            <div class="flex bg-on-surface/5 dark:bg-white/5 p-1 sm:p-1.5 rounded-2xl border border-outline-variant/10 dark:border-white/5 backdrop-blur-xl w-full md:w-auto">
                 <button 
                     @click="activeTab = 'nucleo'"
                     :class="activeTab === 'nucleo' ? 'bg-primary text-white shadow-lg' : 'text-on-surface-variant/60 dark:text-white/40 hover:text-on-surface dark:hover:text-white'"
-                    class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
+                    class="flex-1 md:flex-none justify-center px-4 sm:px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 cursor-pointer"
                 >
                     <span class="material-symbols-rounded text-sm">settings_input_component</span>
                     NÚCLEO
@@ -242,7 +242,7 @@ const processImportFile = async (file: File) => {
                 <button 
                     @click="activeTab = 'hoja_vida'"
                     :class="activeTab === 'hoja_vida' ? 'bg-primary text-white shadow-lg' : 'text-on-surface-variant/60 dark:text-white/40 hover:text-on-surface dark:hover:text-white'"
-                    class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
+                    class="flex-1 md:flex-none justify-center px-4 sm:px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 cursor-pointer"
                 >
                     <span class="material-symbols-rounded text-sm">architecture</span>
                     HOJA DE VIDA
@@ -253,32 +253,32 @@ const processImportFile = async (file: File) => {
         <!-- TAB: NUCLEO (Original Settings) -->
         <div v-if="activeTab === 'nucleo'" class="animate-in fade-in slide-in-from-right-4 duration-500">
 
-        <form @submit.prevent="submit" class="grid grid-cols-1 xl:grid-cols-12 gap-10 items-start">
+        <form @submit.prevent="submit" class="grid grid-cols-1 xl:grid-cols-12 gap-6 sm:gap-10 items-start">
             
             <!-- SECTION 1: PAYMENTS & GATEWAYS -->
-            <div class="xl:col-span-8 space-y-10">
+            <div class="xl:col-span-8 space-y-6 sm:space-y-10">
                 
                 <!-- Wompi Integration Card -->
-                <Card class="!p-10 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14]">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-                        <div class="flex items-center gap-5">
-                            <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 shadow-inner">
+                <Card class="p-5 sm:p-8 md:!p-10 rounded-[2.2rem] sm:rounded-[3rem] md:!rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14]">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-10">
+                        <div class="flex items-center gap-4 sm:gap-5">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 shadow-inner shrink-0">
                                 <span class="material-symbols-rounded text-2xl">payments</span>
                             </div>
                             <div>
-                                <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Pasarela <span class="text-emerald-500">Wompi</span></h3>
-                                <p class="text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] mt-3 italic">Integración oficial para recaudo automatizado</p>
+                                <h3 class="text-xl sm:text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Pasarela <span class="text-emerald-500">Wompi</span></h3>
+                                <p class="text-[9px] sm:text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.2em] sm:tracking-[0.3em] mt-2 italic">Integración oficial para recaudo automatizado</p>
                             </div>
                         </div>
                         <div class="flex gap-2">
-                             <div class="px-6 py-3 bg-emerald-500/10 rounded-2xl flex items-center gap-3 border border-emerald-500/20">
-                                 <Checkbox v-model:checked="form.settings.payments_enabled" class="!w-6 !h-6" />
-                                 <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">SISTEMA ACTIVO</span>
+                             <div class="px-4 sm:px-6 py-2.5 sm:py-3 bg-emerald-500/10 rounded-2xl flex items-center gap-3 border border-emerald-500/20">
+                                 <Checkbox v-model:checked="form.settings.payments_enabled" class="!w-5 !h-5 sm:!w-6 sm:!h-6" />
+                                 <span class="text-[9px] sm:text-[10px] font-black text-emerald-500 uppercase tracking-widest">SISTEMA ACTIVO</span>
                              </div>
                         </div>
                     </div>
 
-                    <div v-if="form.settings.payments_enabled" class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-outline-variant/5 dark:border-white/5 animate-in slide-in-from-top-4 duration-500">
+                    <div v-if="form.settings.payments_enabled" class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 pt-6 border-t border-outline-variant/5 dark:border-white/5 animate-in slide-in-from-top-4 duration-500">
                         <Input
                             v-model="form.settings.wompi_public_key"
                             label="LLAVE PÚBLICA (PUB_TEST_...)"
@@ -371,37 +371,37 @@ const processImportFile = async (file: File) => {
             </div>
 
             <!-- SECTION 2: MODULES & GLOBAL RULES -->
-            <div class="xl:col-span-4 space-y-10">
+            <div class="xl:col-span-4 space-y-6 sm:space-y-10">
                 
                 <!-- Modules Control -->
-                <Card class="!p-10 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14]">
-                    <h3 class="text-xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none mb-8">Hardware de <span class="text-primary italic">Módulos</span></h3>
+                <Card class="p-5 sm:p-8 md:!p-10 rounded-[2.2rem] sm:rounded-[3rem] md:!rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14]">
+                    <h3 class="text-lg sm:text-xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none mb-6 sm:mb-8">Hardware de <span class="text-primary italic">Módulos</span></h3>
                     
-                    <div class="space-y-6">
-                        <div class="flex items-center justify-between p-6 rounded-[2rem] bg-surface-container-low dark:bg-white/[0.02] border border-outline-variant/10 dark:border-white/5 hover:border-primary/30 transition-all group">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                                    <span class="material-symbols-rounded text-xl">forum</span>
+                    <div class="space-y-4 sm:space-y-6">
+                        <div class="flex items-center justify-between p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] bg-surface-container-low dark:bg-white/[0.02] border border-outline-variant/10 dark:border-white/5 hover:border-primary/30 transition-all group">
+                            <div class="flex items-center gap-3 sm:gap-4">
+                                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                                    <span class="material-symbols-rounded text-lg sm:text-xl">forum</span>
                                 </div>
-                                <span class="text-[11px] font-black text-on-surface-variant dark:text-white/40 uppercase tracking-widest italic group-hover:text-primary transition-colors">Integración PQRS</span>
+                                <span class="text-[10px] sm:text-[11px] font-black text-on-surface-variant dark:text-white/40 uppercase tracking-widest italic group-hover:text-primary transition-colors">Integración PQRS</span>
                             </div>
                             <Checkbox v-model:checked="form.settings.pqrs_enabled" />
                         </div>
 
-                        <div class="flex items-center justify-between p-6 rounded-[2rem] bg-surface-container-low dark:bg-white/[0.02] border border-outline-variant/10 dark:border-white/5 hover:border-primary/30 transition-all group">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                                    <span class="material-symbols-rounded text-xl">event_available</span>
+                        <div class="flex items-center justify-between p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] bg-surface-container-low dark:bg-white/[0.02] border border-outline-variant/10 dark:border-white/5 hover:border-primary/30 transition-all group">
+                            <div class="flex items-center gap-3 sm:gap-4">
+                                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                                    <span class="material-symbols-rounded text-lg sm:text-xl">event_available</span>
                                 </div>
-                                <span class="text-[11px] font-black text-on-surface-variant dark:text-white/40 uppercase tracking-widest italic group-hover:text-primary transition-colors">Sistema Reservas</span>
+                                <span class="text-[10px] sm:text-[11px] font-black text-on-surface-variant dark:text-white/40 uppercase tracking-widest italic group-hover:text-primary transition-colors">Sistema Reservas</span>
                             </div>
                             <Checkbox v-model:checked="form.settings.reservas_enabled" />
                         </div>
                     </div>
 
                     <!-- Market Rules -->
-                    <div class="mt-12 pt-8 border-t border-outline-variant/5 dark:border-white/5 space-y-6">
-                        <div class="flex items-end gap-4">
+                    <div class="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-outline-variant/5 dark:border-white/5 space-y-4 sm:space-y-6">
+                        <div class="flex items-end gap-3 sm:gap-4">
                             <div class="flex-1">
                                 <Input
                                     v-model="form.settings.interes_mora"
@@ -412,24 +412,24 @@ const processImportFile = async (file: File) => {
                                     class="!rounded-2xl"
                                 />
                             </div>
-                            <div class="w-12 h-14 bg-surface-container-high dark:bg-white/5 flex items-center justify-center rounded-2xl border border-outline-variant/10">
+                            <div class="w-12 h-14 bg-surface-container-high dark:bg-white/5 flex items-center justify-center rounded-2xl border border-outline-variant/10 shrink-0">
                                 <span class="material-symbols-rounded text-xl opacity-20">trending_up</span>
                             </div>
                         </div>
-                        <p class="text-[9px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-widest leading-relaxed italic pr-6 italic px-2">
+                        <p class="text-[8px] sm:text-[9px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-widest leading-relaxed italic px-1">
                             * Este vector porcentual afectará automáticamente los balances financieros al cierre de cada ciclo.
                         </p>
                     </div>
                 </Card>
 
                 <!-- Action Hub -->
-                <div class="bg-surface-container-highest dark:bg-white/5 p-10 rounded-[3.5rem] border border-outline-variant/10 flex flex-col gap-6">
+                <div class="bg-surface-container-highest dark:bg-white/5 p-6 sm:p-8 md:p-10 rounded-[2.2rem] sm:rounded-[3rem] md:rounded-[3.5rem] border border-outline-variant/10 flex flex-col gap-4 sm:gap-6">
                     <h4 class="text-xs font-black text-on-surface dark:text-white uppercase tracking-[0.3em] text-center italic">Despachador Maestro</h4>
                     <Button 
                         type="submit" 
                         variant="primary" 
                         size="lg" 
-                        class="w-full !h-16 !rounded-2xl !text-[12px] font-black uppercase italic shadow-2xl shadow-primary/20"
+                        class="w-full !h-14 sm:!h-16 !rounded-2xl !text-[12px] font-black uppercase italic shadow-2xl shadow-primary/20 cursor-pointer"
                         :loading="form.processing"
                         icon="save"
                     >
@@ -444,35 +444,35 @@ const processImportFile = async (file: File) => {
     </div>
 
         <!-- TAB: HOJA DE VIDA (Unit Types) -->
-        <div v-if="activeTab === 'hoja_vida'" class="animate-in fade-in slide-in-from-left-4 duration-500 space-y-10">
-            <div class="grid grid-cols-1 xl:grid-cols-12 gap-10">
+        <div v-if="activeTab === 'hoja_vida'" class="animate-in fade-in slide-in-from-left-4 duration-500 space-y-6 sm:space-y-10">
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 sm:gap-10">
                 
                 <!-- Setup Form -->
-                <div class="xl:col-span-7 space-y-8">
-                    <Card class="!p-10 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:shadow-3xl bg-surface dark:bg-[#0b0e14] relative overflow-hidden">
-                        <div v-if="copropiedad.unit_types_locked && !is_super_admin" class="absolute inset-0 z-20 bg-surface/60 dark:bg-black/60 backdrop-blur-md flex flex-col items-center justify-center text-center p-10">
-                            <div class="w-20 h-20 bg-on-surface/5 dark:bg-white/5 rounded-full flex items-center justify-center mb-6 border border-outline-variant/10 dark:border-white/10">
-                                <span class="material-symbols-rounded text-4xl text-primary">lock</span>
+                <div class="xl:col-span-7 space-y-6 sm:space-y-8">
+                    <Card class="p-5 sm:p-8 md:!p-10 rounded-[2.2rem] sm:rounded-[3rem] md:!rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:shadow-3xl bg-surface dark:bg-[#0b0e14] relative overflow-hidden">
+                        <div v-if="copropiedad.unit_types_locked && !is_super_admin" class="absolute inset-0 z-20 bg-surface/80 dark:bg-black/80 backdrop-blur-md flex flex-col items-center justify-center text-center p-6 sm:p-10">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-on-surface/5 dark:bg-white/5 rounded-full flex items-center justify-center mb-4 sm:mb-6 border border-outline-variant/10 dark:border-white/10">
+                                <span class="material-symbols-rounded text-3xl sm:text-4xl text-primary">lock</span>
                             </div>
-                            <h4 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic">Configuración Bloqueada</h4>
-                            <p class="text-[10px] font-bold text-on-surface-variant/60 dark:text-white/40 uppercase tracking-widest mt-4 max-w-xs leading-relaxed">
+                            <h4 class="text-xl sm:text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic">Configuración Bloqueada</h4>
+                            <p class="text-[9px] sm:text-[10px] font-bold text-on-surface-variant/60 dark:text-white/40 uppercase tracking-widest mt-2 sm:mt-4 max-w-xs leading-relaxed">
                                 Los modelos de unidad han sido certificados. Cualquier cambio debe ser solicitado al Super Administrador.
                             </p>
                         </div>
 
-                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                <div>
-                                    <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Definir <span class="text-primary">Modelo</span></h3>
-                                    <p class="text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] mt-3 italic">Registro de tipos de unidad por medidas y componentes</p>
-                                </div>
-                                <Badge :variant="copropiedad.unit_types_locked ? 'primary' : 'warning'" class="!rounded-xl !px-4 !py-2 uppercase font-black text-[9px] tracking-widest italic">
-                                    {{ copropiedad.unit_types_locked ? '🔒 CONFIGURACIÓN BLINDADA' : '🔓 EDICIÓN ABIERTA' }}
-                                </Badge>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+                            <div>
+                                <h3 class="text-xl sm:text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Definir <span class="text-primary">Modelo</span></h3>
+                                <p class="text-[9px] sm:text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.2em] sm:tracking-[0.3em] mt-2 italic">Registro de tipos de unidad por medidas y componentes</p>
                             </div>
+                            <Badge :variant="copropiedad.unit_types_locked ? 'primary' : 'warning'" class="!rounded-xl !px-3.5 !py-1.5 uppercase font-black text-[9px] tracking-widest italic w-fit">
+                                {{ copropiedad.unit_types_locked ? '🔒 CONFIGURACIÓN BLINDADA' : '🔓 EDICIÓN ABIERTA' }}
+                            </Badge>
+                        </div>
 
-                        <div class="mb-8 p-6 bg-surface-container-low dark:bg-white/[0.02] rounded-[2rem] border border-outline-variant/10 dark:border-white/5 shadow-sm">
-                            <h4 class="text-sm font-black text-on-surface dark:text-white uppercase tracking-tighter mb-4 italic">Datos Base del Conjunto</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="mb-6 sm:mb-8 p-4 sm:p-6 bg-surface-container-low dark:bg-white/[0.02] rounded-2xl sm:rounded-[2rem] border border-outline-variant/10 dark:border-white/5 shadow-sm">
+                            <h4 class="text-xs sm:text-sm font-black text-on-surface dark:text-white uppercase tracking-tighter mb-3 sm:mb-4 italic">Datos Base del Conjunto</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                                 <Input 
                                     v-model="form.area_construida_total" 
                                     type="number" 
@@ -482,17 +482,17 @@ const processImportFile = async (file: File) => {
                                     class="!rounded-2xl" 
                                 />
                                 <div class="flex items-end">
-                                    <Button @click="submit" variant="primary" size="lg" :loading="form.processing" class="w-full !rounded-2xl">
+                                    <Button @click="submit" variant="primary" size="lg" :loading="form.processing" class="w-full !rounded-2xl !h-12 cursor-pointer font-black text-xs uppercase">
                                         Guardar Área Total
                                     </Button>
                                 </div>
                             </div>
-                            <p class="text-[9px] font-bold text-on-surface-variant/50 uppercase tracking-widest mt-3">
+                            <p class="text-[8px] sm:text-[9px] font-bold text-on-surface-variant/50 uppercase tracking-widest mt-2 sm:mt-3">
                                 Este valor es la base matemática para el cálculo automático de los coeficientes de copropiedad.
                             </p>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
                             <Input v-model="tipoUnidadForm.nombre" label="NOMBRE DEL MODELO" placeholder="Ej: Apartamento Tipo A" class="!rounded-2xl" />
                             <Input v-model="tipoUnidadForm.area_m2" type="number" step="0.01" label="ÁREA PRIVADA (M2)" placeholder="0.00" class="!rounded-2xl" />
                         </div>
@@ -579,43 +579,44 @@ const processImportFile = async (file: File) => {
                 </div>
 
                 <!-- Summary & List -->
-                <div class="xl:col-span-5 space-y-8">
-                    <Card class="!p-10 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl bg-surface dark:bg-[#0b0e14]">
-                        <h3 class="text-xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none mb-8">Modelos <span class="text-primary">Certificados</span></h3>
+                <div class="xl:col-span-5 space-y-6 sm:space-y-8">
+                    <!-- Modelos Certificados -->
+                    <Card class="p-5 sm:p-8 md:!p-10 rounded-[2.2rem] sm:rounded-[3rem] md:!rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl bg-surface dark:bg-[#0b0e14]">
+                        <h3 class="text-lg sm:text-xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none mb-6 sm:mb-8">Modelos <span class="text-primary">Certificados</span></h3>
                         
-                        <div class="space-y-4">
-                            <div v-for="tipo in copropiedad.tipos_unidad" :key="tipo.id" class="p-6 rounded-[2.5rem] bg-surface-container-low dark:bg-white/[0.02] border border-outline-variant/10 dark:border-white/5 group hover:border-primary/30 transition-all shadow-sm">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h4 class="text-base font-black text-on-surface dark:text-white uppercase tracking-tighter italic">{{ tipo.nombre }}</h4>
-                                    <Badge variant="primary" class="!rounded-lg">{{ tipo.area_m2 }} M2</Badge>
+                        <div class="space-y-3 sm:space-y-4">
+                            <div v-for="tipo in copropiedad.tipos_unidad" :key="tipo.id" class="p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] bg-surface-container-low dark:bg-white/[0.02] border border-outline-variant/10 dark:border-white/5 group hover:border-primary/30 transition-all shadow-sm">
+                                <div class="flex items-center justify-between mb-3 sm:mb-4">
+                                    <h4 class="text-sm sm:text-base font-black text-on-surface dark:text-white uppercase tracking-tighter italic truncate">{{ tipo.nombre }}</h4>
+                                    <Badge variant="primary" class="!rounded-lg shrink-0 text-[9px]">{{ tipo.area_m2 }} M2</Badge>
                                 </div>
-                                <div class="flex flex-wrap gap-2">
-                                    <span v-for="comp in tipo.componentes" :key="comp.id" class="px-3 py-1 bg-on-surface/5 dark:bg-white/5 rounded-lg text-[8px] font-bold text-on-surface-variant/60 dark:text-white/40 uppercase tracking-widest">
+                                <div class="flex flex-wrap gap-1.5 sm:gap-2">
+                                    <span v-for="comp in tipo.componentes" :key="comp.id" class="px-2.5 sm:px-3 py-1 bg-on-surface/5 dark:bg-white/5 rounded-lg text-[8px] font-bold text-on-surface-variant/60 dark:text-white/40 uppercase tracking-widest">
                                         {{ comp.pivot.cantidad }} {{ comp.nombre }}
                                     </span>
                                 </div>
                             </div>
 
-                            <div v-if="!copropiedad.tipos_unidad?.length" class="py-12 text-center opacity-40 dark:opacity-20 italic text-sm text-on-surface dark:text-white">
+                            <div v-if="!copropiedad.tipos_unidad?.length" class="py-8 sm:py-12 text-center opacity-40 dark:opacity-20 italic text-xs sm:text-sm text-on-surface dark:text-white">
                                 No hay modelos registrados aún
                             </div>
                         </div>
                     </Card>
 
                     <!-- STEP 2: CENSO & CARGA INTELIGENTE CON EXCEL -->
-                    <Card class="!p-10 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl bg-surface dark:bg-[#0b0e14] relative overflow-hidden">
-                        <div class="flex items-center justify-between mb-6">
+                    <Card class="p-5 sm:p-8 md:!p-10 rounded-[2.2rem] sm:rounded-[3rem] md:!rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl bg-surface dark:bg-[#0b0e14] relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-4 sm:mb-6">
                             <div>
-                                <div class="flex items-center gap-2 mb-1.5">
-                                    <span class="px-2.5 py-0.5 rounded-lg bg-primary/10 text-primary text-[9px] font-black tracking-widest uppercase">Paso 2</span>
-                                    <span class="text-[9px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-widest">Censo de Unidades</span>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2.5 py-0.5 rounded-lg bg-primary/10 text-primary text-[8px] sm:text-[9px] font-black tracking-widest uppercase">Paso 2</span>
+                                    <span class="text-[8px] sm:text-[9px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-widest">Censo de Unidades</span>
                                 </div>
-                                <h3 class="text-xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">
+                                <h3 class="text-lg sm:text-xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">
                                     Censo & <span class="text-primary">Carga Masiva</span>
                                 </h3>
                             </div>
-                            <div class="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                                <span class="material-symbols-rounded text-2xl">table_view</span>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                <span class="material-symbols-rounded text-xl sm:text-2xl">table_view</span>
                             </div>
                         </div>
 
@@ -635,18 +636,18 @@ const processImportFile = async (file: File) => {
                         </div>
 
                         <!-- Cuando ya existen modelos certificados -->
-                        <div v-else class="space-y-6">
+                        <div v-else class="space-y-4 sm:space-y-6">
                             <!-- Botón de Descarga de Plantilla -->
                             <Button 
                                 @click="downloadTemplate" 
                                 variant="primary" 
                                 size="lg" 
-                                class="w-full !rounded-2xl !h-14 font-black uppercase tracking-wider shadow-lg shadow-primary/20 flex items-center justify-center gap-2 cursor-pointer"
+                                class="w-full !rounded-2xl !h-12 sm:!h-14 font-black uppercase tracking-wider shadow-lg shadow-primary/20 flex items-center justify-center gap-2 cursor-pointer text-xs"
                                 icon="download"
                             >
                                 DESCARGAR PLANTILLA (.XLSX)
                             </Button>
-                            <p class="text-[9px] font-bold text-center text-on-surface-variant/40 dark:text-white/20 uppercase tracking-widest">
+                            <p class="text-[8px] sm:text-[9px] font-bold text-center text-on-surface-variant/40 dark:text-white/20 uppercase tracking-widest">
                                 * Incluye tus {{ copropiedad.tipos_unidad.length }} modelos en menú desplegable
                             </p>
 
@@ -660,7 +661,7 @@ const processImportFile = async (file: File) => {
                                     isDraggingOver ? 'border-primary bg-primary/10 scale-[1.01]' : 'border-outline-variant/20 dark:border-white/10 hover:border-primary/50 bg-surface-container-low dark:bg-white/[0.02]',
                                     copropiedad.unit_types_locked && !is_super_admin ? 'opacity-50 pointer-events-none' : 'cursor-pointer'
                                 ]"
-                                class="p-8 rounded-[2.5rem] border-2 border-dashed transition-all flex flex-col items-center justify-center text-center group"
+                                class="p-5 sm:p-8 rounded-2xl sm:rounded-[2.5rem] border-2 border-dashed transition-all flex flex-col items-center justify-center text-center group active:scale-[0.99]"
                             >
                                 <input 
                                     ref="fileInputRef" 
@@ -670,27 +671,27 @@ const processImportFile = async (file: File) => {
                                     @change="handleFileSelection"
                                 />
                                 
-                                <div class="w-12 h-12 rounded-2xl bg-primary/10 group-hover:bg-primary group-hover:text-white text-primary flex items-center justify-center mb-3 transition-all">
-                                    <span class="material-symbols-rounded text-2xl">cloud_upload</span>
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 group-hover:bg-primary group-hover:text-white text-primary flex items-center justify-center mb-2.5 sm:mb-3 transition-all">
+                                    <span class="material-symbols-rounded text-xl sm:text-2xl">cloud_upload</span>
                                 </div>
                                 
-                                <p class="text-xs font-black text-on-surface dark:text-white uppercase tracking-wider mb-1">
+                                <p class="text-xs font-black text-on-surface dark:text-white uppercase tracking-wider mb-0.5 sm:mb-1">
                                     Arrastra tu censo aquí
                                 </p>
-                                <p class="text-[9px] font-bold text-on-surface-variant/50 uppercase tracking-widest">
+                                <p class="text-[8px] sm:text-[9px] font-bold text-on-surface-variant/50 uppercase tracking-widest">
                                     O haz clic para examinar (.xlsx, .xls, .csv)
                                 </p>
                             </div>
 
                             <!-- Alternativa Secuencial -->
-                            <div class="pt-4 border-t border-outline-variant/10 dark:border-white/5 flex items-center justify-between">
-                                <span class="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-wider">
+                            <div class="pt-3 sm:pt-4 border-t border-outline-variant/10 dark:border-white/5 flex items-center justify-between">
+                                <span class="text-[9px] sm:text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-wider">
                                     ¿Conjunto homogéneo?
                                 </span>
                                 <button 
                                     @click="lockConfiguration"
                                     type="button" 
-                                    class="text-[10px] font-black text-primary hover:underline uppercase tracking-widest flex items-center gap-1 cursor-pointer"
+                                    class="text-[9px] sm:text-[10px] font-black text-primary hover:underline uppercase tracking-widest flex items-center gap-1 cursor-pointer"
                                     :disabled="copropiedad.unit_types_locked && !is_super_admin"
                                 >
                                     <span class="material-symbols-rounded text-sm">precision_manufacturing</span>

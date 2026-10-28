@@ -113,12 +113,12 @@ const purgeLogs = () => {
         </div>
 
         <!-- Main Logs Table -->
-        <Card title="Trazabilidad de Eventos" subtitle="Análisis profundo de la red" icon="analytics" class="!p-0 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14] overflow-hidden">
+        <Card title="Trazabilidad de Eventos" subtitle="Análisis profundo de la red" icon="analytics" class="!p-0 rounded-[2rem] sm:rounded-[2.8rem] md:!rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14] overflow-hidden">
             <template #header>
-                <div class="p-10 flex items-center justify-between">
+                <div class="p-5 sm:p-8 md:p-10 flex items-center justify-between">
                     <div>
-                        <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Registro <span class="text-secondary italic">Maestro</span></h3>
-                        <p class="text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] mt-3 italic">Registro cronológico de anomalías y eventos del core</p>
+                        <h3 class="text-xl sm:text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Registro <span class="text-secondary italic">Maestro</span></h3>
+                        <p class="text-[9px] sm:text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.25em] sm:tracking-[0.3em] mt-2 sm:mt-3 italic">Registro cronológico de anomalías y eventos del core</p>
                     </div>
                 </div>
             </template>

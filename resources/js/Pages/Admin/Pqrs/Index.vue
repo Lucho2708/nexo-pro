@@ -73,41 +73,41 @@ const getStatusLabel = (status: string): string => {
 <template>
     <Head title="PQRS Monitor — NEXO-PRO" />
 
-    <div class="space-y-12 pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div class="space-y-8 sm:space-y-12 pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
         <!-- Tactical Header -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 px-1">
-            <div class="space-y-3">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 px-1">
+            <div class="space-y-2 sm:space-y-3">
                 <div class="flex items-center gap-3">
                     <div class="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_8px_rgba(var(--primary),0.5)]"></div>
-                    <p class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.4em] italic leading-none">Módulo de Atención al Residente</p>
+                    <p class="text-[9px] sm:text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] sm:tracking-[0.4em] italic leading-none">Módulo de Atención al Residente</p>
                 </div>
-                <h2 class="text-5xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none">Monitor <span class="text-primary italic">PQRS</span></h2>
-                <p class="text-[11px] font-bold text-on-surface-variant/40 dark:text-white/10 uppercase tracking-[0.2em] mt-2 leading-relaxed italic">Gestión operativa de incidencias, peticiones y protocolos de respuesta</p>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none">Monitor <span class="text-primary italic">PQRS</span></h2>
+                <p class="text-[10px] sm:text-[11px] font-bold text-on-surface-variant/40 dark:text-white/10 uppercase tracking-[0.15em] sm:tracking-[0.2em] mt-1 sm:mt-2 leading-relaxed italic">Gestión operativa de incidencias, peticiones y protocolos de respuesta</p>
             </div>
-            <div class="flex items-center gap-3">
-                 <Button variant="outline" icon="hub" class="!rounded-2xl !h-14 !px-8 text-[11px] font-black uppercase italic">Historial Maestro</Button>
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                 <Button variant="outline" icon="hub" class="!rounded-xl sm:!rounded-2xl h-12 sm:!h-14 px-6 sm:!px-8 text-[10px] sm:text-[11px] font-black uppercase italic w-full sm:w-auto">Historial Maestro</Button>
             </div>
         </div>
 
         <!-- Real-time Metrics -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard label="SOLICITUDES ACTIVAS" :value="(metrics.abierto || 0).toString()" color-class="!bg-primary" class="!rounded-[2.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14]" />
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <StatCard label="SOLICITUDES ACTIVAS" :value="(metrics.abierto || 0).toString()" color-class="!bg-primary" class="!rounded-[2rem] sm:!rounded-[2.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14]" />
             <StatCard label="EN ANÁLISIS" :value="(metrics.en_proceso || 0).toString()" color-class="!bg-warning" class="!rounded-[2.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14]" />
             <StatCard label="CRÍTICAS / REABIERTAS" :value="(metrics.reabierto || 0).toString()" color-class="!bg-error" class="!rounded-[2.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14]" />
             <StatCard label="RESOLUCIÓN TOTAL" :value="(metrics.cerrado || 0).toString()" color-class="!bg-emerald-500" class="!rounded-[2.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl dark:bg-[#0b0e14]" />
         </section>
 
         <!-- Main Incident Table -->
-        <Card class="!p-0 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14] overflow-hidden">
+        <Card class="!p-0 rounded-[2rem] sm:rounded-[2.8rem] md:!rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-3xl dark:bg-[#0b0e14] overflow-hidden">
             <template #header>
-                <div class="p-10 flex items-center gap-4">
-                    <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary shadow-inner">
+                <div class="p-5 sm:p-8 md:p-10 flex items-center gap-4">
+                    <div class="w-12 sm:w-14 h-12 sm:h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary shadow-inner">
                         <span class="material-symbols-rounded text-2xl">forum</span>
                     </div>
                     <div>
-                        <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Bandeja de <span class="text-primary italic">Incidencias</span></h3>
-                        <p class="text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] mt-3 italic">Control cronológico de requerimientos residentes</p>
+                        <h3 class="text-xl sm:text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">Bandeja de <span class="text-primary italic">Incidencias</span></h3>
+                        <p class="text-[9px] sm:text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.25em] sm:tracking-[0.3em] mt-2 sm:mt-3 italic">Control cronológico de requerimientos residentes</p>
                     </div>
                 </div>
             </template>

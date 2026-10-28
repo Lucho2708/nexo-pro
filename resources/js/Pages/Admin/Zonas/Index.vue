@@ -82,32 +82,32 @@ const formatCurrency = (value: number) => {
 <template>
     <Head title="Activos — NEXO-PRO" />
 
-    <div class="space-y-12 pb-32 animate-in fade-in slide-in-from-bottom-6 duration-700">
+    <div class="space-y-8 sm:space-y-12 pb-32 animate-in fade-in slide-in-from-bottom-6 duration-700">
         
         <!-- Tactical Header -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 px-1">
-            <div class="space-y-3">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 px-1">
+            <div class="space-y-2 sm:space-y-3">
                 <div class="flex items-center gap-3">
                     <div class="w-2 h-6 bg-secondary rounded-full"></div>
-                    <p class="text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.4em] italic leading-none">Gestión de Infraestructura Común</p>
+                    <p class="text-[9px] sm:text-[10px] font-black text-on-surface-variant/40 dark:text-white/20 uppercase tracking-[0.3em] sm:tracking-[0.4em] italic leading-none">Gestión de Infraestructura Común</p>
                 </div>
-                <h2 class="text-5xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none">Zonas <span class="text-secondary italic">Comunes</span></h2>
-                <p class="text-[11px] font-bold text-on-surface-variant/40 dark:text-white/10 uppercase tracking-[0.2em] mt-2 leading-relaxed">Configuración de parámetros operativos y modelos de reserva</p>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-on-surface dark:text-white tracking-tighter uppercase italic leading-none">Zonas <span class="text-secondary italic">Comunes</span></h2>
+                <p class="text-[10px] sm:text-[11px] font-bold text-on-surface-variant/40 dark:text-white/10 uppercase tracking-[0.15em] sm:tracking-[0.2em] mt-1 sm:mt-2 leading-relaxed">Configuración de parámetros operativos y modelos de reserva</p>
             </div>
-            <Button variant="primary" size="lg" icon="add_home_work" class="!h-16 !px-10 !rounded-2xl shadow-xl shadow-primary/20 !text-[11px] font-black uppercase italic" @click="openCreateModal">
+            <Button variant="primary" size="lg" icon="add_home_work" class="h-12 sm:!h-16 px-6 sm:!px-10 rounded-xl sm:!rounded-2xl shadow-xl shadow-primary/20 text-[10px] sm:!text-[11px] font-black uppercase italic w-full sm:w-auto" @click="openCreateModal">
                 Registrar Activo
             </Button>
         </div>
 
         <!-- Infrastructure Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
             <Card 
                 v-for="zona in zonas" 
                 :key="zona.id"
-                class="!p-0 !rounded-[3.5rem] overflow-hidden border border-outline-variant/10 dark:border-white/5 transition-all duration-500 hover:-translate-y-2 hover:shadow-3xl hover:shadow-primary/5 dark:bg-[#0b0e14] group"
+                class="!p-0 rounded-[2rem] sm:rounded-[2.8rem] md:!rounded-[3.5rem] overflow-hidden border border-outline-variant/10 dark:border-white/5 transition-all duration-500 hover:-translate-y-2 hover:shadow-3xl hover:shadow-primary/5 dark:bg-[#0b0e14] group"
             >
                 <!-- Visual Preview -->
-                <div class="relative h-60 bg-surface-container-high dark:bg-white/[0.03] overflow-hidden">
+                <div class="relative h-48 sm:h-60 bg-surface-container-high dark:bg-white/[0.03] overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                     <img 
                         v-if="zona.imagen_path" 
@@ -115,46 +115,46 @@ const formatCurrency = (value: number) => {
                         class="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110"
                     />
                     <div v-else class="w-full h-full flex flex-col items-center justify-center opacity-20 text-on-surface-variant gap-4 group-hover:bg-primary/5 transition-colors">
-                        <span class="material-symbols-rounded text-6xl">apartment</span>
+                        <span class="material-symbols-rounded text-5xl sm:text-6xl">apartment</span>
                         <p class="text-[9px] font-black uppercase tracking-[0.3em]">Cámara no disponible</p>
                     </div>
                     
                     <!-- Tactical Badges Overlay -->
-                    <div class="absolute top-6 left-6 z-20">
-                         <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20">
+                    <div class="absolute top-4 sm:top-6 left-4 sm:left-6 z-20">
+                         <div class="flex items-center gap-2 sm:gap-3 bg-white/10 backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-white/20">
                              <div class="w-2 h-2 rounded-full animate-pulse" :class="zona.activa ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-error shadow-[0_0_8px_rgba(239,68,68,0.8)]'"></div>
-                             <span class="text-[9px] font-black text-white uppercase tracking-widest leading-none">{{ zona.activa ? 'SISTEMA ONLINE' : 'ZONA RESTRINGIDA' }}</span>
+                             <span class="text-[8px] sm:text-[9px] font-black text-white uppercase tracking-widest leading-none">{{ zona.activa ? 'SISTEMA ONLINE' : 'ZONA RESTRINGIDA' }}</span>
                          </div>
                     </div>
 
-                    <div class="absolute bottom-6 right-6 z-20">
-                         <Badge variant="neutral" class="!bg-white !text-black !font-black !text-[11px] !px-5 !py-1 !rounded-xl shadow-2xl tracking-tighter italic">
+                    <div class="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 z-20">
+                         <Badge variant="neutral" class="!bg-white !text-black !font-black !text-[10px] sm:!text-[11px] !px-3.5 sm:!px-5 !py-1 !rounded-xl shadow-2xl tracking-tighter italic">
                              {{ zona.costo > 0 ? formatCurrency(zona.costo) : 'USO GRATUITO' }}
                          </Badge>
                     </div>
                 </div>
 
                 <!-- Asset Data -->
-                <div class="p-10 space-y-6">
+                <div class="p-6 sm:p-8 md:p-10 space-y-4 sm:space-y-6">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none group-hover:text-primary transition-colors">{{ zona.nombre }}</h3>
-                            <div class="flex items-center gap-2 mt-4">
+                            <h3 class="text-xl sm:text-2xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none group-hover:text-primary transition-colors">{{ zona.nombre }}</h3>
+                            <div class="flex items-center gap-2 mt-3 sm:mt-4">
                                 <span class="material-symbols-rounded text-base text-on-surface-variant/40 dark:text-white/20">groups</span>
                                 <p class="text-[10px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-widest italic">Capacidad Máx: <span class="text-on-surface dark:text-white">{{ zona.capacidad_maxima }} PAX</span></p>
                             </div>
                         </div>
                     </div>
 
-                    <p class="text-sm font-medium text-on-surface-variant/70 dark:text-white/40 leading-relaxed line-clamp-3 italic min-h-[4.5rem]">
+                    <p class="text-xs sm:text-sm font-medium text-on-surface-variant/70 dark:text-white/40 leading-relaxed line-clamp-3 italic min-h-[3rem] sm:min-h-[4.5rem]">
                         {{ zona.descripcion || 'Sin protocolos de uso documentados en la base de datos.' }}
                     </p>
 
-                    <div class="pt-8 border-t border-outline-variant/10 dark:border-white/5 flex gap-4">
-                        <Button variant="outline" class="flex-1 !h-14 !rounded-2xl !text-[10px] font-black uppercase italic group-hover:bg-primary/5" icon="tune" @click="openEditModal(zona)">Calibrar</Button>
+                    <div class="pt-6 sm:pt-8 border-t border-outline-variant/10 dark:border-white/5 flex gap-3 sm:gap-4">
+                        <Button variant="outline" class="flex-1 !h-12 sm:!h-14 !rounded-xl sm:!rounded-2xl !text-[10px] font-black uppercase italic group-hover:bg-primary/5" icon="tune" @click="openEditModal(zona)">Calibrar</Button>
                         <Button 
                             :variant="zona.activa ? 'ghost' : 'primary'" 
-                            class="flex-1 !h-14 !rounded-2xl !text-[10px] font-black uppercase italic"
+                            class="flex-1 !h-12 sm:!h-14 !rounded-xl sm:!rounded-2xl !text-[10px] font-black uppercase italic"
                             :icon="zona.activa ? 'power_settings_new' : 'bolt'"
                             @click="toggleStatus(zona.id)"
                         >
@@ -167,14 +167,14 @@ const formatCurrency = (value: number) => {
             <!-- Deployment Placeholder -->
             <button 
                 @click="openCreateModal"
-                class="relative h-full min-h-[35rem] border-4 border-dashed border-outline-variant/10 dark:border-white/5 rounded-[3.5rem] flex flex-col items-center justify-center p-12 hover:border-primary/40 hover:bg-primary/5 transition-all group overflow-hidden"
+                class="relative h-full min-h-[16rem] sm:min-h-[25rem] md:min-h-[35rem] border-4 border-dashed border-outline-variant/10 dark:border-white/5 rounded-[2rem] sm:rounded-[2.8rem] md:rounded-[3.5rem] flex flex-col items-center justify-center p-6 sm:p-12 hover:border-primary/40 hover:bg-primary/5 transition-all group overflow-hidden"
             >
                 <div class="absolute inset-0 bg-primary opacity-0 group-hover:opacity-[0.02] transition-opacity duration-700"></div>
-                <div class="w-20 h-20 rounded-3xl bg-surface-container-high dark:bg-white/5 flex items-center justify-center text-on-surface-variant/40 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all shadow-2xl relative z-10">
-                    <span class="material-symbols-rounded text-4xl">add</span>
+                <div class="w-16 sm:w-20 h-16 sm:h-20 rounded-2xl sm:rounded-3xl bg-surface-container-high dark:bg-white/5 flex items-center justify-center text-on-surface-variant/40 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all shadow-2xl relative z-10">
+                    <span class="material-symbols-rounded text-3xl sm:text-4xl">add</span>
                 </div>
-                <p class="text-[11px] font-black text-on-surface-variant/40 uppercase tracking-[0.4em] mt-8 group-hover:text-primary transition-colors relative z-10 italic">Integrar Nuevo Activo</p>
-                <div class="mt-4 flex gap-1 relative z-10">
+                <p class="text-[10px] sm:text-[11px] font-black text-on-surface-variant/40 uppercase tracking-[0.3em] sm:tracking-[0.4em] mt-6 sm:mt-8 group-hover:text-primary transition-colors relative z-10 italic">Integrar Nuevo Activo</p>
+                <div class="mt-3 sm:mt-4 flex gap-1 relative z-10">
                     <div v-for="i in 3" :key="i" class="w-1 h-1 rounded-full bg-on-surface-variant/20 dark:bg-white/10 group-hover:bg-primary/40 transition-colors"></div>
                 </div>
             </button>
