@@ -39,5 +39,10 @@ Route::middleware(['auth', 'verified', 'ensure-legal', 'two-factor'])->group(fun
         Route::post('/admin/unit-types/generate', [TipoUnidadController::class, 'generateUnits'])->name('admin.settings.generate_units');
         Route::post('/admin/unit-types/unlock', [TipoUnidadController::class, 'unlock'])->name('admin.unit-types.unlock');
         Route::post('/admin/componentes', [TipoUnidadController::class, 'storeComponente'])->name('admin.componentes.store');
+
+        // Onboarding de Unidades vía Hoja de Cálculo Inteligente
+        Route::get('/admin/settings/template', [TipoUnidadController::class, 'downloadTemplate'])->name('admin.settings.download_template');
+        Route::post('/admin/settings/import-preview', [TipoUnidadController::class, 'previewImport'])->name('admin.settings.preview_import');
+        Route::post('/admin/settings/import-units', [TipoUnidadController::class, 'importUnits'])->name('admin.settings.import_units');
     });
 });

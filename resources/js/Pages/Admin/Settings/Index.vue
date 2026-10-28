@@ -8,7 +8,9 @@ import Input from '@/Components/UI/Input.vue';
 import Checkbox from '@/Components/UI/Checkbox.vue';
 import Badge from '@/Components/UI/Badge.vue';
 import UnitGeneratorModal from './Partials/UnitGeneratorModal.vue';
+import UnitImportAuditModal from './Partials/UnitImportAuditModal.vue';
 import { useToast } from '@/Composables/useToast';
+import axios from 'axios';
 
 defineOptions({ layout: AuthenticatedLayout });
 
@@ -145,6 +147,69 @@ const unlockConfiguration = () => {
     useForm({}).post(route('admin.unit-types.unlock'), {
         onSuccess: () => toast.add('Edición habilitada para Super Admin', 'warning')
     });
+};
+
+// --- Lógica de Onboarding con Plantilla Inteligente y Auditoría ---
+const showImportModal = ref(false);
+const selectedImportFile = ref<File | null>(null);
+const previewImportResult = ref<any>(null);
+const isAuditingFile = ref(false);
+const isDraggingOver = ref(false);
+const fileInputRef = ref<HTMLInputElement | null>(null);
+
+const downloadTemplate = () => {
+    if (!props.copropiedad.tipos_unidad || props.copropiedad.tipos_unidad.length === 0) {
+        toast.add('Primero debes registrar al menos un modelo para generar la plantilla con opciones.', 'warning');
+        return;
+    }
+    window.location.href = route('admin.settings.download_template');
+};
+
+const triggerFileInput = () => {
+    if (fileInputRef.value) {
+        fileInputRef.value.value = '';
+        fileInputRef.value.click();
+    }
+};
+
+const handleFileSelection = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        processImportFile(target.files[0]);
+    }
+};
+
+const handleFileDrop = (event: DragEvent) => {
+    isDraggingOver.value = false;
+    if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
+        processImportFile(event.dataTransfer.files[0]);
+    }
+};
+
+const processImportFile = async (file: File) => {
+    selectedImportFile.value = file;
+    isAuditingFile.value = true;
+    showImportModal.value = true;
+    previewImportResult.value = null;
+
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await axios.post(route('admin.settings.preview_import'), formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        previewImportResult.value = response.data;
+    } catch (err: any) {
+        const errMsg = err.response?.data?.message || err.message || 'Error al procesar el archivo';
+        toast.add(errMsg, 'error');
+        showImportModal.value = false;
+    } finally {
+        isAuditingFile.value = false;
+    }
 };
 </script>
 
@@ -536,6 +601,104 @@ const unlockConfiguration = () => {
                             </div>
                         </div>
                     </Card>
+
+                    <!-- STEP 2: CENSO & CARGA INTELIGENTE CON EXCEL -->
+                    <Card class="!p-10 !rounded-[3.5rem] border border-outline-variant/10 dark:border-white/5 shadow-2xl bg-surface dark:bg-[#0b0e14] relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1.5">
+                                    <span class="px-2.5 py-0.5 rounded-lg bg-primary/10 text-primary text-[9px] font-black tracking-widest uppercase">Paso 2</span>
+                                    <span class="text-[9px] font-bold text-on-surface-variant/40 dark:text-white/20 uppercase tracking-widest">Censo de Unidades</span>
+                                </div>
+                                <h3 class="text-xl font-black text-on-surface dark:text-white uppercase tracking-tighter italic leading-none">
+                                    Censo & <span class="text-primary">Carga Masiva</span>
+                                </h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                                <span class="material-symbols-rounded text-2xl">table_view</span>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] font-medium text-on-surface-variant/70 dark:text-white/40 leading-relaxed mb-6">
+                            Descarga la plantilla con lista desplegable de tus modelos, completa tu censo de apartamentos y cárgalo para certificar la copropiedad.
+                        </p>
+
+                        <!-- Estado cuando aún no hay modelos -->
+                        <div v-if="!copropiedad.tipos_unidad?.length" class="p-6 rounded-3xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-300 text-xs font-medium space-y-2">
+                            <div class="flex items-center gap-2 font-black uppercase text-[10px] tracking-wider">
+                                <span class="material-symbols-rounded text-base">info</span>
+                                Catálogo Vacío
+                            </div>
+                            <p class="text-[11px] leading-relaxed opacity-90">
+                                Registra primero al menos un modelo arquitectónico (ej: Apartamento Tipo A) en el formulario para habilitar la plantilla oficial.
+                            </p>
+                        </div>
+
+                        <!-- Cuando ya existen modelos certificados -->
+                        <div v-else class="space-y-6">
+                            <!-- Botón de Descarga de Plantilla -->
+                            <Button 
+                                @click="downloadTemplate" 
+                                variant="primary" 
+                                size="lg" 
+                                class="w-full !rounded-2xl !h-14 font-black uppercase tracking-wider shadow-lg shadow-primary/20 flex items-center justify-center gap-2 cursor-pointer"
+                                icon="download"
+                            >
+                                DESCARGAR PLANTILLA (.XLSX)
+                            </Button>
+                            <p class="text-[9px] font-bold text-center text-on-surface-variant/40 dark:text-white/20 uppercase tracking-widest">
+                                * Incluye tus {{ copropiedad.tipos_unidad.length }} modelos en menú desplegable
+                            </p>
+
+                            <!-- Zona Drag & Drop -->
+                            <div 
+                                @dragover.prevent="isDraggingOver = true"
+                                @dragleave.prevent="isDraggingOver = false"
+                                @drop.prevent="handleFileDrop"
+                                @click="triggerFileInput"
+                                :class="[
+                                    isDraggingOver ? 'border-primary bg-primary/10 scale-[1.01]' : 'border-outline-variant/20 dark:border-white/10 hover:border-primary/50 bg-surface-container-low dark:bg-white/[0.02]',
+                                    copropiedad.unit_types_locked && !is_super_admin ? 'opacity-50 pointer-events-none' : 'cursor-pointer'
+                                ]"
+                                class="p-8 rounded-[2.5rem] border-2 border-dashed transition-all flex flex-col items-center justify-center text-center group"
+                            >
+                                <input 
+                                    ref="fileInputRef" 
+                                    type="file" 
+                                    accept=".xlsx,.xls,.csv" 
+                                    class="hidden" 
+                                    @change="handleFileSelection"
+                                />
+                                
+                                <div class="w-12 h-12 rounded-2xl bg-primary/10 group-hover:bg-primary group-hover:text-white text-primary flex items-center justify-center mb-3 transition-all">
+                                    <span class="material-symbols-rounded text-2xl">cloud_upload</span>
+                                </div>
+                                
+                                <p class="text-xs font-black text-on-surface dark:text-white uppercase tracking-wider mb-1">
+                                    Arrastra tu censo aquí
+                                </p>
+                                <p class="text-[9px] font-bold text-on-surface-variant/50 uppercase tracking-widest">
+                                    O haz clic para examinar (.xlsx, .xls, .csv)
+                                </p>
+                            </div>
+
+                            <!-- Alternativa Secuencial -->
+                            <div class="pt-4 border-t border-outline-variant/10 dark:border-white/5 flex items-center justify-between">
+                                <span class="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-wider">
+                                    ¿Conjunto homogéneo?
+                                </span>
+                                <button 
+                                    @click="lockConfiguration"
+                                    type="button" 
+                                    class="text-[10px] font-black text-primary hover:underline uppercase tracking-widest flex items-center gap-1 cursor-pointer"
+                                    :disabled="copropiedad.unit_types_locked && !is_super_admin"
+                                >
+                                    <span class="material-symbols-rounded text-sm">precision_manufacturing</span>
+                                    Generador Secuencial
+                                </button>
+                            </div>
+                        </div>
+                    </Card>
                 </div>
             </div>
         </div>
@@ -544,7 +707,15 @@ const unlockConfiguration = () => {
     <UnitGeneratorModal 
         :show="showGeneratorModal" 
         @close="showGeneratorModal = false"
-        @success="() => { showGeneratorModal = false; activeTab = 'settings'; toast.success('Unidades generadas exitosamente'); }"
+        @success="() => { showGeneratorModal = false; activeTab = 'nucleo'; toast.success('Unidades generadas exitosamente'); }"
+    />
+
+    <UnitImportAuditModal 
+        :show="showImportModal"
+        :result="previewImportResult"
+        :file="selectedImportFile"
+        @close="showImportModal = false"
+        @success="() => { showImportModal = false; activeTab = 'nucleo'; }"
     />
 </template>
 

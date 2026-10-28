@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Modules\Property\Models\Unidad;
 use App\Modules\Property\Services\CoeficienteCalculator;
+use NexoPro\Property\Services\SpreadsheetUnitTemplateService;
+use NexoPro\Property\Services\SpreadsheetUnitImportService;
+use NexoPro\Property\Services\UnitBulkImportExecutor;
 
 class TipoUnidadController extends \App\Http\Controllers\Controller
 {
@@ -167,5 +170,92 @@ class TipoUnidadController extends \App\Http\Controllers\Controller
         ]);
 
         return back()->with('success', "Componente '{$componente->nombre}' agregado al catálogo.");
+    }
+
+    /**
+     * Download the official Excel census template pre-populated with unit models.
+     */
+    public function downloadTemplate(SpreadsheetUnitTemplateService $templateService)
+    {
+        $copropiedad = auth()->user()->currentCopropiedad;
+        $copropiedad->load('tiposUnidad');
+
+        $modelos = $copropiedad->tiposUnidad->map(fn($t) => [
+            'id' => $t->id,
+            'nombre' => $t->nombre,
+            'area_m2' => (float)$t->area_m2,
+        ])->toArray();
+
+        $binary = $templateService->generateBinary($copropiedad->nombre ?? 'Copropiedad', $modelos);
+        $filename = 'Plantilla_Censo_Unidades_' . Str::slug($copropiedad->nombre ?? 'copropiedad') . '.xlsx';
+
+        return response($binary, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Cache-Control' => 'max-age=0, must-revalidate',
+        ]);
+    }
+
+    /**
+     * Audit and preview a spreadsheet before persisting units.
+     */
+    public function previewImport(Request $request, SpreadsheetUnitImportService $importService)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv,txt|max:10240',
+        ]);
+
+        $copropiedad = auth()->user()->currentCopropiedad;
+        $copropiedad->load('tiposUnidad');
+
+        $modelosCatalog = [];
+        foreach ($copropiedad->tiposUnidad as $t) {
+            $modelosCatalog[$t->nombre] = [
+                'id' => $t->id,
+                'area_m2' => (float)$t->area_m2,
+            ];
+        }
+
+        $filePath = $request->file('file')->getRealPath();
+        $result = $importService->parseSpreadsheetFile($filePath, $modelosCatalog);
+
+        return response()->json($result->toArray());
+    }
+
+    /**
+     * Persist units from uploaded spreadsheet in a single database transaction.
+     */
+    public function importUnits(Request $request, SpreadsheetUnitImportService $importService, UnitBulkImportExecutor $executor)
+    {
+        $copropiedad = auth()->user()->currentCopropiedad;
+
+        if ($copropiedad->unit_types_locked && auth()->user()->role !== 'super_admin') {
+            return back()->with('error', 'La configuración de unidades ya se encuentra certificada y bloqueada.');
+        }
+
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv,txt|max:10240',
+        ]);
+
+        $copropiedad->load('tiposUnidad');
+
+        $modelosCatalog = [];
+        foreach ($copropiedad->tiposUnidad as $t) {
+            $modelosCatalog[$t->nombre] = [
+                'id' => $t->id,
+                'area_m2' => (float)$t->area_m2,
+            ];
+        }
+
+        $filePath = $request->file('file')->getRealPath();
+        $result = $importService->parseSpreadsheetFile($filePath, $modelosCatalog);
+
+        if (!$result->isValid) {
+            return back()->with('error', 'El archivo contiene errores de validación. Por favor verifique el reporte.');
+        }
+
+        $count = $executor->execute($copropiedad, $result->validRows, $modelosCatalog);
+
+        return back()->with('success', "¡Excelente! Se han importado y certificado {$count} unidades con sus coeficientes oficiales.");
     }
 }

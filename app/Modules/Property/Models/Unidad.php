@@ -33,6 +33,7 @@ class Unidad extends Model
         'propietario_nombre',
         'propietario_identificacion',
         'email_contacto',
+        'telefono_contacto',
         'saldo_actual',
         'tipo_unidad_id',
     ];
