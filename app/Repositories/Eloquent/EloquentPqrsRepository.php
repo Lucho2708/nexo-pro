@@ -16,8 +16,9 @@ class EloquentPqrsRepository implements PqrsRepositoryInterface
 
     public function getByCopropiedad(string $copropiedadId): Collection
     {
-        return Pqrs::whereHas('unidad', function($q) use ($copropiedadId) {
-                $q->where('copropiedad_id', $copropiedadId);
+        return Pqrs::where(function($q) use ($copropiedadId) {
+                $q->where('copropiedad_id', $copropiedadId)
+                  ->orWhereHas('unidad', fn($u) => $u->where('copropiedad_id', $copropiedadId));
             })
             ->with(['unidad', 'user'])
             ->orderByDesc('created_at')
@@ -45,12 +46,24 @@ class EloquentPqrsRepository implements PqrsRepositoryInterface
 
     public function getCountsByStatus(string $copropiedadId): array
     {
-        return Pqrs::whereHas('unidad', function($q) use ($copropiedadId) {
-                $q->where('copropiedad_id', $copropiedadId);
+        return Pqrs::where(function($q) use ($copropiedadId) {
+                $q->where('copropiedad_id', $copropiedadId)
+                  ->orWhereHas('unidad', fn($u) => $u->where('copropiedad_id', $copropiedadId));
             })
             ->select('estado', DB::raw('count(*) as total'))
             ->groupBy('estado')
             ->pluck('total', 'estado')
             ->toArray();
+    }
+
+    public function getUrgentCount(string $copropiedadId): int
+    {
+        return Pqrs::where(function($q) use ($copropiedadId) {
+                $q->where('copropiedad_id', $copropiedadId)
+                  ->orWhereHas('unidad', fn($u) => $u->where('copropiedad_id', $copropiedadId));
+            })
+            ->whereIn('estado', ['abierto', 'reabierto'])
+            ->where('prioridad', 'alta')
+            ->count();
     }
 }

@@ -43,6 +43,25 @@ class PqrsService
 
     public function getDashboardMetrics(string $copropiedadId): array
     {
-        return $this->repository->getCountsByStatus($copropiedadId);
+        $rawCounts = $this->repository->getCountsByStatus($copropiedadId);
+
+        $abierto = (int) ($rawCounts['abierto'] ?? 0);
+        $enProceso = (int) ($rawCounts['en_proceso'] ?? 0);
+        $reabierto = (int) ($rawCounts['reabierto'] ?? 0);
+        $cerrado = (int) ($rawCounts['cerrado'] ?? 0);
+
+        $total = $abierto + $enProceso + $reabierto + $cerrado;
+        $tasaResolucion = $total > 0 ? round(($cerrado / $total) * 100, 1) : 0;
+        $urgentesActivas = $this->repository->getUrgentCount($copropiedadId);
+
+        return [
+            'abierto' => $abierto,
+            'en_proceso' => $enProceso,
+            'reabierto' => $reabierto,
+            'cerrado' => $cerrado,
+            'total' => $total,
+            'tasa_resolucion' => $tasaResolucion,
+            'urgentes_activas' => $urgentesActivas,
+        ];
     }
 }

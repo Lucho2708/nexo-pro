@@ -91,7 +91,8 @@ const navigationItems = computed(() => {
 
     // ── COMUNIDAD (PQRS & Reservas) ─────────────────────────────
     if (permissions.includes('pqrs:manage') || permissions.includes('pqrs:create')) {
-        items.push({ name: 'PQRS', icon: 'forum', href: route('pqrs.index'), active: isRouteActive('pqrs.index') });
+        const href = user.value?.role === 'admin' ? route('admin.pqrs.index') : route('pqrs.index');
+        items.push({ name: 'PQRS', icon: 'forum', href: href, active: isRouteActive('admin.pqrs.*') || isRouteActive('pqrs.*') });
     }
 
     if (permissions.includes('reservations:manage') || permissions.includes('reservations:create')) {
@@ -169,7 +170,8 @@ const mobileBottomNavItems = computed(() => {
     }
 
     if (permissions.includes('pqrs:manage') || permissions.includes('pqrs:create')) {
-        items.push({ name: 'PQRS', icon: 'forum', href: route('pqrs.index'), active: isRouteActive('pqrs.index') });
+        const href = user.value?.role === 'admin' ? route('admin.pqrs.index') : route('pqrs.index');
+        items.push({ name: 'PQRS', icon: 'forum', href: href, active: isRouteActive('admin.pqrs.*') || isRouteActive('pqrs.*') });
     }
 
     if (permissions.includes('property:manage') && !isStandalone) {
@@ -289,6 +291,7 @@ const mobileBottomNavItems = computed(() => {
 
         <!-- Desktop Sidebar Pro (Rendered ONLY on lg+ screens, never on mobile) -->
         <aside 
+            v-if="isLargeScreen"
             class="hidden lg:flex fixed inset-y-0 left-0 bg-surface-container-low dark:bg-[#0b0e14]/98 backdrop-blur-3xl border-r border-outline-variant/10 flex-col transition-all duration-300 z-[70] no-scrollbar shadow-2xl overflow-visible"
             :class="[isSidebarOpen ? 'w-72' : 'w-24']"
         >

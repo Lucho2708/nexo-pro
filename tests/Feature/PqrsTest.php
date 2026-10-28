@@ -56,7 +56,7 @@ describe('PqrsController', function () {
                 'copropiedad_id' => $this->copropiedad->id,
             ]);
 
-            $response = $this->actingAs($this->admin)->get(route('pqrs.index'));
+            $response = $this->actingAs($this->admin)->get(route('admin.pqrs.index'));
 
             $response->assertOk()
                 ->assertInertia(fn ($page) => $page->component('Admin/Pqrs/Index'));

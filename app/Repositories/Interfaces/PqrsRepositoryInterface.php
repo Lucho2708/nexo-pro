@@ -18,4 +18,6 @@ interface PqrsRepositoryInterface
     public function update(string $id, array $data): bool;
     
     public function getCountsByStatus(string $copropiedadId): array;
+    
+    public function getUrgentCount(string $copropiedadId): int;
 }

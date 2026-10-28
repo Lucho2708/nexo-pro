@@ -62,44 +62,112 @@ const formatDate = (date: string) => {
             </span>
         </button>
 
-        <!-- Backdrop on mobile -->
-        <Transition
-            enter-active-class="transition-opacity duration-200 ease-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition-opacity duration-150 ease-in"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-        >
-            <div 
-                v-if="isOpen" 
-                @click="closeDropdown" 
-                class="fixed inset-0 z-40 bg-slate-950/50 backdrop-blur-sm sm:hidden"
-                aria-hidden="true"
-            />
-        </Transition>
+        <!-- Mobile Teleported Dropdown & Backdrop (Immune to backdrop-filter containment) -->
+        <Teleport to="body">
+            <!-- Backdrop on mobile -->
+            <Transition
+                enter-active-class="transition-opacity duration-200 ease-out"
+                enter-from-class="opacity-0"
+                enter-to-class="opacity-100"
+                leave-active-class="transition-opacity duration-150 ease-in"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+            >
+                <div 
+                    v-if="isOpen" 
+                    @click="closeDropdown" 
+                    class="fixed inset-0 z-[120] bg-slate-950/75 backdrop-blur-sm sm:hidden cursor-pointer"
+                    aria-hidden="true"
+                />
+            </Transition>
 
-        <!-- Dropdown Menu -->
+            <!-- Mobile Modal Card -->
+            <Transition name="slide-up">
+                <div 
+                    v-if="isOpen" 
+                    class="fixed inset-x-3 top-20 max-w-sm mx-auto bg-surface dark:bg-[#0b0e14] rounded-[2rem] shadow-2xl border border-outline-variant/20 dark:border-white/10 overflow-hidden z-[130] sm:hidden flex flex-col max-h-[80vh]"
+                    role="dialog"
+                    aria-label="Panel de Notificaciones Móvil"
+                >
+                    <div class="p-4 bg-surface-container/30 border-b border-outline-variant/10 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-rounded text-base text-primary">notifications</span>
+                            <h4 class="text-xs font-black uppercase tracking-widest text-primary">Notificaciones</h4>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] font-bold text-on-surface-variant/50">{{ unreadCount }} pendientes</span>
+                            <button 
+                                @click="closeDropdown" 
+                                class="w-8 h-8 rounded-xl text-on-surface-variant/70 hover:text-on-surface bg-surface-container-high flex items-center justify-center cursor-pointer"
+                                aria-label="Cerrar"
+                            >
+                                <span class="material-symbols-rounded text-base">close</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-y-auto no-scrollbar flex-1 divide-y divide-outline-variant/5">
+                        <div v-if="announcements.length === 0" class="p-10 text-center">
+                            <span class="material-symbols-rounded text-4xl text-on-surface-variant/20 mb-2">notifications_off</span>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">Sin avisos recientes</p>
+                        </div>
+
+                        <div 
+                            v-for="ann in announcements" 
+                            :key="ann.id"
+                            class="p-4 hover:bg-primary/5 transition-colors cursor-pointer group"
+                            :class="{ 'bg-surface-container-low/30': !ann.is_read }"
+                            @click="markAsRead(ann)"
+                        >
+                            <div class="flex gap-3">
+                                <div 
+                                    class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    :class="{
+                                        'bg-primary/10 text-primary': ann.type === 'info',
+                                        'bg-warning/10 text-warning': ann.type === 'warning',
+                                        'bg-error/10 text-error': ann.type === 'error' || ann.type === 'danger',
+                                    }"
+                                >
+                                    <span class="material-symbols-rounded text-lg">
+                                        {{ ann.type === 'error' || ann.type === 'danger' ? 'report' : ann.type === 'warning' ? 'warning' : 'info' }}
+                                    </span>
+                                </div>
+                                <div class="flex-1 overflow-hidden">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <p class="text-[10px] font-black uppercase tracking-tighter truncate pr-2" :class="ann.is_read ? 'text-on-surface-variant/50' : 'text-on-surface'">
+                                            {{ ann.title }}
+                                        </p>
+                                        <span class="text-[9px] font-bold text-on-surface-variant/40">{{ formatDate(ann.created_at) }}</span>
+                                    </div>
+                                    <p class="text-xs font-medium text-on-surface-variant line-clamp-2 leading-tight">
+                                        {{ ann.message }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-surface-container/30 text-center border-t border-outline-variant/10">
+                        <button @click="closeDropdown" class="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/60 hover:text-primary transition-colors cursor-pointer">
+                            Cerrar Panel
+                        </button>
+                    </div>
+                </div>
+            </Transition>
+        </Teleport>
+
+        <!-- Desktop Dropdown Menu (Anchored under the Bell icon) -->
         <Transition name="slide-up">
             <div 
                 v-if="isOpen" 
-                class="fixed sm:absolute inset-x-3 sm:inset-x-auto sm:right-0 top-16 sm:top-full mt-2 sm:mt-3 sm:w-80 max-w-[calc(100vw-1.5rem)] bg-surface dark:bg-[#0b0e14] rounded-3xl shadow-2xl border border-outline-variant/20 dark:border-white/10 overflow-hidden z-50"
+                class="hidden sm:block absolute right-0 top-full mt-3 w-80 max-w-[calc(100vw-1.5rem)] bg-surface dark:bg-[#0b0e14] rounded-3xl shadow-2xl border border-outline-variant/20 dark:border-white/10 overflow-hidden z-50"
             >
                 <div class="p-4 bg-surface-container/30 border-b border-outline-variant/10 flex justify-between items-center">
                     <div class="flex items-center gap-2">
                         <span class="material-symbols-rounded text-base text-primary">notifications</span>
                         <h4 class="text-xs font-black uppercase tracking-widest text-primary">Notificaciones</h4>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-[10px] font-bold text-on-surface-variant/50">{{ unreadCount }} pendientes</span>
-                        <button 
-                            @click="closeDropdown" 
-                            class="sm:hidden p-1 rounded-xl text-on-surface-variant/60 hover:text-on-surface hover:bg-surface-container-high cursor-pointer"
-                            aria-label="Cerrar"
-                        >
-                            <span class="material-symbols-rounded text-base">close</span>
-                        </button>
-                    </div>
+                    <span class="text-[10px] font-bold text-on-surface-variant/50">{{ unreadCount }} pendientes</span>
                 </div>
 
                 <div class="max-h-80 sm:max-h-96 overflow-y-auto no-scrollbar">
