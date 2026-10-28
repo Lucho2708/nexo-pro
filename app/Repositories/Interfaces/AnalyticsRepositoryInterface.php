@@ -17,4 +17,6 @@ interface AnalyticsRepositoryInterface
     public function getUpcomingReservationsCount(string $copropiedadId, string $startDate, string $endDate): int;
     
     public function getTopOverdueUnits(string $copropiedadId, int $limit = 5): array;
+
+    public function clearCache(string $copropiedadId): void;
 }

@@ -70,4 +70,9 @@ class EloquentAnalyticsRepository implements AnalyticsRepositoryInterface
             ->get()
             ->toArray();
     }
+
+    public function clearCache(string $copropiedadId): void
+    {
+        // Eloquent directamente no mantiene caché en memoria
+    }
 }

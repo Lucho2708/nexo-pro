@@ -36,7 +36,7 @@ class DashboardController extends Controller
     /**
      * Dashboard canónico del Administrador de Copropiedad.
      */
-    public function adminDashboard(): mixed
+    public function adminDashboard(Request $request): mixed
     {
         $user = Auth::user();
 
@@ -54,11 +54,16 @@ class DashboardController extends Controller
             return Inertia::render('Admin/Copropiedades/SetupRequired');
         }
 
+        if ($request->boolean('refresh')) {
+            $this->analyticsService->clearCache($copropiedadId);
+        }
+
         return Inertia::render('Dashboard', [
             'stats' => $this->analyticsService->getAdminDashboardStats($copropiedadId),
             'chartData' => $this->analyticsService->getChartData($copropiedadId),
             'overduePayments' => $this->analyticsService->getOverduePayments($copropiedadId),
             'notifications' => $user->notifications()->unread()->latest()->take(5)->get(),
+            'lastSyncedAt' => Carbon::now()->toIso8601String(),
         ]);
     }
 

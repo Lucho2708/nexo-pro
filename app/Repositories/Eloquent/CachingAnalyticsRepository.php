@@ -4,10 +4,11 @@ namespace App\Repositories\Eloquent;
 
 use App\Repositories\Interfaces\AnalyticsRepositoryInterface;
 use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class CachingAnalyticsRepository implements AnalyticsRepositoryInterface
 {
-    private const CACHE_TTL = 3600; // 1 hora de caché por defecto
+    private const CACHE_TTL = 120; // 2 minutos para datos vivos y frescos
 
     public function __construct(
         private AnalyticsRepositoryInterface $baseRepository
@@ -44,7 +45,7 @@ class CachingAnalyticsRepository implements AnalyticsRepositoryInterface
     {
         return Cache::remember(
             "units_in_debt_{$copropiedadId}",
-            600, // 10 minutos para datos más volátiles
+            60, // 60 segundos para reflejar pagos
             fn() => $this->baseRepository->getUnitsInDebtCount($copropiedadId)
         );
     }
@@ -53,7 +54,7 @@ class CachingAnalyticsRepository implements AnalyticsRepositoryInterface
     {
         return Cache::remember(
             "open_pqrs_{$copropiedadId}",
-            300, // 5 minutos
+            30, // 30 segundos para requerimientos
             fn() => $this->baseRepository->getOpenPqrsCount($copropiedadId)
         );
     }
@@ -62,7 +63,7 @@ class CachingAnalyticsRepository implements AnalyticsRepositoryInterface
     {
         return Cache::remember(
             "upcoming_res_{$copropiedadId}_{$startDate}_{$endDate}",
-            600,
+            60,
             fn() => $this->baseRepository->getUpcomingReservationsCount($copropiedadId, $startDate, $endDate)
         );
     }
@@ -71,8 +72,29 @@ class CachingAnalyticsRepository implements AnalyticsRepositoryInterface
     {
         return Cache::remember(
             "top_overdue_{$copropiedadId}_{$limit}",
-            600,
+            60,
             fn() => $this->baseRepository->getTopOverdueUnits($copropiedadId, $limit)
         );
+    }
+
+    public function clearCache(string $copropiedadId): void
+    {
+        $now = Carbon::now();
+        Cache::forget("billing_{$copropiedadId}_{$now->month}_{$now->year}");
+        Cache::forget("collected_{$copropiedadId}_{$now->month}_{$now->year}");
+        Cache::forget("total_units_{$copropiedadId}");
+        Cache::forget("units_in_debt_{$copropiedadId}");
+        Cache::forget("open_pqrs_{$copropiedadId}");
+        Cache::forget("top_overdue_{$copropiedadId}_5");
+
+        for ($i = 0; $i <= 5; $i++) {
+            $d = Carbon::now()->subMonths($i);
+            Cache::forget("billing_{$copropiedadId}_{$d->month}_{$d->year}");
+            Cache::forget("collected_{$copropiedadId}_{$d->month}_{$d->year}");
+        }
+
+        Cache::forget("upcoming_res_{$copropiedadId}_{$now->toDateString()}_" . $now->copy()->addDays(7)->toDateString());
+
+        $this->baseRepository->clearCache($copropiedadId);
     }
 }

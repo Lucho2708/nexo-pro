@@ -44,6 +44,8 @@ class AnalyticsService
                 'progress' => $recaudoPercentage,
                 'color' => 'bg-secondary',
                 'accent_color' => '#0F7B6E',
+                'href' => route('cartera.index'),
+                'icon' => 'payments',
             ],
             [
                 'label' => 'Morosidad',
@@ -53,6 +55,8 @@ class AnalyticsService
                 'subtext' => $unitsInDebt . ' unidades en mora',
                 'color' => 'bg-[#FF6B4A]',
                 'accent_color' => '#FF6B4A',
+                'href' => route('cartera.index'),
+                'icon' => 'warning',
             ],
             [
                 'label' => 'PQRS abiertas',
@@ -60,6 +64,8 @@ class AnalyticsService
                 'subtext' => 'Pendientes por responder',
                 'color' => 'bg-primary-container',
                 'accent_color' => '#0A2B5E',
+                'href' => route('pqrs.index'),
+                'icon' => 'forum',
             ],
             [
                 'label' => 'Reservas 7d',
@@ -67,8 +73,15 @@ class AnalyticsService
                 'subtext' => 'En áreas comunes',
                 'color' => 'bg-secondary-fixed-dim',
                 'accent_color' => '#7cd6c7',
+                'href' => route('admin.reservas.index'),
+                'icon' => 'event_available',
             ],
         ];
+    }
+
+    public function clearCache(string $copropiedadId): void
+    {
+        $this->repository->clearCache($copropiedadId);
     }
 
     public function getChartData(string $copropiedadId): array
