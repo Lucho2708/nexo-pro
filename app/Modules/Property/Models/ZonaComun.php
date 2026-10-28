@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use App\Traits\Multitenantable;
+use App\Modules\Operations\Models\Reserva;
 
 class ZonaComun extends Model
 {

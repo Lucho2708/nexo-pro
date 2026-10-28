@@ -16,6 +16,7 @@ Route::middleware(['auth', 'verified', 'ensure-legal', 'two-factor'])->group(fun
         Route::post('/admin/zonas', [ZonaComunController::class, 'store'])->name('admin.zonas.store');
         Route::patch('/admin/zonas/{zona}', [ZonaComunController::class, 'update'])->name('admin.zonas.update');
         Route::patch('/admin/zonas/{zona}/toggle', [ZonaComunController::class, 'toggleStatus'])->name('admin.zonas.toggle');
+        Route::delete('/admin/zonas/{zona}', [ZonaComunController::class, 'destroy'])->name('admin.zonas.destroy');
     });
 
     // Unidades y Configuración

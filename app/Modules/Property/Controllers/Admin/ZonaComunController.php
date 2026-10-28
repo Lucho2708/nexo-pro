@@ -17,19 +17,30 @@ class ZonaComunController extends \App\Http\Controllers\Controller
     {
         $copropiedadId = auth()->user()->current_copropiedad_id;
         $zonas = $this->zonaComunService->getAllByCopropiedad($copropiedadId);
+        $stats = $this->zonaComunService->getMetrics($copropiedadId);
 
         return Inertia::render('Admin/Zonas/Index', [
-            'zonas' => $zonas
+            'zonas' => $zonas,
+            'stats' => $stats,
         ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'capacidad_maxima' => 'required|integer|min:1',
-            'costo' => 'required|numeric|min:0',
+            'nombre'                      => 'required|string|max:255',
+            'descripcion'                 => 'nullable|string',
+            'capacidad_maxima'            => 'required|integer|min:1|max:5000',
+            'costo'                       => 'required|numeric|min:0',
+            'imagen_path'                 => 'nullable|string|max:1000',
+            'activa'                      => 'nullable|boolean',
+            'settings'                    => 'nullable|array',
+            'settings.tipo'               => 'nullable|string|max:50',
+            'settings.horario_apertura'   => 'nullable|string|max:10',
+            'settings.horario_cierre'     => 'nullable|string|max:10',
+            'settings.deposito_garantia'  => 'nullable|numeric|min:0',
+            'settings.tiempo_maximo_horas'=> 'nullable|integer|min:1|max:24',
+            'settings.requiere_aprobacion'=> 'nullable|boolean',
         ]);
 
         $this->zonaComunService->createZona($validated, auth()->user()->current_copropiedad_id);
@@ -40,10 +51,19 @@ class ZonaComunController extends \App\Http\Controllers\Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'capacidad_maxima' => 'required|integer|min:1',
-            'costo' => 'required|numeric|min:0',
+            'nombre'                      => 'required|string|max:255',
+            'descripcion'                 => 'nullable|string',
+            'capacidad_maxima'            => 'required|integer|min:1|max:5000',
+            'costo'                       => 'required|numeric|min:0',
+            'imagen_path'                 => 'nullable|string|max:1000',
+            'activa'                      => 'nullable|boolean',
+            'settings'                    => 'nullable|array',
+            'settings.tipo'               => 'nullable|string|max:50',
+            'settings.horario_apertura'   => 'nullable|string|max:10',
+            'settings.horario_cierre'     => 'nullable|string|max:10',
+            'settings.deposito_garantia'  => 'nullable|numeric|min:0',
+            'settings.tiempo_maximo_horas'=> 'nullable|integer|min:1|max:24',
+            'settings.requiere_aprobacion'=> 'nullable|boolean',
         ]);
 
         $this->zonaComunService->updateZona($id, $validated);
@@ -55,5 +75,16 @@ class ZonaComunController extends \App\Http\Controllers\Controller
     {
         $this->zonaComunService->toggleStatus($id);
         return back()->with('success', 'Estado de la zona actualizado.');
+    }
+
+    public function destroy(string $id)
+    {
+        $result = $this->zonaComunService->deleteZonaSafely($id);
+
+        if (!$result['success']) {
+            return back()->with('error', $result['message']);
+        }
+
+        return back()->with('success', $result['message']);
     }
 }

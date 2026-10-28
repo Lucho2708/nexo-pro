@@ -11,6 +11,10 @@ class EloquentZonaComunRepository implements ZonaComunRepositoryInterface
     public function getByCopropiedad(string $copropiedadId): Collection
     {
         return ZonaComun::where('copropiedad_id', $copropiedadId)
+            ->withCount(['reservas as reservas_activas_count' => function ($query) {
+                $query->where('fecha', '>=', now()->toDateString())
+                    ->whereIn('estado', ['confirmada', 'pendiente']);
+            }])
             ->orderBy('nombre')
             ->get();
     }
