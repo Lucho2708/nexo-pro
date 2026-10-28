@@ -8,7 +8,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('cartera.import'), {
+    form.post(route('admin.cartera.import'), {
         onSuccess: () => emit('close'),
         forceFormData: true,
     });

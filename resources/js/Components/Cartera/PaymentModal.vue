@@ -26,7 +26,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('cartera.payment'), {
+    form.post(route('admin.cartera.payment'), {
         onSuccess: () => emit('close'),
         forceFormData: true,
     });

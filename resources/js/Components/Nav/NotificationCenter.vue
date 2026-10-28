@@ -83,7 +83,7 @@ const formatDate = (date: string) => {
         <Transition name="slide-up">
             <div 
                 v-if="isOpen" 
-                class="fixed sm:absolute left-3 right-3 sm:left-auto sm:right-0 top-16 sm:top-full mt-2 sm:mt-3 sm:w-80 max-w-[calc(100vw-1.5rem)] bg-surface dark:bg-[#0b0e14] rounded-3xl shadow-2xl border border-outline-variant/20 dark:border-white/10 overflow-hidden z-50"
+                class="fixed sm:absolute inset-x-3 sm:inset-x-auto sm:right-0 top-16 sm:top-full mt-2 sm:mt-3 sm:w-80 max-w-[calc(100vw-1.5rem)] bg-surface dark:bg-[#0b0e14] rounded-3xl shadow-2xl border border-outline-variant/20 dark:border-white/10 overflow-hidden z-50"
             >
                 <div class="p-4 bg-surface-container/30 border-b border-outline-variant/10 flex justify-between items-center">
                     <div class="flex items-center gap-2">

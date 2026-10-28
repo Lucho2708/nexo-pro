@@ -35,7 +35,7 @@ Route::middleware([
     Route::patch('/admin/notifications/{notification}/read', [DashboardController::class, 'markNotificationAsRead'])->name('admin.notifications.read');
     Route::patch('/notifications/{notification}/read', [DashboardController::class, 'markNotificationAsRead'])->name('notifications.read');
 
-    // ── GESTIÓN DE CARTERA Y RECAUDO ──────────────────────────────
+    // ── GESTIÓN DE CARTERA Y RECAUDO (CANÓNICO ADMIN) ─────────────
     Route::prefix('admin/cartera')->name('admin.cartera.')->group(function () {
         Route::get('/', [CarteraController::class, 'index'])->middleware('log-feature:cartera')->name('index');
         Route::post('/import', [CarteraController::class, 'import'])->name('import');
@@ -44,12 +44,21 @@ Route::middleware([
         Route::get('/statement/{unidad}', [CarteraController::class, 'downloadAccountStatement'])->name('statement.download');
     });
 
-    // Alias retrocompatibles para Cartera (/cartera)
-    Route::get('/cartera', [CarteraController::class, 'index'])->middleware('log-feature:cartera')->name('cartera.index');
+    // Redirección canónica: /cartera -> /admin/cartera
+    Route::get('/cartera', function () {
+        return redirect()->route('admin.cartera.index');
+    })->name('cartera.index');
     Route::post('/cartera/import', [CarteraController::class, 'import'])->name('cartera.import');
     Route::post('/cartera/payment', [CarteraController::class, 'storePayment'])->name('cartera.payment');
     Route::post('/cartera/trigger-billing', [CarteraController::class, 'triggerMonthlyBilling'])->name('cartera.billing.trigger');
     Route::get('/cartera/statement/{unidad}', [CarteraController::class, 'downloadAccountStatement'])->name('cartera.statement.download');
+
+    // ── GESTIÓN DE ATENCIÓN Y PQRS (CANÓNICO ADMIN) ───────────────
+    Route::prefix('admin/pqrs')->name('admin.pqrs.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PqrsController::class, 'index'])->middleware('log-feature:pqrs')->name('index');
+        Route::patch('/{pqrs}', [\App\Http\Controllers\PqrsController::class, 'update'])->name('update');
+        Route::get('/{pqrs}/download', [\App\Http\Controllers\PqrsController::class, 'downloadPdf'])->name('download');
+    });
 
     // ── RESERVAS DE ZONAS COMUNES (ADMIN) ─────────────────────────
     Route::get('/admin/reservas', [ReservaController::class, 'adminIndex'])->middleware('log-feature:reservas')->name('admin.reservas.index');

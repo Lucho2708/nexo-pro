@@ -3,6 +3,7 @@
 namespace App\Services\Financial;
 
 use App\DTOs\TransactionDataDTO;
+use App\Modules\Finance\Models\ConceptoCobro;
 use App\Repositories\Interfaces\FinancialRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -54,7 +55,10 @@ class BillingService
         $interestRate = ($copropiedad->settings['interes_mora'] ?? 1.5) / 100;
 
         if (!$concept) {
-            throw new \Exception("Concepto de Intereses (INT) no encontrado.");
+            $concept = ConceptoCobro::firstOrCreate(
+                ['copropiedad_id' => $copropiedadId, 'codigo' => 'INT'],
+                ['nombre' => 'Intereses de Mora']
+            );
         }
 
         DB::transaction(function () use ($units, $concept, $interestRate) {

@@ -13,7 +13,10 @@ class EloquentFinancialRepository implements FinancialRepositoryInterface
 {
     public function createTransaction(TransactionDataDTO $data): Transaccion
     {
+        $unidad = $this->getUnidad($data->unidadId);
+
         return Transaccion::create([
+            'copropiedad_id' => $unidad->copropiedad_id,
             'unidad_id'   => $data->unidadId,
             'concepto_id' => $data->conceptoId,
             'tipo'        => $data->tipo,
@@ -71,11 +74,48 @@ class EloquentFinancialRepository implements FinancialRepositoryInterface
 
     public function getCarteraStats(string $copropiedadId): array
     {
+        $unidades = Unidad::where('copropiedad_id', $copropiedadId)->get();
+        $totalUnidades = $unidades->count();
+        $unitIds = $unidades->pluck('id');
+
+        $carteraVencida = (float) $unidades->where('saldo_actual', '>', 0)->sum('saldo_actual');
+        $unidadesMora = $unidades->where('saldo_actual', '>', 0)->count();
+
+        // Total facturado del mes en curso para las unidades del conjunto
+        $totalFacturadoMes = (float) Transaccion::whereIn('unidad_id', $unitIds)
+            ->where('tipo', 'cargo')
+            ->whereMonth('fecha', now()->month)
+            ->whereYear('fecha', now()->year)
+            ->sum('monto');
+
+        // Total recaudado (abonos) del mes en curso
+        $totalRecaudadoMes = (float) Transaccion::whereIn('unidad_id', $unitIds)
+            ->where('tipo', 'abono')
+            ->whereMonth('fecha', now()->month)
+            ->whereYear('fecha', now()->year)
+            ->sum('monto');
+
+        // Si no hay facturas este mes aún, calcular el recaudo total histórico
+        $totalRecaudado = $totalRecaudadoMes > 0 
+            ? $totalRecaudadoMes 
+            : (float) Transaccion::whereIn('unidad_id', $unitIds)->where('tipo', 'abono')->sum('monto');
+
+        // Cálculo de porcentaje de recaudo e índice de solvencia real
+        if ($totalFacturadoMes > 0) {
+            $porcentajeRecaudo = round(($totalRecaudadoMes / $totalFacturadoMes) * 100, 1);
+        } else {
+            // Si no hay cobros en el mes, la solvencia se calcula según mora actual
+            $porcentajeRecaudo = $totalUnidades > 0 
+                ? round((($totalUnidades - $unidadesMora) / $totalUnidades) * 100, 1) 
+                : 100.0;
+        }
+
         return [
-            'total_recaudado' => 142580000, // Mock for visual demo
-            'cartera_vencida' => Unidad::where('copropiedad_id', $copropiedadId)->sum('saldo_actual'),
-            'porcentaje_recaudo' => 82.4,
-            'unidades_mora' => Unidad::where('copropiedad_id', $copropiedadId)->where('saldo_actual', '>', 0)->count()
+            'total_recaudado'    => $totalRecaudado,
+            'cartera_vencida'    => $carteraVencida,
+            'porcentaje_recaudo' => min(100.0, max(0.0, $porcentajeRecaudo)),
+            'unidades_mora'      => $unidadesMora,
+            'total_unidades'     => $totalUnidades,
         ];
     }
 

@@ -80,8 +80,8 @@ const navigationItems = computed(() => {
 
     // ── FINANZAS / CARTERA ──────────────────────────────────────
     if (permissions.includes('finance:manage') || permissions.includes('finance:view')) {
-        const href = user.value?.role === 'owner' ? route('owner.payments') : route('cartera.index');
-        items.push({ name: 'Cartera', icon: 'payments', href: href, active: isRouteActive('cartera.*') || isRouteActive('owner.payments') });
+        const href = user.value?.role === 'owner' ? route('owner.payments') : route('admin.cartera.index');
+        items.push({ name: 'Cartera', icon: 'payments', href: href, active: isRouteActive('admin.cartera.*') || isRouteActive('cartera.*') || isRouteActive('owner.payments') });
     }
 
     // ── INMUEBLES / ZONAS ───────────────────────────────────────
@@ -164,8 +164,8 @@ const mobileBottomNavItems = computed(() => {
     });
 
     if (permissions.includes('finance:manage') || permissions.includes('finance:view')) {
-        const href = user.value?.role === 'owner' ? route('owner.payments') : route('cartera.index');
-        items.push({ name: 'Cartera', icon: 'payments', href: href, active: isRouteActive('cartera.*') || isRouteActive('owner.payments') });
+        const href = user.value?.role === 'owner' ? route('owner.payments') : route('admin.cartera.index');
+        items.push({ name: 'Cartera', icon: 'payments', href: href, active: isRouteActive('admin.cartera.*') || isRouteActive('cartera.*') || isRouteActive('owner.payments') });
     }
 
     if (permissions.includes('pqrs:manage') || permissions.includes('pqrs:create')) {
@@ -189,51 +189,113 @@ const mobileBottomNavItems = computed(() => {
             <Link :href="route('superadmin.impersonate.stop')" method="post" as="button" class="bg-white/20 hover:bg-white/30 px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest transition-all">Regresar a Super Admin</Link>
         </div>
 
-        <!-- Mobile Backdrop Overlay -->
-        <Transition
-            enter-active-class="transition-opacity duration-300 ease-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition-opacity duration-200 ease-in"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-        >
-            <div 
-                v-if="!isLargeScreen && isSidebarOpen" 
-                @click="isSidebarOpen = false" 
-                class="fixed inset-0 z-[65] bg-slate-950/75 backdrop-blur-sm lg:hidden cursor-pointer"
-                aria-hidden="true"
-            />
-        </Transition>
+        <!-- Mobile Drawer (Off-Canvas Modal, Teleported to Body to avoid overflow leakage) -->
+        <Teleport to="body">
+            <Transition
+                enter-active-class="transition-opacity duration-300 ease-out"
+                enter-from-class="opacity-0"
+                enter-to-class="opacity-100"
+                leave-active-class="transition-opacity duration-200 ease-in"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+            >
+                <div 
+                    v-if="!isLargeScreen && isSidebarOpen" 
+                    class="fixed inset-0 z-[100] lg:hidden"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Menú de Navegación"
+                >
+                    <!-- Backdrop -->
+                    <div 
+                        @click="isSidebarOpen = false" 
+                        class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm cursor-pointer"
+                    />
 
-        <!-- Sidebar Pro & Mobile Drawer -->
+                    <!-- Drawer Sheet -->
+                    <aside 
+                        class="fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-surface-container-low dark:bg-[#0b0e14] border-r border-outline-variant/10 dark:border-white/10 flex flex-col z-10 shadow-2xl overflow-hidden animate-in slide-in-from-left duration-300"
+                    >
+                        <div class="px-5 pt-6 pb-4 flex items-center justify-between border-b border-outline-variant/10">
+                            <Link :href="homeRoute" class="flex items-center gap-3" @click="isSidebarOpen = false">
+                                <Logo width="38px" height="38px" :show-text="true" />
+                            </Link>
+                            <button 
+                                @click="isSidebarOpen = false"
+                                class="w-10 h-10 rounded-2xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant flex items-center justify-center transition-all active:scale-95 cursor-pointer"
+                                aria-label="Cerrar menú"
+                            >
+                                <span class="material-symbols-rounded text-xl">close</span>
+                            </button>
+                        </div>
+
+                        <!-- Mobile Condominium Switcher -->
+                        <div v-if="user?.role !== 'super_admin'" class="p-4 border-b border-outline-variant/5">
+                            <PropertySwitcher />
+                        </div>
+
+                        <!-- Navigation Items -->
+                        <nav class="flex-1 px-4 py-3 space-y-1.5 overflow-y-auto custom-scrollbar">
+                            <Link 
+                                v-for="item in navigationItems" 
+                                :key="item.name" 
+                                :href="item.href"
+                                @click="isSidebarOpen = false"
+                                class="flex items-center gap-4 py-3 px-4 rounded-2xl transition-all group relative overflow-hidden"
+                                :class="[
+                                    item.active 
+                                        ? 'bg-primary text-white shadow-lg shadow-primary/20 translate-x-1' 
+                                        : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
+                                ]"
+                            >
+                                <span 
+                                    class="material-symbols-rounded shrink-0 text-xl"
+                                    :class="item.active ? 'text-white' : 'text-primary/70'"
+                                >
+                                    {{ item.icon }}
+                                </span>
+                                <span class="text-xs font-black uppercase tracking-wider">
+                                    {{ item.name }}
+                                </span>
+                            </Link>
+                        </nav>
+
+                        <!-- Config & Profile links -->
+                        <div class="p-4 border-t border-outline-variant/10 space-y-1 bg-surface-container-lowest dark:bg-white/[0.02]">
+                            <Link 
+                                v-for="item in configItems" 
+                                :key="item.name" 
+                                :href="item.href"
+                                @click="isSidebarOpen = false"
+                                class="flex items-center gap-4 py-2.5 px-4 rounded-xl text-on-surface-variant hover:text-primary transition-all text-xs font-bold uppercase tracking-wider"
+                            >
+                                <span class="material-symbols-rounded text-lg">{{ item.icon }}</span>
+                                <span>{{ item.name }}</span>
+                            </Link>
+                            <Link 
+                                :href="route('logout')" 
+                                method="post" 
+                                as="button" 
+                                class="w-full flex items-center gap-4 py-2.5 px-4 rounded-xl text-error hover:bg-error/10 transition-all text-xs font-black uppercase tracking-wider mt-1"
+                            >
+                                <span class="material-symbols-rounded text-lg">logout</span>
+                                <span>Cerrar Sesión</span>
+                            </Link>
+                        </div>
+                    </aside>
+                </div>
+            </Transition>
+        </Teleport>
+
+        <!-- Desktop Sidebar Pro (Rendered ONLY on lg+ screens, never on mobile) -->
         <aside 
-            class="fixed inset-y-0 left-0 bg-surface-container-low dark:bg-[#0b0e14]/98 backdrop-blur-3xl border-r border-outline-variant/10 flex flex-col transition-all duration-300 z-[70] no-scrollbar shadow-2xl overflow-hidden"
-            :class="[
-                isSidebarOpen 
-                    ? 'w-80 max-w-[85vw] translate-x-0 lg:w-72' 
-                    : 'w-80 max-w-[85vw] -translate-x-full invisible pointer-events-none lg:visible lg:pointer-events-auto lg:w-24 lg:translate-x-0'
-            ]"
+            class="hidden lg:flex fixed inset-y-0 left-0 bg-surface-container-low dark:bg-[#0b0e14]/98 backdrop-blur-3xl border-r border-outline-variant/10 flex-col transition-all duration-300 z-[70] no-scrollbar shadow-2xl overflow-visible"
+            :class="[isSidebarOpen ? 'w-72' : 'w-24']"
         >
-            <div class="px-5 pt-6 pb-4 sm:py-10 flex items-center justify-between lg:justify-center">
+            <div class="px-5 py-8 flex items-center justify-center">
                 <Link :href="homeRoute" class="flex items-center gap-3">
                     <Logo :width="isSidebarOpen ? '42px' : '32px'" :height="isSidebarOpen ? '42px' : '32px'" :show-text="isSidebarOpen" class="transition-all duration-300" />
                 </Link>
-                <button 
-                    v-if="!isLargeScreen"
-                    @click="isSidebarOpen = false"
-                    class="p-2.5 rounded-2xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant transition-all active:scale-95 cursor-pointer lg:hidden"
-                    aria-label="Cerrar menú"
-                >
-                    <span class="material-symbols-rounded text-xl">close</span>
-                </button>
-            </div>
-
-            <!-- Mobile Condominium Switcher inside Drawer -->
-            <div v-if="user?.role !== 'super_admin' && !isLargeScreen" class="px-4 pb-4 lg:hidden">
-                <div class="p-1 bg-surface-container-high/40 rounded-2xl border border-outline-variant/10">
-                    <PropertySwitcher />
-                </div>
             </div>
 
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
@@ -241,7 +303,7 @@ const mobileBottomNavItems = computed(() => {
                     v-for="item in navigationItems" 
                     :key="item.name" 
                     :href="item.href"
-                    class="flex items-center gap-4 py-3.5 sm:py-4 px-4 sm:px-5 rounded-[1.5rem] transition-all group relative overflow-hidden"
+                    class="flex items-center gap-4 py-3.5 px-4 rounded-[1.5rem] transition-all group relative overflow-hidden"
                     :class="[
                         item.active 
                             ? 'bg-primary text-white shadow-xl shadow-primary/20 translate-x-1' 
@@ -265,23 +327,23 @@ const mobileBottomNavItems = computed(() => {
                 </Link>
             </nav>
 
-            <div class="px-4 border-t border-outline-variant/5 py-6 sm:py-8 space-y-1">
+            <div class="px-4 border-t border-outline-variant/5 py-6 space-y-1">
                 <Link 
                     v-for="item in configItems" 
                     :key="item.name" 
                     :href="item.href"
-                    class="flex items-center gap-4 py-3 sm:py-4 px-4 sm:px-5 rounded-2xl transition-all group"
+                    class="flex items-center gap-4 py-3 px-4 rounded-2xl transition-all group"
                     :class="[item.active ? 'bg-primary/5 text-primary' : 'text-on-surface-variant/50 hover:bg-surface-container-high hover:text-on-surface']"
                 >
                     <span class="material-symbols-rounded shrink-0 group-hover:text-primary transition-colors text-lg">{{ item.icon }}</span>
                     <span v-if="isSidebarOpen" class="text-[10px] font-black uppercase tracking-widest">{{ item.name }}</span>
                 </Link>
                 
-                <div v-if="isSidebarOpen" class="mt-4 sm:mt-8 relative group cursor-help">
+                <div v-if="isSidebarOpen" class="mt-4 relative group cursor-help">
                     <div class="absolute inset-0 blur-xl opacity-20 transition-all group-hover:opacity-40" :class="twoFactorStatus ? 'bg-emerald-500' : 'bg-rose-500'"></div>
-                    <div class="relative p-4 sm:p-5 rounded-[2rem] flex items-center gap-3 sm:gap-4 border transition-all" :class="twoFactorStatus ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-rose-500/10 border-rose-500/20'">
-                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center shadow-inner shrink-0" :class="twoFactorStatus ? 'bg-emerald-500/20' : 'bg-rose-500/20'">
-                             <span class="material-symbols-rounded text-lg sm:text-xl" :class="twoFactorStatus ? 'text-emerald-500' : 'text-rose-500'">{{ twoFactorStatus ? 'verified_user' : 'gpp_maybe' }}</span>
+                    <div class="relative p-4 rounded-[2rem] flex items-center gap-3 border transition-all" :class="twoFactorStatus ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-rose-500/10 border-rose-500/20'">
+                        <div class="w-9 h-9 rounded-2xl flex items-center justify-center shadow-inner shrink-0" :class="twoFactorStatus ? 'bg-emerald-500/20' : 'bg-rose-500/20'">
+                             <span class="material-symbols-rounded text-lg" :class="twoFactorStatus ? 'text-emerald-500' : 'text-rose-500'">{{ twoFactorStatus ? 'verified_user' : 'gpp_maybe' }}</span>
                         </div>
                         <div class="flex flex-col min-w-0">
                             <span class="text-[9px] font-black uppercase tracking-widest truncate" :class="twoFactorStatus ? 'text-emerald-500' : 'text-rose-500'">{{ twoFactorStatus ? 'Escudo Activo' : 'Riesgo Crítico' }}</span>
@@ -292,9 +354,8 @@ const mobileBottomNavItems = computed(() => {
             </div>
             
             <button 
-                v-if="isLargeScreen"
                 @click="isSidebarOpen = !isSidebarOpen"
-                class="hidden lg:flex absolute bottom-6 -right-3 w-8 h-8 bg-surface dark:bg-[#0b0e14] border border-outline-variant/20 rounded-xl items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-2xl z-50 text-on-surface-variant cursor-pointer"
+                class="absolute bottom-6 -right-3 w-8 h-8 bg-surface dark:bg-[#0b0e14] border border-outline-variant/20 rounded-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-2xl z-50 text-on-surface-variant cursor-pointer"
                 aria-label="Colapsar barra lateral"
             >
                 <span class="material-symbols-rounded text-xs transition-transform duration-300" :class="{'rotate-180': !isSidebarOpen}">chevron_left</span>
@@ -307,20 +368,24 @@ const mobileBottomNavItems = computed(() => {
             :class="[isLargeScreen ? (isSidebarOpen ? 'ml-72' : 'ml-24') : 'ml-0']"
         >
             <header 
-                class="sticky z-40 bg-surface/90 dark:bg-[#0b0e14]/90 backdrop-blur-xl border-b border-outline-variant/15 dark:border-white/5 px-4 sm:px-6 md:px-10 py-3.5 sm:py-5 flex justify-between items-center shadow-sm transition-all duration-200"
+                class="sticky z-40 bg-surface/95 dark:bg-[#0b0e14]/95 backdrop-blur-xl border-b border-outline-variant/15 dark:border-white/5 px-3 sm:px-6 md:px-10 py-3 sm:py-5 flex justify-between items-center shadow-sm transition-all duration-200"
                 :class="[user?.is_impersonating ? 'top-10' : 'top-0']"
             >
-                <div class="flex items-center gap-3 sm:gap-6 min-w-0">
-                    <button @click="isSidebarOpen = !isSidebarOpen" class="lg:hidden p-2.5 sm:p-3 rounded-2xl bg-primary/10 text-primary active:scale-95 transition-all cursor-pointer shrink-0" aria-label="Abrir menú">
-                        <span class="material-symbols-rounded text-xl">{{ isSidebarOpen ? 'close' : 'menu' }}</span>
+                <div class="flex items-center gap-2.5 sm:gap-6 min-w-0 flex-1">
+                    <button 
+                        @click="isSidebarOpen = true" 
+                        class="lg:hidden w-10 h-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center active:scale-95 transition-all cursor-pointer shrink-0" 
+                        aria-label="Abrir menú"
+                    >
+                        <span class="material-symbols-rounded text-xl">menu</span>
                     </button>
-                    <div class="min-w-0">
-                        <h2 class="text-sm sm:text-lg md:text-xl font-black text-on-surface dark:text-white uppercase tracking-tight italic flex items-center gap-1.5 truncate">
-                            HOLA, <span class="text-primary truncate max-w-[120px] sm:max-w-none">{{ user?.name?.split(' ')[0] || '...' }}</span>
+                    <div class="min-w-0 pr-1">
+                        <h2 class="text-xs sm:text-lg md:text-xl font-black text-on-surface dark:text-white uppercase tracking-tight italic flex items-center gap-1.5 truncate">
+                            HOLA, <span class="text-primary truncate max-w-[95px] sm:max-w-none">{{ user?.name?.split(' ')[0] || '...' }}</span>
                         </h2>
-                        <div class="flex items-center gap-2 mt-0.5">
+                        <div class="flex items-center gap-1.5 mt-0.5">
                             <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shrink-0"></div>
-                            <p class="text-[8px] sm:text-[9px] font-black text-on-surface-variant/50 dark:text-white/30 uppercase tracking-widest truncate max-w-[170px] sm:max-w-none">
+                            <p class="text-[7.5px] sm:text-[9px] font-black text-on-surface-variant/50 dark:text-white/30 uppercase tracking-widest truncate max-w-[130px] sm:max-w-none">
                                 {{ user?.current_copropiedad?.nombre || new Date().toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase() }}
                             </p>
                         </div>
@@ -332,17 +397,17 @@ const mobileBottomNavItems = computed(() => {
                     <PropertySwitcher />
                 </div>
 
-                <div class="flex items-center gap-2.5 sm:gap-4 md:gap-6 shrink-0">
+                <div class="flex items-center gap-1.5 sm:gap-4 md:gap-6 shrink-0">
                     <ThemeToggle />
                     <NotificationCenter />
 
-                    <div class="flex items-center gap-3 sm:gap-4 pl-2.5 sm:pl-6 border-l border-outline-variant/20 relative">
+                    <div class="flex items-center gap-2 sm:gap-4 pl-1.5 sm:pl-6 border-l border-outline-variant/20 relative">
                         <div class="hidden lg:block text-right">
                             <p class="text-[11px] font-black text-on-surface dark:text-white uppercase tracking-tighter leading-none">{{ user?.name }}</p>
                             <p class="text-[8px] font-black text-primary uppercase tracking-widest mt-1 italic">{{ user?.role?.replace('_', ' ') }}</p>
                         </div>
                         <button @click="showUserMenu = !showUserMenu" class="relative group cursor-pointer" aria-label="Menú de usuario">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary ring-2 sm:ring-4 ring-primary/10 overflow-hidden shadow-xl group-hover:ring-primary/30 transition-all">
+                            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-primary ring-2 sm:ring-4 ring-primary/10 overflow-hidden shadow-xl group-hover:ring-primary/30 transition-all flex items-center justify-center">
                                 <img :src="`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`" class="w-full h-full object-cover" alt="Avatar" />
                             </div>
                             <Transition

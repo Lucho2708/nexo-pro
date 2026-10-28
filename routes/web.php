@@ -54,7 +54,12 @@ Route::middleware(['auth', 'verified', 'ensure-legal'])->group(function () {
 
     Route::middleware('two-factor')->group(function () {
         // ── GESTIÓN DE PQRS (Compartida Admin/Owner) ──────────────
-        Route::get('/pqrs', [\App\Http\Controllers\PqrsController::class, 'index'])->middleware(['check-license', 'log-feature:pqrs'])->name('pqrs.index');
+        Route::get('/pqrs', function (\Illuminate\Http\Request $request) {
+            if (auth()->user()?->role === 'admin') {
+                return redirect()->route('admin.pqrs.index');
+            }
+            return app(\App\Http\Controllers\PqrsController::class)->index($request);
+        })->middleware(['check-license', 'log-feature:pqrs'])->name('pqrs.index');
         Route::post('/pqrs', [\App\Http\Controllers\PqrsController::class, 'store'])->name('pqrs.store');
         Route::get('/pqrs/{pqrs}/download', [\App\Http\Controllers\PqrsController::class, 'downloadPdf'])->name('pqrs.download');
         Route::patch('/pqrs/{pqrs}', [\App\Http\Controllers\PqrsController::class, 'update'])->name('pqrs.update');
