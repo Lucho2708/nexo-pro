@@ -15,17 +15,20 @@ interface Props {
     error?: string;
     state?: 'success' | 'warning' | 'error' | 'default';
     disabled?: boolean;
+    searchable?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     placeholder: 'Seleccionar...',
     disabled: false,
-    state: 'default'
+    state: 'default',
+    searchable: false,
 });
 
 const emit = defineEmits(['update:modelValue', 'change']);
 
 const isOpen = ref(false);
+const searchQuery = ref('');
 const triggerRef = ref<HTMLElement | null>(null);
 const menuRef = ref<HTMLElement | null>(null);
 const dropdownStyle = ref({ top: '0px', left: '0px', width: 'auto' });
@@ -40,6 +43,12 @@ watch(() => props.modelValue, (newVal) => {
 
 const selectedOption = computed(() => {
     return props.options.find(opt => opt.value === localValue.value) || null;
+});
+
+const displayOptions = computed(() => {
+    if (!searchQuery.value.trim()) return props.options;
+    const q = searchQuery.value.toLowerCase().trim();
+    return props.options.filter(opt => opt.label.toLowerCase().includes(q));
 });
 
 const currentState = computed(() => {
@@ -90,12 +99,14 @@ const toggle = async () => {
 
 const closeMenu = () => {
     isOpen.value = false;
+    searchQuery.value = '';
     window.removeEventListener('scroll', updatePosition, true);
     window.removeEventListener('resize', updatePosition);
 };
 
 const select = (option: Option) => {
     localValue.value = option.value; // Actualización instantánea UI
+    searchQuery.value = '';
     emit('update:modelValue', option.value);
     emit('change', option.value);
     closeMenu();
@@ -159,23 +170,39 @@ onUnmounted(() => {
                     ref="menuRef"
                     :style="dropdownStyle"
                     @mousedown.stop
-                    class="fixed z-[9999] bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl overflow-hidden py-2 max-h-60 overflow-y-auto no-scrollbar"
+                    class="fixed z-[9999] bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl overflow-hidden py-1.5 max-h-64 flex flex-col no-scrollbar"
                 >
-                    <div
-                        v-for="option in options"
-                        :key="option.value"
-                        @click="select(option)"
-                        class="px-5 py-3 text-sm font-bold cursor-pointer transition-colors"
-                        :class="[
-                            localValue === option.value 
-                                ? 'bg-primary/10 text-primary' 
-                                : 'text-on-surface-variant hover:bg-surface-container-low'
-                        ]"
-                    >
-                        {{ option.label }}
+                    <!-- Quick search input if many options or searchable -->
+                    <div v-if="searchable || options.length > 8" class="p-2 border-b border-outline-variant/10 sticky top-0 bg-surface z-10">
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant/40 pointer-events-none">search</span>
+                            <input
+                                v-model="searchQuery"
+                                type="text"
+                                placeholder="Buscar..."
+                                class="w-full pl-8 pr-3 py-1.5 text-xs bg-surface-container-low rounded-xl border border-outline-variant/15 text-on-surface focus:outline-none focus:border-primary/50"
+                                @click.stop
+                            />
+                        </div>
                     </div>
-                    <div v-if="options.length === 0" class="px-5 py-3 text-xs text-on-surface-variant/40 text-center italic">
-                        No hay opciones disponibles
+
+                    <div class="overflow-y-auto max-h-52 no-scrollbar py-1">
+                        <div
+                            v-for="option in displayOptions"
+                            :key="option.value"
+                            @click="select(option)"
+                            class="px-5 py-3 text-sm font-bold cursor-pointer transition-colors"
+                            :class="[
+                                localValue === option.value 
+                                    ? 'bg-primary/10 text-primary' 
+                                    : 'text-on-surface-variant hover:bg-surface-container-low'
+                            ]"
+                        >
+                            {{ option.label }}
+                        </div>
+                        <div v-if="displayOptions.length === 0" class="px-5 py-3 text-xs text-on-surface-variant/40 text-center italic">
+                            No se encontraron opciones
+                        </div>
                     </div>
                 </div>
             </Transition>

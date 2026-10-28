@@ -16,9 +16,8 @@ it('validates a registration request', function () {
     $response = $this->post('/register', []);
 
     $response->assertSessionHasErrors([
-        'nit', 'nombre_copropiedad', 'direccion', 'ciudad', 
-        'plan', 'unidades_totales', 'torres',
-        'name', 'email', 'password', 'terms'
+        'nit', 'nombre_copropiedad', 'direccion', 'departamento', 'ciudad', 
+        'plan', 'name', 'email', 'password', 'terms'
     ]);
 });
 
@@ -27,10 +26,9 @@ it('registers a new copropiedad and admin user', function () {
         'nit' => '123456789-0',
         'nombre_copropiedad' => 'Residencial El Sol',
         'direccion' => 'Calle 123 #45-67',
+        'departamento' => 'Antioquia',
         'ciudad' => 'Medellín',
-        'plan' => 'pro',
-        'unidades_totales' => 120,
-        'torres' => 3,
+        'plan' => 'condominio_pro',
         'name' => 'Admin User',
         'email' => 'admin@elsol.com',
         'password' => 'password123',
@@ -46,7 +44,8 @@ it('registers a new copropiedad and admin user', function () {
     $this->assertDatabaseHas('property.copropiedades', [
         'nit' => '123456789-0',
         'nombre' => 'Residencial El Sol',
-        'plan' => 'pro',
+        'departamento' => 'Antioquia',
+        'plan' => 'condominio_pro',
     ]);
 
     $this->assertDatabaseHas('users', [

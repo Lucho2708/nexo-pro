@@ -5,10 +5,11 @@ namespace App\Notifications;
 use App\Modules\Property\Models\Copropiedad;
 use App\Modules\IAM\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class WelcomeAdminNotification extends Notification
+class WelcomeAdminNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

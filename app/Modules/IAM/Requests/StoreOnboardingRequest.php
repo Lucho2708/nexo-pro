@@ -30,6 +30,7 @@ class StoreOnboardingRequest extends FormRequest
             ],
             'nombre_copropiedad' => 'required|string|max:255',
             'direccion' => 'required|string|max:255',
+            'departamento' => 'required|string|max:100',
             'ciudad' => 'required|string|max:255',
             
             // Operation & Subscription

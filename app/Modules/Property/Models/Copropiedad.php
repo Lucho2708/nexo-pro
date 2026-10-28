@@ -28,7 +28,7 @@ class Copropiedad extends Model
     public static function getCustomColumns(): array
     {
         return [
-            'id', 'nit', 'nombre', 'direccion', 'ciudad', 'plan', 
+            'id', 'nit', 'nombre', 'direccion', 'departamento', 'ciudad', 'plan', 
             'license_status', 'license_expires_at',
             'settings', 'unidades_totales', 'torres', 'area_construida_total', 'created_at', 'updated_at'
         ];
@@ -38,6 +38,7 @@ class Copropiedad extends Model
         'nit',
         'nombre',
         'direccion',
+        'departamento',
         'ciudad',
         'plan',
         'license_status',

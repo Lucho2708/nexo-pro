@@ -9,6 +9,7 @@ use App\Notifications\WelcomeAdminNotification;
 use App\DTOs\RegisterCopropiedadDTO;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class RegisterCopropiedadAction
 {
@@ -26,6 +27,7 @@ class RegisterCopropiedadAction
                 'nit' => $dto->nit,
                 'nombre' => $dto->nombre_copropiedad,
                 'direccion' => $dto->direccion,
+                'departamento' => $dto->departamento,
                 'ciudad' => $dto->ciudad,
                 'plan' => $dto->is_standalone ? 'standalone' : ($dto->plan ?? 'condominio_pro'),
                 'unidades_totales' => $dto->unidades_totales ?? 0,
@@ -54,8 +56,15 @@ class RegisterCopropiedadAction
             // 3. Attach the admin to the copropiedad pivot table
             $user->managedCopropiedades()->attach($copropiedad->id);
 
-            // 4. Send Welcome Notification
-            $user->notify(new WelcomeAdminNotification($user, $copropiedad));
+            // 4. Send Welcome Notification (safeguarded against mail transport downtime)
+            try {
+                $user->notify(new WelcomeAdminNotification($user, $copropiedad));
+            } catch (\Throwable $e) {
+                Log::warning('No fue posible enviar correo de bienvenida al administrador: ' . $e->getMessage(), [
+                    'user_id' => $user->id,
+                    'copropiedad_id' => $copropiedad->id,
+                ]);
+            }
 
             event(new CopropiedadCreated($copropiedad));
 

@@ -102,6 +102,7 @@ class PlanUnitCapacityEnforcementTest extends TestCase
             'nit' => '900777888-5',
             'nombre_copropiedad' => 'Conjunto Residencial El Portal',
             'direccion' => 'Carrera 7 # 120-40',
+            'departamento' => 'Cundinamarca',
             'ciudad' => 'Bogotá',
             'plan' => 'condominio_pro',
             'billing_cycle' => 'annual',

@@ -4,12 +4,14 @@ import { Head, useForm, Link } from '@inertiajs/vue3';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import Button from '@/Components/UI/Button.vue';
 import Input from '@/Components/UI/Input.vue';
+import Select from '@/Components/UI/Select.vue';
 import Checkbox from '@/Components/UI/Checkbox.vue';
 import Alert from '@/Components/UI/Alert.vue';
 import Card from '@/Components/UI/Card.vue';
 import Logo from '@/Components/UI/Logo.vue';
 import Modal from '@/Components/UI/Modal.vue';
 import LegalContent from '@/Components/Legal/LegalContent.vue';
+import { useColombiaGeography } from '@/Composables/useColombiaGeography';
 
 const props = withDefaults(defineProps<{
     available_plans?: any[];
@@ -20,6 +22,8 @@ const props = withDefaults(defineProps<{
     selected_plan_slug: 'condominio_pro',
     initial_billing_cycle: 'monthly',
 });
+
+const { departamentosList, getMunicipios } = useColombiaGeography();
 
 const showLegalModal = ref(false);
 const legalModalType = ref<'privacy' | 'terms'>('privacy');
@@ -47,6 +51,7 @@ const form = useForm({
     nit: '',
     nombre_copropiedad: '',
     direccion: '',
+    departamento: '',
     ciudad: '',
     
     // Subscription Plan
@@ -61,6 +66,14 @@ const form = useForm({
     terms: false,
 });
 
+const availableMunicipios = computed(() => getMunicipios(form.departamento));
+
+const onDepartamentoChange = (dep: string | number) => {
+    form.departamento = String(dep);
+    form.ciudad = '';
+    form.clearErrors('departamento', 'ciudad');
+};
+
 const showPassword = ref(false);
 const showPasswordConfirm = ref(false);
 
@@ -70,6 +83,7 @@ const nextStep = () => {
     if (!form.nit) form.setError('nit', 'El NIT de la copropiedad es requerido.');
     if (!form.nombre_copropiedad) form.setError('nombre_copropiedad', 'El nombre del conjunto es requerido.');
     if (!form.direccion) form.setError('direccion', 'La dirección física es requerida.');
+    if (!form.departamento) form.setError('departamento', 'El departamento es requerido.');
     if (!form.ciudad) form.setError('ciudad', 'La ciudad o municipio es requerido.');
 
     if (Object.keys(form.errors).length === 0) {
@@ -301,24 +315,36 @@ const selectPlan = (slug: string) => {
                                     :error="form.errors.nombre_copropiedad" 
                                     class="!rounded-2xl"
                                 />
+                                <Input 
+                                    v-model="form.direccion" 
+                                    label="Dirección Física *" 
+                                    placeholder="Calle 123 # 45-67" 
+                                    icon="location_on" 
+                                    required 
+                                    :error="form.errors.direccion" 
+                                    class="!rounded-2xl"
+                                />
+
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <Input 
-                                        v-model="form.direccion" 
-                                        label="Dirección Física *" 
-                                        placeholder="Calle 123 # 45-67" 
-                                        icon="location_on" 
-                                        required 
-                                        :error="form.errors.direccion" 
-                                        class="!rounded-2xl"
-                                    />
-                                    <Input 
-                                        v-model="form.ciudad" 
-                                        label="Ciudad / Municipio *" 
-                                        placeholder="Ej: Bogotá" 
+                                    <Select 
+                                        v-model="form.departamento" 
+                                        :options="departamentosList"
+                                        label="Departamento *" 
+                                        placeholder="Seleccionar departamento..." 
                                         icon="map" 
-                                        required 
+                                        searchable
+                                        :error="form.errors.departamento"
+                                        @change="onDepartamentoChange"
+                                    />
+                                    <Select 
+                                        v-model="form.ciudad" 
+                                        :options="availableMunicipios"
+                                        label="Municipio / Ciudad *" 
+                                        :placeholder="form.departamento ? 'Seleccionar municipio...' : 'Primero selecciona departamento...'" 
+                                        icon="location_city" 
+                                        searchable
+                                        :disabled="!form.departamento"
                                         :error="form.errors.ciudad" 
-                                        class="!rounded-2xl"
                                     />
                                 </div>
                             </div>
