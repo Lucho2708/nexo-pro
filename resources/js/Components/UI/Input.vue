@@ -87,9 +87,10 @@ const labelStateConfig = {
                 <!-- Icon -->
                 <span 
                     v-if="icon" 
-                    class="material-symbols-outlined absolute left-4 text-slate-400 group-focus-within:text-primary transition-colors z-10 pointer-events-none"
+                    class="material-symbols-outlined notranslate absolute left-4 text-slate-400 group-focus-within:text-primary transition-colors z-10 pointer-events-none select-none"
                     style="font-variation-settings: 'opsz' 20, 'wght' 500;"
                     aria-hidden="true"
+                    translate="no"
                 >
                     {{ icon }}
                 </span>
@@ -122,9 +123,10 @@ const labelStateConfig = {
                 <!-- Icon -->
                 <span 
                     v-if="icon" 
-                    class="material-symbols-outlined absolute left-4 text-slate-400 group-focus-within:text-primary transition-colors z-10 pointer-events-none"
+                    class="material-symbols-outlined notranslate absolute left-4 text-slate-400 group-focus-within:text-primary transition-colors z-10 pointer-events-none select-none"
                     style="font-variation-settings: 'opsz' 20, 'wght' 500;"
                     aria-hidden="true"
+                    translate="no"
                 >
                     {{ icon }}
                 </span>

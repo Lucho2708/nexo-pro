@@ -119,7 +119,7 @@ const navLinks = [
                     aria-label="Abrir o cerrar menú de navegación"
                     aria-controls="mobile-menu-drawer"
                 >
-                    <span class="material-symbols-outlined text-2xl">
+                    <span class="material-symbols-outlined notranslate text-2xl select-none" translate="no">
                         {{ isMobileMenuOpen ? 'close' : 'menu' }}
                     </span>
                 </button>

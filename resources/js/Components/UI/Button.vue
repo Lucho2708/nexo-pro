@@ -53,8 +53,8 @@ const classes = computed(() => [
         :class="classes"
         class="no-underline"
     >
-        <span v-if="loading" class="animate-spin material-symbols-outlined text-[1.2em]">sync</span>
-        <span v-else-if="icon" class="material-symbols-outlined text-[1.2em]">{{ icon }}</span>
+        <span v-if="loading" class="animate-spin material-symbols-outlined notranslate text-[1.2em] select-none" translate="no">sync</span>
+        <span v-else-if="icon" class="material-symbols-outlined notranslate text-[1.2em] select-none" translate="no">{{ icon }}</span>
         <slot />
     </Link>
     
@@ -65,8 +65,8 @@ const classes = computed(() => [
         :class="classes"
         @click="$emit('click', $event)"
     >
-        <span v-if="loading" class="animate-spin material-symbols-outlined text-[1.2em]">sync</span>
-        <span v-else-if="icon" class="material-symbols-outlined text-[1.2em]">{{ icon }}</span>
+        <span v-if="loading" class="animate-spin material-symbols-outlined notranslate text-[1.2em] select-none" translate="no">sync</span>
+        <span v-else-if="icon" class="material-symbols-outlined notranslate text-[1.2em] select-none" translate="no">{{ icon }}</span>
         <slot />
     </button>
 </template>

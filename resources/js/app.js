@@ -11,6 +11,47 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/index.esm.js';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+// Blindaje contra traducción automática de ligaduras de iconos (Google Material Symbols)
+if (typeof window !== 'undefined') {
+    const protectIcons = (root = document) => {
+        const icons = root.querySelectorAll?.('.material-symbols-outlined, .material-symbols-rounded, [class*="material-symbols-"]');
+        if (!icons) return;
+        for (let i = 0; i < icons.length; i++) {
+            const el = icons[i];
+            if (!el.hasAttribute('translate')) {
+                el.setAttribute('translate', 'no');
+            }
+            if (!el.classList.contains('notranslate')) {
+                el.classList.add('notranslate');
+            }
+        }
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => protectIcons());
+    } else {
+        protectIcons();
+    }
+
+    const observer = new MutationObserver((mutations) => {
+        let shouldProtect = false;
+        for (let i = 0; i < mutations.length; i++) {
+            if (mutations[i].addedNodes.length > 0) {
+                shouldProtect = true;
+                break;
+            }
+        }
+        if (shouldProtect) {
+            protectIcons();
+        }
+    });
+
+    observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+    });
+}
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),

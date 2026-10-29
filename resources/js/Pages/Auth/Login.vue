@@ -83,7 +83,7 @@ const submit = () => {
                                         class="absolute right-4 top-9 z-10 text-slate-400 hover:text-primary transition-colors focus:outline-none"
                                         :aria-label="showPassword ? 'Ocultar contraseña' : 'Ver contraseña'"
                                     >
-                                        <span class="material-symbols-outlined text-xl">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                                        <span class="material-symbols-outlined notranslate text-xl select-none" translate="no">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
                                     </button>
                                 </div>
                                 <div class="flex justify-end pt-1">
@@ -100,7 +100,7 @@ const submit = () => {
                                     id="remember"
                                     class="peer w-5 h-5 rounded-md border-2 border-outline-variant text-primary focus:ring-primary/20 transition-all cursor-pointer appearance-none checked:bg-primary checked:border-primary"
                                 />
-                                <span class="material-symbols-rounded text-white text-[14px] absolute pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+                                <span class="material-symbols-rounded notranslate text-white text-[14px] absolute pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity select-none" translate="no">check</span>
                             </div>
                             <label for="remember" class="text-sm font-medium text-on-surface-variant cursor-pointer select-none">Mantener sesión activa</label>
                         </div>
@@ -130,12 +130,12 @@ const submit = () => {
                 <!-- Footer Context -->
                 <div class="pt-10 flex justify-center items-center gap-8 opacity-40">
                     <div class="flex items-center gap-2">
-                        <span class="material-symbols-rounded text-sm">verified_user</span>
+                        <span class="material-symbols-rounded notranslate text-sm select-none" translate="no">verified_user</span>
                         <span class="text-xs font-bold uppercase tracking-widest">Seguro</span>
                     </div>
                     <div class="w-1.5 h-1.5 rounded-full bg-on-surface-variant/30"></div>
                     <div class="flex items-center gap-2">
-                        <span class="material-symbols-rounded text-sm">shield_with_heart</span>
+                        <span class="material-symbols-rounded notranslate text-sm select-none" translate="no">shield_with_heart</span>
                         <span class="text-xs font-bold uppercase tracking-widest">Privado</span>
                     </div>
                 </div>

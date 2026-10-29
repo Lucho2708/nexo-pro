@@ -55,15 +55,15 @@ defineProps({
                     <!-- Píldoras de Valor Clave en Móvil -->
                     <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-1">
                         <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-800/60 text-blue-700 dark:text-blue-300 text-xs font-semibold">
-                            <span class="material-symbols-rounded text-sm">payments</span>
+                            <span class="material-symbols-rounded notranslate text-sm select-none" translate="no">payments</span>
                             <span>Pasarela PSE / Wompi</span>
                         </div>
                         <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 text-xs font-semibold">
-                            <span class="material-symbols-rounded text-sm">how_to_vote</span>
+                            <span class="material-symbols-rounded notranslate text-sm select-none" translate="no">how_to_vote</span>
                             <span>Quórum en Vivo</span>
                         </div>
                         <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-xs font-semibold">
-                            <span class="material-symbols-rounded text-sm">trending_up</span>
+                            <span class="material-symbols-rounded notranslate text-sm select-none" translate="no">trending_up</span>
                             <span>Mora reducida 35%</span>
                         </div>
                     </div>
@@ -74,7 +74,7 @@ defineProps({
                             href="/#contacto"
                             class="flex items-center justify-center gap-2 h-13 px-7 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-sm tracking-wide shadow-lg shadow-blue-600/25 active:scale-[0.98] transition-all min-h-[48px]"
                         >
-                            <span class="material-symbols-rounded text-lg">calendar_month</span>
+                            <span class="material-symbols-rounded notranslate text-lg select-none" translate="no">calendar_month</span>
                             <span>Agendar Demostración VIP</span>
                         </a>
 
@@ -82,7 +82,7 @@ defineProps({
                             href="/#calculadora-roi"
                             class="flex items-center justify-center gap-2 h-13 px-6 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-800 dark:text-slate-100 border border-slate-200/80 dark:border-white/10 font-bold text-sm tracking-wide active:scale-[0.98] transition-all min-h-[48px]"
                         >
-                            <span class="material-symbols-rounded text-lg text-blue-600 dark:text-blue-400">calculate</span>
+                            <span class="material-symbols-rounded notranslate text-lg text-blue-600 dark:text-blue-400 select-none" translate="no">calculate</span>
                             <span>Calcular Ahorro de tu Conjunto</span>
                         </a>
                     </div>
@@ -201,7 +201,7 @@ defineProps({
                         <!-- Insignia Flotante Acotada: Grado Bancario -->
                         <div class="absolute -top-3 sm:-top-4 -right-2 sm:right-3 bg-white/95 dark:bg-[#151a24]/95 backdrop-blur-md px-3 py-2 rounded-xl shadow-lg border border-slate-200/80 dark:border-white/10 flex items-center gap-2">
                             <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                                <span class="material-symbols-rounded text-base">verified_user</span>
+                                <span class="material-symbols-rounded notranslate text-base select-none" translate="no">verified_user</span>
                             </div>
                             <div>
                                 <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Seguridad</p>
@@ -220,5 +220,7 @@ defineProps({
 <style scoped>
 .material-symbols-rounded {
     font-variation-settings: 'opsz' 24, 'wght' 600, 'FILL' 0;
+    font-feature-settings: 'liga' 1;
+    overflow: hidden;
 }
 </style>

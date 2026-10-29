@@ -47,7 +47,7 @@ onUnmounted(() => {
                 class="flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 active:scale-95 transition-transform shrink-0"
                 aria-label="Contactar por WhatsApp"
             >
-                <span class="material-symbols-outlined text-2xl">chat</span>
+                <span class="material-symbols-outlined notranslate text-2xl select-none" translate="no">chat</span>
             </a>
 
             <!-- Botón Principal: Agendar Demostración VIP -->
@@ -55,7 +55,7 @@ onUnmounted(() => {
                 href="/#contacto"
                 class="flex-1 flex items-center justify-center gap-2 h-12 px-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 active:scale-[0.98] text-white font-extrabold text-xs sm:text-sm tracking-wide shadow-md shadow-blue-600/30 transition-all text-center leading-none"
             >
-                <span class="material-symbols-outlined text-lg">calendar_today</span>
+                <span class="material-symbols-outlined notranslate text-lg select-none" translate="no">calendar_today</span>
                 <span>Agendar Demo Gratis</span>
             </a>
         </div>
@@ -69,5 +69,7 @@ onUnmounted(() => {
 
 .material-symbols-outlined {
     font-variation-settings: 'opsz' 24, 'wght' 600, 'FILL' 0;
+    font-feature-settings: 'liga' 1;
+    overflow: hidden;
 }
 </style>
