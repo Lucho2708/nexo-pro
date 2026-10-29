@@ -107,11 +107,21 @@ class DemoDataSeeder extends Seeder
         foreach ([$coproRoble, $coproValle, $coproSabana] as $copro) {
             ConceptoCobro::firstOrCreate(
                 ['copropiedad_id' => $copro->id, 'codigo' => 'ADM'],
-                ['nombre' => 'Administración', 'tipo' => 'fijo', 'monto_base' => 150000]
+                [
+                    'nombre' => 'Administración',
+                    'descripcion' => 'Cuota de administración ordinaria',
+                    'valor_fijo' => 150000,
+                    'es_obligatorio' => true,
+                ]
             );
             ConceptoCobro::firstOrCreate(
                 ['copropiedad_id' => $copro->id, 'codigo' => 'PARQ'],
-                ['nombre' => 'Parqueadero', 'tipo' => 'fijo', 'monto_base' => 50000]
+                [
+                    'nombre' => 'Parqueadero',
+                    'descripcion' => 'Canon mensual de parqueadero',
+                    'valor_fijo' => 50000,
+                    'es_obligatorio' => false,
+                ]
             );
             ZonaComun::firstOrCreate(
                 ['copropiedad_id' => $copro->id, 'nombre' => 'Salón Social'],
