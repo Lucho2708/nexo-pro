@@ -210,6 +210,41 @@ class DemoDataSeeder extends Seeder
             $unidadMulti201->id => ['role' => 'owner'],
         ]);
 
+        // 7. Personal de Garita / Portería
+        $securityRole = Role::where('name', 'security')->first();
+
+        $guardaRoble = User::updateOrCreate(
+            ['email' => 'guarda@nexo.pro'],
+            [
+                'name' => 'Carlos Rodríguez (Guarda Titular)',
+                'password' => $password,
+                'role' => 'security',
+                'email_verified_at' => now(),
+                'current_copropiedad_id' => $coproRoble->id,
+                'pin_porteria' => '4812',
+                'is_active' => true,
+            ]
+        );
+        if ($securityRole) {
+            $guardaRoble->roles()->syncWithoutDetaching([$securityRole->id]);
+        }
+
+        $guardaRelevo = User::updateOrCreate(
+            ['email' => 'guarda_relevo@nexo.pro'],
+            [
+                'name' => 'Nelson Gómez (Guarda Relevo)',
+                'password' => $password,
+                'role' => 'security',
+                'email_verified_at' => now(),
+                'current_copropiedad_id' => $coproRoble->id,
+                'pin_porteria' => '9945',
+                'is_active' => true,
+            ]
+        );
+        if ($securityRole) {
+            $guardaRelevo->roles()->syncWithoutDetaching([$securityRole->id]);
+        }
+
         // Transacciones contables de demostración
         $conceptoAdmRoble = ConceptoCobro::where('copropiedad_id', $coproRoble->id)->where('codigo', 'ADM')->first();
         if ($conceptoAdmRoble) {
@@ -252,6 +287,8 @@ class DemoDataSeeder extends Seeder
             'admin_simple@nexo.pro',
             'propietario_simple@nexo.pro',
             'propietario_multi@nexo.pro',
+            'guarda@nexo.pro',
+            'guarda_relevo@nexo.pro',
         ];
 
         foreach (User::whereIn('email', $targetEmails)->get() as $demoUser) {
