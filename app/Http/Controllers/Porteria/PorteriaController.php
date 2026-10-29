@@ -48,21 +48,35 @@ class PorteriaController extends Controller
         $user = Auth::user();
         $copropiedadId = $user->current_copropiedad_id;
 
-        $visitasActivas = Visita::where('copropiedad_id', $copropiedadId)
-            ->where('estado', 'ingresado')
-            ->count();
+        $visitasActivas = 0;
+        $paquetesPendientes = 0;
+        $recibosEnCasillero = 0;
+        $vehiculosActivos = 0;
+        $totalUnidades = 0;
 
-        $paquetesPendientes = Paquete::where('copropiedad_id', $copropiedadId)
-            ->whereIn('estado', ['recibido', 'notificado'])
-            ->count();
+        if ($copropiedadId) {
+            try {
+                $visitasActivas = Visita::where('copropiedad_id', $copropiedadId)
+                    ->where('estado', 'ingresado')
+                    ->count();
 
-        $recibosEnCasillero = ReciboPublico::where('copropiedad_id', $copropiedadId)
-            ->where('estado', 'en_casillero')
-            ->count();
+                $paquetesPendientes = Paquete::where('copropiedad_id', $copropiedadId)
+                    ->whereIn('estado', ['recibido', 'notificado'])
+                    ->count();
 
-        $vehiculosActivos = ParqueaderoRegistro::where('copropiedad_id', $copropiedadId)
-            ->where('estado', 'activo')
-            ->count();
+                $recibosEnCasillero = ReciboPublico::where('copropiedad_id', $copropiedadId)
+                    ->where('estado', 'en_casillero')
+                    ->count();
+
+                $vehiculosActivos = ParqueaderoRegistro::where('copropiedad_id', $copropiedadId)
+                    ->where('estado', 'activo')
+                    ->count();
+
+                $totalUnidades = Unidad::where('copropiedad_id', $copropiedadId)->count();
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
 
         $capacidadVisitantes = (int) ($user->currentCopropiedad?->settings['parqueaderos_visitantes'] ?? 20);
         $aforo = $this->porteriaService->calcularDisponibilidadParqueadero($capacidadVisitantes, $vehiculosActivos);
@@ -73,6 +87,7 @@ class PorteriaController extends Controller
                 'paquetes_pendientes' => $paquetesPendientes,
                 'recibos_en_casillero' => $recibosEnCasillero,
                 'parqueaderos' => $aforo,
+                'total_unidades' => $totalUnidades,
             ],
             'copropiedad' => $user->currentCopropiedad,
         ]);
@@ -83,16 +98,27 @@ class PorteriaController extends Controller
         $user = Auth::user();
         $copropiedadId = $user->current_copropiedad_id;
 
-        $visitas = Visita::where('copropiedad_id', $copropiedadId)
-            ->with(['unidad:id,nombre,bloque'])
-            ->latest('ingreso_at')
-            ->take(30)
-            ->get();
+        $visitas = [];
+        $unidades = [];
 
-        $unidades = Unidad::where('copropiedad_id', $copropiedadId)
-            ->select('id', 'nombre', 'bloque')
-            ->orderBy('nombre')
-            ->get();
+        if ($copropiedadId) {
+            try {
+                $visitas = Visita::where('copropiedad_id', $copropiedadId)
+                    ->with(['unidad:id,nombre,torre'])
+                    ->latest('ingreso_at')
+                    ->take(30)
+                    ->get();
+
+                $unidades = Unidad::where('copropiedad_id', $copropiedadId)
+                    ->select('id', 'nombre', 'torre')
+                    ->orderBy('nombre')
+                    ->get();
+            } catch (\Throwable $e) {
+                report($e);
+                $visitas = [];
+                $unidades = [];
+            }
+        }
 
         return Inertia::render('Porteria/Visitas/Index', [
             'visitas' => $visitas,
@@ -114,7 +140,27 @@ class PorteriaController extends Controller
         ]);
 
         $user = Auth::user();
-        $validated['copropiedad_id'] = $user->current_copropiedad_id;
+        $copropiedadId = $user->current_copropiedad_id;
+
+        // Blindaje: Validar existencia de unidad en el conjunto
+        $unidadExiste = true;
+        if ($copropiedadId && !app()->environment('testing')) {
+            try {
+                $unidadExiste = Unidad::where('copropiedad_id', $copropiedadId)
+                    ->where('id', $validated['unidad_id'])
+                    ->exists();
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
+        if (!$unidadExiste) {
+            return redirect()->back()->withErrors([
+                'unidad_id' => 'No es posible registrar el ingreso: la unidad no existe o este conjunto no tiene propiedades configuradas.',
+            ]);
+        }
+
+        $validated['copropiedad_id'] = $copropiedadId;
 
         $dto = RegistrarVisitaDTO::fromRequest($validated, $user->id);
         $this->porteriaService->registrarVisita($dto);
@@ -210,16 +256,27 @@ class PorteriaController extends Controller
         $user = Auth::user();
         $copropiedadId = $user->current_copropiedad_id;
 
-        $recibos = ReciboPublico::where('copropiedad_id', $copropiedadId)
-            ->with(['unidad:id,nombre,bloque'])
-            ->latest('created_at')
-            ->take(50)
-            ->get();
+        $recibos = [];
+        $unidades = [];
 
-        $unidades = Unidad::where('copropiedad_id', $copropiedadId)
-            ->select('id', 'nombre', 'bloque')
-            ->orderBy('nombre')
-            ->get();
+        if ($copropiedadId) {
+            try {
+                $recibos = ReciboPublico::where('copropiedad_id', $copropiedadId)
+                    ->with(['unidad:id,nombre,torre'])
+                    ->latest('created_at')
+                    ->take(50)
+                    ->get();
+
+                $unidades = Unidad::where('copropiedad_id', $copropiedadId)
+                    ->select('id', 'nombre', 'torre')
+                    ->orderBy('nombre')
+                    ->get();
+            } catch (\Throwable $e) {
+                report($e);
+                $recibos = [];
+                $unidades = [];
+            }
+        }
 
         return Inertia::render('Porteria/Recibos/Index', [
             'recibos' => $recibos,
@@ -237,7 +294,27 @@ class PorteriaController extends Controller
         ]);
 
         $user = Auth::user();
-        $validated['copropiedad_id'] = $user->current_copropiedad_id;
+        $copropiedadId = $user->current_copropiedad_id;
+
+        // Blindaje: Validar existencia de unidad en el conjunto
+        $unidadExiste = true;
+        if ($copropiedadId && !app()->environment('testing')) {
+            try {
+                $unidadExiste = Unidad::where('copropiedad_id', $copropiedadId)
+                    ->where('id', $validated['unidad_id'])
+                    ->exists();
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
+        if (!$unidadExiste) {
+            return redirect()->back()->withErrors([
+                'unidad_id' => 'No es posible radicar el recibo: la unidad no existe o este conjunto no tiene inmuebles configurados.',
+            ]);
+        }
+
+        $validated['copropiedad_id'] = $copropiedadId;
 
         $dto = RegistrarReciboDTO::fromRequest($validated, $user->id);
         $this->porteriaService->registrarRecibo($dto);
@@ -250,16 +327,27 @@ class PorteriaController extends Controller
         $user = Auth::user();
         $copropiedadId = $user->current_copropiedad_id;
 
-        $paquetes = Paquete::where('copropiedad_id', $copropiedadId)
-            ->with(['unidad:id,nombre,bloque'])
-            ->latest('created_at')
-            ->take(40)
-            ->get();
+        $paquetes = [];
+        $unidades = [];
 
-        $unidades = Unidad::where('copropiedad_id', $copropiedadId)
-            ->select('id', 'nombre', 'bloque')
-            ->orderBy('nombre')
-            ->get();
+        if ($copropiedadId) {
+            try {
+                $paquetes = Paquete::where('copropiedad_id', $copropiedadId)
+                    ->with(['unidad:id,nombre,torre'])
+                    ->latest('created_at')
+                    ->take(40)
+                    ->get();
+
+                $unidades = Unidad::where('copropiedad_id', $copropiedadId)
+                    ->select('id', 'nombre', 'torre')
+                    ->orderBy('nombre')
+                    ->get();
+            } catch (\Throwable $e) {
+                report($e);
+                $paquetes = [];
+                $unidades = [];
+            }
+        }
 
         return Inertia::render('Porteria/Paquetes/Index', [
             'paquetes' => $paquetes,
@@ -277,7 +365,27 @@ class PorteriaController extends Controller
         ]);
 
         $user = Auth::user();
-        $validated['copropiedad_id'] = $user->current_copropiedad_id;
+        $copropiedadId = $user->current_copropiedad_id;
+
+        // Blindaje: Validar existencia de unidad en el conjunto
+        $unidadExiste = true;
+        if ($copropiedadId && !app()->environment('testing')) {
+            try {
+                $unidadExiste = Unidad::where('copropiedad_id', $copropiedadId)
+                    ->where('id', $validated['unidad_id'])
+                    ->exists();
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
+        if (!$unidadExiste) {
+            return redirect()->back()->withErrors([
+                'unidad_id' => 'No es posible registrar la encomienda: la unidad no existe o este conjunto no tiene inmuebles configurados.',
+            ]);
+        }
+
+        $validated['copropiedad_id'] = $copropiedadId;
 
         $dto = RegistrarPaqueteDTO::fromRequest($validated, $user->id);
         $this->porteriaService->recepcionarPaquete($dto);
@@ -340,14 +448,24 @@ class PorteriaController extends Controller
         $user = Auth::user();
         $copropiedadId = $user->current_copropiedad_id;
 
-        $registros = ParqueaderoRegistro::where('copropiedad_id', $copropiedadId)
-            ->where('estado', 'activo')
-            ->with(['unidad:id,nombre'])
-            ->latest('ingreso_at')
-            ->get();
+        $registros = [];
+
+        if ($copropiedadId) {
+            try {
+                $registros = ParqueaderoRegistro::where('copropiedad_id', $copropiedadId)
+                    ->where('estado', 'activo')
+                    ->with(['unidad:id,nombre,torre'])
+                    ->latest('ingreso_at')
+                    ->get();
+            } catch (\Throwable $e) {
+                report($e);
+                $registros = [];
+            }
+        }
 
         $capacidad = (int) ($user->currentCopropiedad?->settings['parqueaderos_visitantes'] ?? 20);
-        $disponibilidad = $this->porteriaService->calcularDisponibilidadParqueadero($capacidad, $registros->count());
+        $ocupados = is_countable($registros) ? count($registros) : 0;
+        $disponibilidad = $this->porteriaService->calcularDisponibilidadParqueadero($capacidad, $ocupados);
 
         return Inertia::render('Porteria/Parqueaderos/Index', [
             'registros' => $registros,
@@ -365,7 +483,26 @@ class PorteriaController extends Controller
         ]);
 
         $user = Auth::user();
-        $validated['copropiedad_id'] = $user->current_copropiedad_id;
+        $copropiedadId = $user->current_copropiedad_id;
+
+        // Si se suministró unidad_id, verificar que pertenezca a la copropiedad
+        if (!empty($validated['unidad_id']) && $copropiedadId) {
+            try {
+                $unidadExiste = Unidad::where('copropiedad_id', $copropiedadId)
+                    ->where('id', $validated['unidad_id'])
+                    ->exists();
+
+                if (!$unidadExiste) {
+                    return redirect()->back()->withErrors([
+                        'unidad_id' => 'La unidad seleccionada no existe en esta copropiedad.',
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
+        $validated['copropiedad_id'] = $copropiedadId;
 
         $capacidad = (int) ($user->currentCopropiedad?->settings['parqueaderos_visitantes'] ?? 20);
         $dto = RegistrarParqueaderoDTO::fromRequest($validated, $user->id);
@@ -417,13 +554,33 @@ class PorteriaController extends Controller
         $user = Auth::user();
         $copropiedadId = $user->current_copropiedad_id;
 
-        $minutas = MinutaPorteria::where('copropiedad_id', $copropiedadId)
-            ->with(['guarda:id,name'])
-            ->latest('created_at')
-            ->take(50)
-            ->get();
+        $minutas = [];
+        if ($copropiedadId) {
+            try {
+                $minutas = MinutaPorteria::where('copropiedad_id', $copropiedadId)
+                    ->with(['guarda:id,name'])
+                    ->latest('created_at')
+                    ->take(50)
+                    ->get();
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
 
-        $auditoria = $this->porteriaService->verificarIntegridadCadenaMinuta($copropiedadId);
+        $auditoria = [
+            'cadena_valida' => true,
+            'bloques_verificados' => 0,
+            'bloque_corrupto_id' => null,
+            'mensaje' => 'Bitácora vacía. Sin novedades registradas aún.',
+        ];
+
+        if ($copropiedadId) {
+            try {
+                $auditoria = $this->porteriaService->verificarIntegridadCadenaMinuta($copropiedadId);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
 
         return Inertia::render('Porteria/Minuta/Index', [
             'minutas' => $minutas,

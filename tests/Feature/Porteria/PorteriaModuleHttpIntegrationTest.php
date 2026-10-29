@@ -371,4 +371,102 @@ class PorteriaModuleHttpIntegrationTest extends TestCase
 
         $response->assertOk();
     }
+
+    /**
+     * Blindaje E2E: Visitas index no falla si no hay unidades cargadas y no busca columna 'bloque' inexistente
+     */
+    public function test_e2e_visitas_index_queries_torre_without_bloque_exception(): void
+    {
+        $response = $this->actingAs($this->securityGuard)
+            ->get('/porteria/visitas');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Porteria/Visitas/Index')
+            ->has('unidades')
+            ->has('visitas')
+        );
+    }
+
+    /**
+     * Blindaje E2E: Paquetes index no falla si no hay unidades y usa 'torre' de forma segura
+     */
+    public function test_e2e_paquetes_index_queries_torre_without_bloque_exception(): void
+    {
+        $response = $this->actingAs($this->securityGuard)
+            ->get('/porteria/paquetes');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Porteria/Paquetes/Index')
+            ->has('unidades')
+            ->has('paquetes')
+        );
+    }
+
+    /**
+     * Blindaje E2E: Recibos index no falla si no hay unidades y usa 'torre' de forma segura
+     */
+    public function test_e2e_recibos_index_queries_torre_without_bloque_exception(): void
+    {
+        $response = $this->actingAs($this->securityGuard)
+            ->get('/porteria/recibos');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Porteria/Recibos/Index')
+            ->has('unidades')
+            ->has('recibos')
+        );
+    }
+
+    /**
+     * Blindaje E2E: Dashboard maneja copropiedad sin inmuebles poblados
+     */
+    public function test_e2e_dashboard_handles_empty_unidades_cleanly(): void
+    {
+        $this->serviceMock->shouldReceive('calcularDisponibilidadParqueadero')
+            ->once()
+            ->andReturn([
+                'capacidad_total' => 20,
+                'ocupados' => 0,
+                'disponibles' => 20,
+                'porcentaje_ocupacion' => 0,
+                'alerta_sobrecupo' => false,
+            ]);
+
+        $response = $this->actingAs($this->securityGuard)
+            ->get('/porteria');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Porteria/Dashboard')
+            ->has('metrics')
+        );
+    }
+
+    /**
+     * Blindaje E2E: Minuta maneja cadena vacía sin errores
+     */
+    public function test_e2e_minuta_handles_empty_chain_cleanly(): void
+    {
+        $this->serviceMock->shouldReceive('verificarIntegridadCadenaMinuta')
+            ->once()
+            ->andReturn([
+                'cadena_valida' => true,
+                'bloques_verificados' => 0,
+                'bloque_corrupto_id' => null,
+                'mensaje' => 'Bitácora vacía. Sin novedades registradas aún.',
+            ]);
+
+        $response = $this->actingAs($this->securityGuard)
+            ->get('/porteria/minuta');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Porteria/Minuta/Index')
+            ->has('minutas')
+            ->has('auditoria')
+        );
+    }
 }

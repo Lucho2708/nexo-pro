@@ -35,6 +35,17 @@ const submitRecibo = () => {
     <Head title="Recibos Públicos • Portería" />
 
     <div class="space-y-6">
+        <!-- Banner Informativo: Copropiedad Sin Propiedades Registradas -->
+        <div v-if="!unidades || unidades.length === 0" class="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/25 flex items-start gap-3">
+            <span class="material-symbols-rounded text-indigo-500 text-xl shrink-0 notranslate" translate="no">domain_disabled</span>
+            <div class="space-y-1">
+                <h4 class="text-xs font-black uppercase tracking-wider text-indigo-500">Aún no se cuenta con registro de propiedades</h4>
+                <p class="text-xs text-on-surface-variant font-medium leading-relaxed">
+                    Esta copropiedad no tiene apartamentos, torres o unidades creadas en el sistema. La radicación de recibos en casillero requiere asociar una propiedad válida. Contacte a la administración para poblar el censo de inmuebles.
+                </p>
+            </div>
+        </div>
+
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <span class="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-500">Gestión de Casillero y Servicios</span>
@@ -77,7 +88,7 @@ const submitRecibo = () => {
                     <tbody class="divide-y divide-outline-variant/10">
                         <tr v-for="recibo in recibos" :key="recibo.id" class="hover:bg-surface-container/30 transition-colors">
                             <td class="p-4 font-black text-on-surface dark:text-white uppercase">
-                                {{ recibo.unidad?.nombre || 'Unidad N/A' }}
+                                {{ recibo.unidad?.nombre || 'Unidad N/A' }} {{ (recibo.unidad?.torre || recibo.unidad?.bloque) ? `(${recibo.unidad?.torre || recibo.unidad?.bloque})` : '' }}
                             </td>
                             <td class="p-4">
                                 <span class="px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-500 font-black uppercase text-[10px]">
@@ -121,12 +132,17 @@ const submitRecibo = () => {
                 </div>
 
                 <div class="space-y-4">
+                    <div v-if="!unidades || unidades.length === 0" class="p-3.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-bold flex items-center gap-2">
+                        <span class="material-symbols-rounded text-base notranslate" translate="no">warning</span>
+                        <span>Aún no hay unidades registradas en el conjunto. Radicación deshabilitada.</span>
+                    </div>
+
                     <div class="space-y-1.5">
                         <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Apartamento / Unidad *</label>
-                        <select v-model="form.unidad_id" required class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <option value="" disabled>Seleccione unidad...</option>
+                        <select v-model="form.unidad_id" required :disabled="!unidades || unidades.length === 0" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-indigo-500 focus:outline-none disabled:opacity-50">
+                            <option value="" disabled>{{ (!unidades || unidades.length === 0) ? 'No hay unidades registradas en el conjunto' : 'Seleccione unidad...' }}</option>
                             <option v-for="u in unidades" :key="u.id" :value="u.id">
-                                {{ u.nombre }} {{ u.bloque ? `(${u.bloque})` : '' }}
+                                {{ u.nombre }} {{ (u.torre || u.bloque) ? `(${u.torre || u.bloque})` : '' }}
                             </option>
                         </select>
                     </div>
@@ -157,7 +173,7 @@ const submitRecibo = () => {
                     <button @click="isModalOpen = false" type="button" class="min-h-[48px] px-5 rounded-xl text-xs font-black uppercase tracking-wider text-on-surface-variant hover:bg-surface-container">
                         Cancelar
                     </button>
-                    <button :disabled="form.processing" type="submit" class="min-h-[48px] px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black uppercase tracking-wider shadow-md disabled:opacity-50">
+                    <button :disabled="form.processing || !unidades || unidades.length === 0" type="submit" class="min-h-[48px] px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black uppercase tracking-wider shadow-md disabled:opacity-50">
                         Notificar y Guardar
                     </button>
                 </div>

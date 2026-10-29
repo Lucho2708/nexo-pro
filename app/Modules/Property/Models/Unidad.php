@@ -24,6 +24,16 @@ class Unidad extends Model
         return $this->belongsTo(Copropiedad::class, 'copropiedad_id');
     }
 
+    /**
+     * Accesor virtual para retrocompatibilidad con frontend que use 'bloque' en lugar de 'torre'
+     */
+    protected $appends = ['bloque'];
+
+    public function getBloqueAttribute(): ?string
+    {
+        return $this->attributes['torre'] ?? null;
+    }
+
     protected $fillable = [
         'copropiedad_id',
         'nombre',

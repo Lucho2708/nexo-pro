@@ -62,7 +62,8 @@ describe('Portería & Seguridad Front-End: Button-by-Button Functionality & Cont
 
         // Form submit buttons
         assert.ok(content.includes('submitIngreso'), 'Ingreso form submits via submitIngreso');
-        assert.ok(content.includes(':disabled="form.processing"'), 'Submit ingreso has anti-double-click protection');
+        assert.ok(content.includes('form.processing'), 'Submit ingreso has anti-double-click protection');
+        assert.ok(content.includes('!unidades || unidades.length === 0'), 'Submit ingreso blocks when copropiedad has no units');
         assert.ok(content.includes('submitPase'), 'Pase modal submits via submitPase');
         assert.ok(content.includes(':disabled="paseForm.processing"'), 'Submit pase has anti-double-click protection');
     });
@@ -74,7 +75,8 @@ describe('Portería & Seguridad Front-End: Button-by-Button Functionality & Cont
         // Reception button
         assert.ok(content.includes('isModalOpen = true'), 'Recibir Nueva Encomienda button opens modal');
         assert.ok(content.includes('submitPaquete'), 'Reception form submits via submitPaquete');
-        assert.ok(content.includes(':disabled="form.processing"'), 'Reception form has anti-double-click protection');
+        assert.ok(content.includes('form.processing'), 'Reception form has anti-double-click protection');
+        assert.ok(content.includes('!unidades || unidades.length === 0'), 'Reception blocks when copropiedad has no units');
 
         // Delivery modal button
         assert.ok(content.includes('abrirEntregaModal(paquete)'), 'Table Entregar button opens modal with package data');
@@ -90,7 +92,8 @@ describe('Portería & Seguridad Front-End: Button-by-Button Functionality & Cont
         // Reception button
         assert.ok(content.includes('isModalOpen = true'), 'Radicar Recibo button opens modal');
         assert.ok(content.includes('submitRecibo'), 'Recibo form submits via submitRecibo');
-        assert.ok(content.includes(':disabled="form.processing"'), 'Recibo form has anti-double-click protection');
+        assert.ok(content.includes('form.processing'), 'Recibo form has anti-double-click protection');
+        assert.ok(content.includes('!unidades || unidades.length === 0'), 'Recibo blocks when copropiedad has no units');
         assert.ok(content.includes("route('porteria.recibos.store')"), 'Recibo submits to porteria.recibos.store');
     });
 

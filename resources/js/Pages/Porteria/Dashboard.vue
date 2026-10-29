@@ -10,6 +10,7 @@ defineProps<{
         visitas_activas: number;
         paquetes_pendientes: number;
         recibos_en_casillero: number;
+        total_unidades?: number;
         parqueaderos: {
             capacidad_total: number;
             ocupados: number;
@@ -18,7 +19,7 @@ defineProps<{
             alerta_sobrecupo: boolean;
         };
     };
-    copropiedad: any;
+    copropiedad?: any;
 }>();
 </script>
 
@@ -26,6 +27,19 @@ defineProps<{
     <Head title="Consola de Garita • Portería" />
 
     <div class="space-y-8">
+        <!-- Alerta de Copropiedad Sin Unidades Pobladas -->
+        <div v-if="metrics.total_unidades === 0" class="p-5 rounded-3xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-4">
+            <span class="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-500 flex items-center justify-center shrink-0 notranslate" translate="no">
+                <span class="material-symbols-rounded text-xl">domain_disabled</span>
+            </span>
+            <div class="space-y-1">
+                <h4 class="text-sm font-black uppercase tracking-wider text-amber-500">Copropiedad sin censo de propiedades configurado</h4>
+                <p class="text-xs text-on-surface-variant font-medium leading-relaxed">
+                    Este conjunto residencial aún no tiene unidades habitacionales (apartamentos, casas o locales) registradas en la base de datos. Las funciones de registro de visitantes, radicación de recibos y correspondencia requieren unidades activas.
+                </p>
+            </div>
+        </div>
+
         <!-- Status & Welcome Banner -->
         <div class="bg-gradient-to-r from-primary/10 via-indigo-500/10 to-transparent p-6 md:p-8 rounded-[2.5rem] border border-primary/20 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
@@ -34,7 +48,7 @@ defineProps<{
                     Panel Principal de Garita
                 </h2>
                 <p class="text-xs text-on-surface-variant font-medium mt-1">
-                    Supervisión en tiempo real de accesos, correspondencia y parqueaderos para {{ copropiedad?.nombre }}.
+                    Supervisión en tiempo real de accesos, correspondencia y parqueaderos para {{ copropiedad?.nombre || 'Copropiedad' }}.
                 </p>
             </div>
 
