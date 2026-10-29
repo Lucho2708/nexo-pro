@@ -24,6 +24,8 @@ Route::middleware([
     // Control de Visitas Peatonales y Vehiculares
     Route::get('/visitas', [PorteriaController::class, 'visitas'])->name('visitas.index');
     Route::post('/visitas', [PorteriaController::class, 'registrarIngreso'])->name('visitas.store');
+    Route::post('/visitas/validar-pase', [PorteriaController::class, 'validarPase'])->name('visitas.validar-pase');
+    Route::post('/citofonia/solicitar', [PorteriaController::class, 'solicitarCitofonia'])->name('citofonia.solicitar');
     Route::patch('/visitas/{visita}/salida', [PorteriaController::class, 'registrarSalida'])->name('visitas.salida');
 
     // Gestión y Notificación de Recibos Públicos
@@ -38,9 +40,19 @@ Route::middleware([
     // Capacidad y Censo de Parqueaderos
     Route::get('/parqueaderos', [PorteriaController::class, 'parqueaderos'])->name('parqueaderos.index');
     Route::post('/parqueaderos', [PorteriaController::class, 'storeParqueadero'])->name('parqueaderos.store');
+    Route::get('/parqueaderos/{registro}/liquidar', [PorteriaController::class, 'liquidarParqueadero'])->name('parqueaderos.liquidar');
+    Route::post('/parqueaderos/{registro}/pagar', [PorteriaController::class, 'procesarPagoParqueadero'])->name('parqueaderos.pagar');
     Route::patch('/parqueaderos/{registro}/salida', [PorteriaController::class, 'salidaParqueadero'])->name('parqueaderos.salida');
 
     // Minuta Digital de Novedades y Relevo de Guardia
     Route::get('/minuta', [PorteriaController::class, 'minuta'])->name('minuta.index');
     Route::post('/minuta', [PorteriaController::class, 'storeMinuta'])->name('minuta.store');
+    Route::post('/relevar-turno', [PorteriaController::class, 'relevarTurno'])->name('relevar-turno');
+
+    // Portal B2B de Supervisión para Empresas de Seguridad Privada
+    Route::get('/supervision', [PorteriaController::class, 'supervision'])->name('supervision');
 });
+
+// Endpoint interactivo para respuesta rápida de citofonía por el residente (WhatsApp / App)
+Route::post('/porteria/citofonia/{token}/responder', [PorteriaController::class, 'responderCitofonia'])
+    ->name('porteria.citofonia.responder');

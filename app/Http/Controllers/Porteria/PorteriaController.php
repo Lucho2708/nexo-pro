@@ -11,6 +11,14 @@ use NexoPro\Porteria\DTOs\RegistrarVisitaDTO;
 use NexoPro\Porteria\DTOs\RegistrarReciboDTO;
 use NexoPro\Porteria\DTOs\RegistrarPaqueteDTO;
 use NexoPro\Porteria\DTOs\RegistrarParqueaderoDTO;
+use NexoPro\Porteria\DTOs\RelevarTurnoDTO;
+use NexoPro\Porteria\DTOs\ValidarPaseVisitaDTO;
+use NexoPro\Porteria\DTOs\SolicitarCitofoniaDTO;
+use NexoPro\Porteria\DTOs\PoliticaTarifariaDTO;
+use NexoPro\Porteria\DTOs\RegistrarMinutaForenseDTO;
+use App\Modules\IAM\Models\User;
+use Illuminate\Support\Str;
+use DomainException;
 use App\Modules\Operations\Models\Visita;
 use App\Modules\Operations\Models\ReciboPublico;
 use App\Modules\Operations\Models\Paquete;
@@ -120,6 +128,83 @@ class PorteriaController extends Controller
         return redirect()->back()->with('success', 'Salida de visitante registrada.');
     }
 
+    public function validarPase(Request $request)
+    {
+        $validated = $request->validate([
+            'token_o_pin' => 'required|string|max:100',
+            'visitante_nombre' => 'nullable|string|max:255',
+            'visitante_documento' => 'nullable|string|max:50',
+            'placa_vehiculo' => 'nullable|string|max:20',
+        ]);
+
+        $user = Auth::user();
+        $dto = new ValidarPaseVisitaDTO(
+            tokenOPin: $validated['token_o_pin'],
+            guardaId: (string) $user->id,
+            visitanteNombre: $validated['visitante_nombre'] ?? null,
+            visitanteDocumento: $validated['visitante_documento'] ?? null,
+            placaVehiculo: $validated['placa_vehiculo'] ?? null
+        );
+
+        try {
+            $visita = $this->porteriaService->validarIngresoConPase($dto);
+            return redirect()->back()->with('success', "Acceso autorizado para {$visita->visitante_nombre} mediante Pase QR.");
+        } catch (DomainException $e) {
+            return redirect()->back()->withErrors(['token_o_pin' => $e->getMessage()]);
+        }
+    }
+
+    public function solicitarCitofonia(Request $request)
+    {
+        $validated = $request->validate([
+            'unidad_id' => 'required|uuid',
+            'visitante_nombre' => 'required|string|max:255',
+            'visitante_documento' => 'nullable|string|max:50',
+            'tipo_visita' => 'nullable|string|in:personal,domicilio,contratista,taxi',
+        ]);
+
+        $user = Auth::user();
+        $dto = new SolicitarCitofoniaDTO(
+            copropiedadId: (string) $user->current_copropiedad_id,
+            unidadId: $validated['unidad_id'],
+            guardaId: (string) $user->id,
+            visitanteNombre: $validated['visitante_nombre'],
+            visitanteDocumento: $validated['visitante_documento'] ?? null,
+            tipoVisita: $validated['tipo_visita'] ?? 'personal'
+        );
+
+        $solicitud = $this->porteriaService->solicitarCitofoniaVirtual($dto);
+
+        return redirect()->back()->with('success', 'Llamada de citofonía virtual enviada al residente. Esperando respuesta...');
+    }
+
+    public function responderCitofonia(Request $request, string $token)
+    {
+        $validated = $request->validate([
+            'respuesta' => 'required|string|in:autorizado,denegado',
+        ]);
+
+        $user = Auth::user();
+
+        try {
+            $solicitud = $this->porteriaService->responderCitofoniaVirtual(
+                tokenRespuesta: $token,
+                respuesta: $validated['respuesta'],
+                respondidoPorId: (string) ($user?->id ?? Str::uuid())
+            );
+
+            return response()->json([
+                'success' => true,
+                'estado' => $solicitud->estado,
+                'mensaje' => $solicitud->estado === 'autorizado' 
+                    ? 'Ingreso de visitante autorizado exitosamente.' 
+                    : 'Ingreso denegado.',
+            ]);
+        } catch (DomainException $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 422);
+        }
+    }
+
     public function recibos(Request $request): Response
     {
         $user = Auth::user();
@@ -204,11 +289,50 @@ class PorteriaController extends Controller
     {
         $validated = $request->validate([
             'entregado_a_nombre' => 'required|string|max:255',
+            'pin' => 'nullable|string|regex:/^[0-9]{4}$/',
         ]);
 
-        $this->porteriaService->entregarPaquete($paquete, $validated['entregado_a_nombre']);
+        if (!empty($validated['pin'])) {
+            try {
+                $this->porteriaService->entregarPaqueteConPin($paquete, $validated['pin'], $validated['entregado_a_nombre']);
+            } catch (DomainException $e) {
+                return redirect()->back()->withErrors(['pin' => $e->getMessage()]);
+            }
+        } else {
+            $this->porteriaService->entregarPaquete($paquete, $validated['entregado_a_nombre']);
+        }
 
         return redirect()->back()->with('success', 'Paquete entregado satisfactoriamente.');
+    }
+
+    public function relevarTurno(Request $request)
+    {
+        $validated = $request->validate([
+            'pin' => 'required|string|regex:/^[0-9]{4}$/',
+        ]);
+
+        $user = Auth::user();
+        $dto = new RelevarTurnoDTO(
+            copropiedadId: (string) $user->current_copropiedad_id,
+            guardaSalienteId: (string) $user->id,
+            guardaSalienteNombre: (string) $user->name,
+            pinEntrante: $validated['pin']
+        );
+
+        try {
+            $resultado = $this->porteriaService->relevarTurno($dto);
+
+            if (!empty($resultado['guarda_entrante_id'])) {
+                $nuevoGuarda = User::find($resultado['guarda_entrante_id']);
+                if ($nuevoGuarda) {
+                    Auth::login($nuevoGuarda);
+                }
+            }
+
+            return redirect()->back()->with('success', "Relevo de turno exitoso. Bienvenido, {$resultado['guarda_entrante_nombre']}.");
+        } catch (DomainException $e) {
+            return redirect()->back()->withErrors(['pin' => $e->getMessage()]);
+        }
     }
 
     public function parqueaderos(Request $request): Response
@@ -243,16 +367,49 @@ class PorteriaController extends Controller
         $user = Auth::user();
         $validated['copropiedad_id'] = $user->current_copropiedad_id;
 
+        $capacidad = (int) ($user->currentCopropiedad?->settings['parqueaderos_visitantes'] ?? 20);
         $dto = RegistrarParqueaderoDTO::fromRequest($validated, $user->id);
-        $this->porteriaService->registrarIngresoVehiculo($dto);
 
-        return redirect()->back()->with('success', 'Ingreso de vehículo registrado.');
+        try {
+            $this->porteriaService->registrarIngresoVehiculoConCapacidad($dto, $capacidad);
+            return redirect()->back()->with('success', 'Ingreso de vehículo registrado.');
+        } catch (DomainException $e) {
+            return redirect()->back()->withErrors(['placa_vehiculo' => $e->getMessage()]);
+        }
+    }
+
+    public function liquidarParqueadero(ParqueaderoRegistro $registro)
+    {
+        $user = Auth::user();
+        $politica = PoliticaTarifariaDTO::fromSettings($user->currentCopropiedad?->settings);
+        $liquidacion = $this->porteriaService->liquidarTarifaVehiculo($registro, $politica);
+
+        return response()->json([
+            'success' => true,
+            'liquidacion' => $liquidacion,
+        ]);
+    }
+
+    public function procesarPagoParqueadero(Request $request, ParqueaderoRegistro $registro)
+    {
+        $validated = $request->validate([
+            'metodo_pago' => 'required|string|in:wompi_pse,wompi_tarjeta,efectivo,cortesia',
+        ]);
+
+        $referencia = $registro->referencia_pago ?? ('PKG-' . Str::upper(Str::random(10)));
+        $this->porteriaService->procesarPagoParqueadero($registro, $validated['metodo_pago'], $referencia);
+
+        return redirect()->back()->with('success', 'Pago de parqueadero registrado satisfactoriamente.');
     }
 
     public function salidaParqueadero(ParqueaderoRegistro $registro)
     {
-        $this->porteriaService->marcarSalidaVehiculo($registro);
-        return redirect()->back()->with('success', 'Salida vehicular registrada.');
+        try {
+            $this->porteriaService->marcarSalidaVehiculoConValidacionPago($registro);
+            return redirect()->back()->with('success', 'Salida vehicular registrada.');
+        } catch (DomainException $e) {
+            return redirect()->back()->withErrors(['salida' => $e->getMessage()]);
+        }
     }
 
     public function minuta(Request $request): Response
@@ -266,8 +423,11 @@ class PorteriaController extends Controller
             ->take(50)
             ->get();
 
+        $auditoria = $this->porteriaService->verificarIntegridadCadenaMinuta($copropiedadId);
+
         return Inertia::render('Porteria/Minuta/Index', [
             'minutas' => $minutas,
+            'auditoria' => $auditoria,
         ]);
     }
 
@@ -277,18 +437,37 @@ class PorteriaController extends Controller
             'tipo_evento' => 'required|string|in:cambio_turno,novedad,ronda,incidente,aviso',
             'prioridad' => 'required|string|in:informativo,advertencia,urgente',
             'descripcion' => 'required|string|max:2000',
+            'evidencia_foto' => 'nullable|image|max:10240',
         ]);
 
         $user = Auth::user();
+        $fotoPath = null;
 
-        MinutaPorteria::create([
-            'copropiedad_id' => $user->current_copropiedad_id,
-            'guarda_id' => $user->id,
-            'tipo_evento' => $validated['tipo_evento'],
-            'prioridad' => $validated['prioridad'],
-            'descripcion' => $validated['descripcion'],
+        if ($request->hasFile('evidencia_foto')) {
+            $fotoPath = $request->file('evidencia_foto')->store('porteria/minutas', 'public');
+        }
+
+        $dto = new RegistrarMinutaForenseDTO(
+            copropiedadId: $user->current_copropiedad_id,
+            guardaId: $user->id,
+            tipoEvento: $validated['tipo_evento'],
+            prioridad: $validated['prioridad'],
+            descripcion: $validated['descripcion'],
+            evidenciaFotoPath: $fotoPath
+        );
+
+        $minuta = $this->porteriaService->registrarMinutaForense($dto);
+
+        return redirect()->back()->with('success', 'Novedad de minuta firmada criptográficamente (Hash: ' . substr($minuta->hash_inmutable, 0, 12) . '...).');
+    }
+
+    public function supervision(Request $request): Response
+    {
+        $user = Auth::user();
+        $dashboard = $this->porteriaService->obtenerDashboardSupervisionB2B($user->id);
+
+        return Inertia::render('Porteria/Supervision/Index', [
+            'dashboard' => $dashboard,
         ]);
-
-        return redirect()->back()->with('success', 'Novedad de minuta registrada.');
     }
 }

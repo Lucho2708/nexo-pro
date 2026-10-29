@@ -30,6 +30,8 @@ class Paquete extends Model
         'codigo_guia',
         'descripcion',
         'estado',
+        'pin_entrega',
+        'notificado_at',
         'recibido_por_guarda_id',
         'entregado_at',
         'entregado_a_nombre',

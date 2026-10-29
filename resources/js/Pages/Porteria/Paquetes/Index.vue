@@ -25,6 +25,7 @@ const form = useForm({
 
 const entregaForm = useForm({
     entregado_a_nombre: '',
+    pin: '',
 });
 
 const submitPaquete = () => {
@@ -39,6 +40,8 @@ const submitPaquete = () => {
 const abrirEntregaModal = (paquete: any) => {
     selectedPaquete.value = paquete;
     entregaForm.entregado_a_nombre = '';
+    entregaForm.pin = '';
+    entregaForm.clearErrors();
     isEntregaModalOpen.value = true;
 };
 
@@ -91,6 +94,7 @@ const confirmarEntrega = () => {
                             <th class="p-4">Apartamento</th>
                             <th class="p-4">Empresa</th>
                             <th class="p-4">Número de Guía</th>
+                            <th class="p-4">PIN Retiro</th>
                             <th class="p-4">Descripción</th>
                             <th class="p-4">Fecha Llegada</th>
                             <th class="p-4">Estado</th>
@@ -104,6 +108,11 @@ const confirmarEntrega = () => {
                             </td>
                             <td class="p-4 font-bold text-amber-500 uppercase">{{ paquete.empresa_mensajeria }}</td>
                             <td class="p-4 font-mono font-bold">{{ paquete.codigo_guia || 'Sin Guía' }}</td>
+                            <td class="p-4">
+                                <span class="px-2 py-1 rounded-lg bg-surface-container-high font-mono font-black text-[11px] text-primary border border-primary/20">
+                                    {{ paquete.pin_entrega || '••••' }}
+                                </span>
+                            </td>
                             <td class="p-4 text-on-surface-variant">{{ paquete.descripcion || 'Paquete sellado' }}</td>
                             <td class="p-4 text-on-surface-variant text-[11px]">
                                 {{ new Date(paquete.created_at).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) }}
@@ -205,9 +214,26 @@ const confirmarEntrega = () => {
                     </p>
                 </div>
 
-                <div class="space-y-1.5">
-                    <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Nombre de quien retira *</label>
-                    <input v-model="entregaForm.entregado_a_nombre" type="text" required placeholder="Ej: Diana Mendoza" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                <div class="space-y-4">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Nombre de quien retira *</label>
+                        <input v-model="entregaForm.entregado_a_nombre" type="text" required placeholder="Ej: Diana Mendoza" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-wider text-primary">PIN Secreto de Retiro (4 dígitos)</label>
+                        <input 
+                            v-model="entregaForm.pin" 
+                            type="password" 
+                            maxlength="4" 
+                            inputmode="numeric" 
+                            placeholder="••••" 
+                            class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-primary/30 text-center font-mono text-lg font-black tracking-[0.3em] text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" 
+                        />
+                        <p v-if="entregaForm.errors.pin" class="text-[11px] font-bold text-rose-500 animate-in shake">
+                            {{ entregaForm.errors.pin }}
+                        </p>
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-2">

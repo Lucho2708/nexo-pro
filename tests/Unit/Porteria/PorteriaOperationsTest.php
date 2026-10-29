@@ -83,6 +83,63 @@ class PorteriaOperationsTest extends TestCase
                 $registro->fill($datos);
                 return $registro;
             }
+
+            public function contarVehiculosActivosPorTipo(string $copropiedadId, string $tipoEspacio): int
+            {
+                return 0;
+            }
+
+            public function buscarGuardaPorPin(string $copropiedadId, string $pin): ?\App\Modules\IAM\Models\User
+            {
+                return null;
+            }
+
+            public function registrarMinuta(array $datos): \App\Modules\Operations\Models\MinutaPorteria
+            {
+                $minuta = new \App\Modules\Operations\Models\MinutaPorteria($datos);
+                $minuta->id = (string) Str::uuid();
+                return $minuta;
+            }
+
+            public function guardarPaseVisita(array $datos): \App\Modules\Operations\Models\PaseVisita
+            {
+                $pase = new \App\Modules\Operations\Models\PaseVisita($datos);
+                $pase->id = (string) Str::uuid();
+                return $pase;
+            }
+
+            public function buscarPaseVisitaPorToken(string $token): ?\App\Modules\Operations\Models\PaseVisita
+            {
+                return null;
+            }
+
+            public function actualizarPaseVisita(\App\Modules\Operations\Models\PaseVisita $pase, array $datos): \App\Modules\Operations\Models\PaseVisita
+            {
+                $pase->fill($datos);
+                return $pase;
+            }
+
+            public function guardarSolicitudCitofonia(array $datos): \App\Modules\Operations\Models\SolicitudCitofonia
+            {
+                $s = new \App\Modules\Operations\Models\SolicitudCitofonia($datos);
+                $s->id = (string) Str::uuid();
+                return $s;
+            }
+
+            public function buscarSolicitudCitofoniaPorToken(string $token): ?\App\Modules\Operations\Models\SolicitudCitofonia
+            {
+                return null;
+            }
+
+            public function actualizarSolicitudCitofonia(\App\Modules\Operations\Models\SolicitudCitofonia $solicitud, array $datos): \App\Modules\Operations\Models\SolicitudCitofonia
+            {
+                $solicitud->fill($datos);
+                return $solicitud;
+            }
+
+            public function obtenerUltimaMinutaPorCopropiedad(string $copropiedadId): ?\App\Modules\Operations\Models\MinutaPorteria { return null; }
+            public function listarMinutasPorCopropiedad(string $copropiedadId): array { return []; }
+            public function obtenerCopropiedadesParaSupervision(?string $supervisorId = null): array { return []; }
         };
 
         $this->service = new PorteriaService($this->repository);

@@ -19,6 +19,10 @@ const props = defineProps<{
 }>();
 
 const isModalOpen = ref(false);
+const isLiquidacionModalOpen = ref(false);
+const selectedRegistro = ref<any>(null);
+const liquidacionData = ref<any>(null);
+const isProcessing = ref(false);
 
 const form = useForm({
     placa_vehiculo: '',
@@ -35,8 +39,60 @@ const submitIngresoVehiculo = () => {
     });
 };
 
-const marcarSalida = (registroId: string) => {
-    router.patch(route('porteria.parqueaderos.salida', registroId));
+const iniciarSalidaVehiculo = async (registro: any) => {
+    selectedRegistro.value = registro;
+    isProcessing.value = true;
+
+    try {
+        const response = await fetch(route('porteria.parqueaderos.liquidar', registro.id), {
+            headers: { 'Accept': 'application/json' },
+        });
+        const data = await response.json();
+        if (data.success) {
+            liquidacionData.value = data.liquidacion;
+            isLiquidacionModalOpen.value = true;
+        }
+    } catch (e) {
+        // Fallback: salida directa si no hay tarificación activa
+        router.patch(route('porteria.parqueaderos.salida', registro.id));
+    } finally {
+        isProcessing.value = false;
+    }
+};
+
+const confirmarPagoYSalida = (metodoPago: string) => {
+    if (!selectedRegistro.value) return;
+
+    isProcessing.value = true;
+    router.post(route('porteria.parqueaderos.pagar', selectedRegistro.value.id), {
+        metodo_pago: metodoPago,
+    }, {
+        preserveScroll: true,
+        onSuccess: () => {
+            router.patch(route('porteria.parqueaderos.salida', selectedRegistro.value.id), {}, {
+                onSuccess: () => {
+                    isLiquidacionModalOpen.value = false;
+                    selectedRegistro.value = null;
+                    liquidacionData.value = null;
+                },
+                onFinish: () => { isProcessing.value = false; }
+            });
+        },
+        onError: () => { isProcessing.value = false; }
+    });
+};
+
+const salidaCortesiaDirecta = () => {
+    if (!selectedRegistro.value) return;
+    isProcessing.value = true;
+    router.patch(route('porteria.parqueaderos.salida', selectedRegistro.value.id), {}, {
+        onSuccess: () => {
+            isLiquidacionModalOpen.value = false;
+            selectedRegistro.value = null;
+            liquidacionData.value = null;
+        },
+        onFinish: () => { isProcessing.value = false; }
+    });
 };
 </script>
 
@@ -116,12 +172,13 @@ const marcarSalida = (registroId: string) => {
                             </td>
                             <td class="p-4 text-right">
                                 <button
-                                    @click="marcarSalida(reg.id)"
+                                    @click="iniciarSalidaVehiculo(reg)"
                                     type="button"
+                                    :disabled="isProcessing"
                                     class="min-h-[40px] px-3.5 py-1.5 rounded-xl bg-surface-container-high hover:bg-rose-500 hover:text-white text-on-surface text-[10px] font-black uppercase tracking-wider transition-all border border-outline-variant/20 inline-flex items-center gap-1.5"
                                 >
                                     <span class="material-symbols-rounded text-sm">output</span>
-                                    Salida
+                                    Salida / Cobro
                                 </button>
                             </td>
                         </tr>
@@ -166,6 +223,104 @@ const marcarSalida = (registroId: string) => {
                     </button>
                 </div>
             </form>
+        </Modal>
+
+        <!-- Modal Liquidación y Checkout Fintech de Parqueadero -->
+        <Modal :show="isLiquidacionModalOpen" @close="isLiquidacionModalOpen = false" max-width="md">
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="flex items-center justify-between border-b border-outline-variant/10 pb-4">
+                    <div>
+                        <span class="text-[10px] font-black uppercase tracking-[0.25em] text-primary">Liquidación de Parqueadero</span>
+                        <h3 class="text-xl font-black uppercase tracking-tight text-on-surface dark:text-white mt-0.5">
+                            Salida Vehículo {{ selectedRegistro?.placa_vehiculo }}
+                        </h3>
+                    </div>
+                    <button @click="isLiquidacionModalOpen = false" type="button" class="p-2 text-on-surface-variant hover:text-on-surface">
+                        <span class="material-symbols-rounded">close</span>
+                    </button>
+                </div>
+
+                <!-- Detalle de Tarificación -->
+                <div v-if="liquidacionData" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="p-3.5 rounded-2xl bg-surface-container border border-outline-variant/15">
+                            <span class="text-[10px] font-bold text-on-surface-variant uppercase">Permanencia Total</span>
+                            <p class="text-base font-black text-on-surface dark:text-white mt-0.5">
+                                {{ liquidacionData.minutos_permanencia }} minutos
+                            </p>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-surface-container border border-outline-variant/15">
+                            <span class="text-[10px] font-bold text-on-surface-variant uppercase">Horas Cobrables</span>
+                            <p class="text-base font-black text-on-surface dark:text-white mt-0.5">
+                                {{ liquidacionData.horas_cobrables }} h
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Total a Pagar -->
+                    <div 
+                        class="p-5 rounded-2xl border text-center space-y-1"
+                        :class="liquidacionData.es_cortesia ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-primary/10 border-primary/30'"
+                    >
+                        <span class="text-[10px] font-black uppercase tracking-widest" :class="liquidacionData.es_cortesia ? 'text-emerald-500' : 'text-primary'">
+                            {{ liquidacionData.es_cortesia ? 'Tiempo de Cortesía Gratuito' : 'Total a Liquidar' }}
+                        </span>
+                        <p class="text-3xl font-black tracking-tight" :class="liquidacionData.es_cortesia ? 'text-emerald-500' : 'text-primary'">
+                            $ {{ Number(liquidacionData.valor_liquidado).toLocaleString('es-CO') }} COP
+                        </p>
+                        <p v-if="liquidacionData.referencia_pago" class="text-[11px] font-mono text-on-surface-variant font-bold mt-1">
+                            Ref: {{ liquidacionData.referencia_pago }}
+                        </p>
+                    </div>
+
+                    <!-- Acciones según caso: Cortesía vs Pago Excedente -->
+                    <div v-if="liquidacionData.es_cortesia" class="pt-2">
+                        <button
+                            @click="salidaCortesiaDirecta"
+                            type="button"
+                            :disabled="isProcessing"
+                            class="w-full min-h-[52px] px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 active:scale-95"
+                        >
+                            <span class="material-symbols-rounded text-xl">check_circle</span>
+                            Autorizar Salida Gratuita
+                        </button>
+                    </div>
+
+                    <div v-else class="space-y-3 pt-2">
+                        <!-- Botón Pago Digital Wompi / PSE -->
+                        <button
+                            @click="confirmarPagoYSalida('wompi_pse')"
+                            type="button"
+                            :disabled="isProcessing"
+                            class="w-full min-h-[52px] px-6 py-3.5 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 active:scale-95"
+                        >
+                            <span class="material-symbols-rounded text-xl">qr_code_2</span>
+                            Cobrar con Wompi / PSE (QR Digital)
+                        </button>
+
+                        <!-- Botón Pago en Efectivo Garita -->
+                        <button
+                            @click="confirmarPagoYSalida('efectivo')"
+                            type="button"
+                            :disabled="isProcessing"
+                            class="w-full min-h-[48px] px-6 py-3 rounded-2xl bg-surface-container-high hover:bg-surface-container text-on-surface font-black text-xs uppercase tracking-wider border border-outline-variant/20 transition-all flex items-center justify-center gap-2"
+                        >
+                            <span class="material-symbols-rounded text-lg">payments</span>
+                            Registrar Pago en Efectivo
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end pt-2 border-t border-outline-variant/10">
+                    <button
+                        @click="isLiquidacionModalOpen = false"
+                        type="button"
+                        class="min-h-[44px] px-5 rounded-xl text-xs font-black uppercase tracking-wider text-on-surface-variant hover:bg-surface-container"
+                    >
+                        Cerrar
+                    </button>
+                </div>
+            </div>
         </Modal>
     </div>
 </template>

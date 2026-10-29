@@ -32,12 +32,22 @@ class ParqueaderoRegistro extends Model
         'estado',
         'ingreso_at',
         'salida_at',
+        'minutos_permanencia',
+        'minutos_cobrables',
+        'valor_liquidado',
+        'metodo_pago',
+        'referencia_pago',
+        'pagado_at',
         'guarda_id',
     ];
 
     protected $casts = [
         'ingreso_at' => 'datetime',
         'salida_at' => 'datetime',
+        'pagado_at' => 'datetime',
+        'valor_liquidado' => 'decimal:2',
+        'minutos_permanencia' => 'integer',
+        'minutos_cobrables' => 'integer',
     ];
 
     public function getTable()

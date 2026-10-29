@@ -18,7 +18,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 
 use App\Modules\IAM\Traits\HasPermissions;
 
-#[Fillable(['name', 'email', 'password', 'terms_accepted_at', 'is_active', 'role', 'is_standalone', 'current_copropiedad_id'])]
+#[Fillable(['name', 'email', 'password', 'terms_accepted_at', 'is_active', 'role', 'is_standalone', 'current_copropiedad_id', 'pin_porteria'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {

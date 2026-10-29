@@ -3,10 +3,12 @@ import { ref, computed } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import ThemeToggle from '@/Components/UI/ThemeToggle.vue';
 import Logo from '@/Components/UI/Logo.vue';
+import RelevoTurnoModal from '@/Components/Porteria/RelevoTurnoModal.vue';
 
 const page = usePage<any>();
 const user = computed(() => page.props.auth?.user);
 const copropiedad = computed(() => user.value?.current_copropiedad);
+const showRelevoModal = ref(false);
 
 const navItems = [
     { name: 'Consola Garita', icon: 'shield_person', route: 'porteria.dashboard' },
@@ -14,7 +16,8 @@ const navItems = [
     { name: 'Recibos Públicos', icon: 'receipt_long', route: 'porteria.recibos.index' },
     { name: 'Paquetería', icon: 'package_2', route: 'porteria.paquetes.index' },
     { name: 'Parqueaderos', icon: 'local_parking', route: 'porteria.parqueaderos.index' },
-    { name: 'Minuta de Turno', icon: 'menu_book', route: 'porteria.minuta.index' },
+    { name: 'Minuta Forense', icon: 'menu_book', route: 'porteria.minuta.index' },
+    { name: 'Supervisión B2B', icon: 'shield_person', route: 'porteria.supervision' },
 ];
 
 const isRouteActive = (name: string) => {
@@ -76,11 +79,22 @@ const logout = () => {
                         <p class="text-[9px] font-black text-primary uppercase tracking-widest mt-1">Guarda de Turno</p>
                     </div>
 
+                    <!-- Relevar Turno Táctico por PIN -->
+                    <button 
+                        @click="showRelevoModal = true"
+                        type="button"
+                        title="Relevo Rápido de Turno por PIN"
+                        class="min-h-[48px] px-3.5 py-2.5 rounded-2xl bg-primary/10 text-primary hover:bg-primary hover:text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 border border-primary/25 active:scale-95 shadow-sm"
+                    >
+                        <span class="material-symbols-rounded text-lg">badge</span>
+                        <span class="hidden md:inline">Relevar Turno</span>
+                    </button>
+
                     <button 
                         @click="logout"
                         type="button"
-                        title="Cerrar Turno de Guardia"
-                        class="min-h-[44px] min-w-[44px] p-2.5 rounded-2xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center border border-rose-500/20"
+                        title="Cerrar Sesión Completa"
+                        class="min-h-[44px] min-w-[44px] p-2.5 rounded-2xl bg-surface-container hover:bg-rose-500/10 text-on-surface-variant hover:text-rose-500 transition-all flex items-center justify-center border border-outline-variant/20"
                     >
                         <span class="material-symbols-rounded text-lg">logout</span>
                     </button>
@@ -110,5 +124,12 @@ const logout = () => {
         <main class="flex-1 w-full max-w-7xl mx-auto p-4 md:p-8">
             <slot />
         </main>
+
+        <!-- Relevo Rápido de Turno Modal -->
+        <RelevoTurnoModal
+            :show="showRelevoModal"
+            :guarda-actual="user?.name"
+            @close="showRelevoModal = false"
+        />
     </div>
 </template>
