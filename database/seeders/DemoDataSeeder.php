@@ -125,11 +125,11 @@ class DemoDataSeeder extends Seeder
             );
             ZonaComun::firstOrCreate(
                 ['copropiedad_id' => $copro->id, 'nombre' => 'Salón Social'],
-                ['activa' => true, 'requiere_pago' => false, 'capacidad_maxima' => 50]
+                ['activa' => true, 'costo' => 0, 'capacidad_maxima' => 50]
             );
             ZonaComun::firstOrCreate(
                 ['copropiedad_id' => $copro->id, 'nombre' => 'Zona BBQ'],
-                ['activa' => true, 'requiere_pago' => false, 'capacidad_maxima' => 20]
+                ['activa' => true, 'costo' => 0, 'capacidad_maxima' => 20]
             );
         }
 

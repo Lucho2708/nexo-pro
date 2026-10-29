@@ -42,6 +42,18 @@ class ZonaComun extends Model
         'activa' => 'boolean',
     ];
 
+    protected $appends = [
+        'requiere_pago',
+    ];
+
+    /**
+     * Accesor para compatibilidad hacia atrás: determina si la zona requiere pago según su costo.
+     */
+    public function getRequierePagoAttribute(): bool
+    {
+        return (float) ($this->attributes['costo'] ?? 0) > 0;
+    }
+
     public function copropiedad()
     {
         return $this->belongsTo(Copropiedad::class);
