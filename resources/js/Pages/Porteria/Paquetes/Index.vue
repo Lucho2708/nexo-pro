@@ -89,17 +89,17 @@ const confirmarEntrega = () => {
             </button>
         </div>
 
-        <Card class="overflow-hidden border border-outline-variant/15">
+        <Card class="overflow-hidden border border-outline-variant/15 w-full max-w-full shadow-sm">
             <div class="p-6 border-b border-outline-variant/10 flex items-center justify-between">
                 <h3 class="text-sm font-black uppercase tracking-tight text-on-surface dark:text-white flex items-center gap-2">
-                    <span class="material-symbols-rounded text-amber-500">inventory_2</span>
+                    <span class="material-symbols-rounded text-amber-500 notranslate" translate="no">inventory_2</span>
                     Paquetes Registrados en Garita
                 </h3>
                 <span class="text-xs font-bold text-on-surface-variant">{{ paquetes.length }} paquetes</span>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
+            <div class="w-full max-w-full overflow-x-auto overscroll-x-contain touch-pan-x">
+                <table class="w-full min-w-[700px] text-left text-xs">
                     <thead class="bg-surface-container-high/50 dark:bg-white/5 border-b border-outline-variant/10 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
                         <tr>
                             <th class="p-4">Apartamento</th>

@@ -145,7 +145,7 @@ const formatHash = (hash?: string) => {
         </div>
 
         <!-- Filters -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <div class="w-full max-w-full flex items-center gap-2 overflow-x-auto overscroll-x-contain touch-pan-x no-scrollbar pb-1">
             <button
                 @click="activeFilter = 'todos'"
                 type="button"

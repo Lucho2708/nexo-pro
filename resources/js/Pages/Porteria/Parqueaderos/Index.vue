@@ -136,17 +136,17 @@ const salidaCortesiaDirecta = () => {
         </div>
 
         <!-- Active Vehicles Table -->
-        <Card class="overflow-hidden border border-outline-variant/15">
+        <Card class="overflow-hidden border border-outline-variant/15 w-full max-w-full shadow-sm">
             <div class="p-6 border-b border-outline-variant/10 flex items-center justify-between">
                 <h3 class="text-sm font-black uppercase tracking-tight text-on-surface dark:text-white flex items-center gap-2">
-                    <span class="material-symbols-rounded text-emerald-500">garage</span>
+                    <span class="material-symbols-rounded text-emerald-500 notranslate" translate="no">garage</span>
                     Vehículos en Parqueadero de Visitantes
                 </h3>
                 <span class="text-xs font-bold text-on-surface-variant">{{ registros.length }} activos</span>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
+            <div class="w-full max-w-full overflow-x-auto overscroll-x-contain touch-pan-x">
+                <table class="w-full min-w-[650px] text-left text-xs">
                     <thead class="bg-surface-container-high/50 dark:bg-white/5 border-b border-outline-variant/10 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
                         <tr>
                             <th class="p-4">Placa</th>
