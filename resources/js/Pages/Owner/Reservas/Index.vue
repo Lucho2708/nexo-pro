@@ -440,6 +440,7 @@ const filteredReservas = computed(() => {
                         size="lg" 
                         class="w-full !rounded-xl !py-4 shadow-xl text-xs font-black uppercase tracking-wider"
                         :loading="form.processing"
+                        :disabled="form.processing"
                         @click="submit"
                     >
                         Confirmar y Radicar Reserva

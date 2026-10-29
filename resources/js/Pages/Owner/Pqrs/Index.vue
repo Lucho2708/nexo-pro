@@ -114,6 +114,12 @@ const reopenTicket = (id: string | number) => {
         }
     });
 };
+
+const downloadPdf = (id: string | number) => {
+    if (typeof window !== 'undefined') {
+        window.open(route('pqrs.download', id), '_blank');
+    }
+};
 </script>
 
 <template>
@@ -298,7 +304,7 @@ const reopenTicket = (id: string | number) => {
                                 size="sm" 
                                 icon="picture_as_pdf" 
                                 class="text-xs font-bold"
-                                @click="window.open(route('pqrs.download', item.id))"
+                                @click="downloadPdf(item.id)"
                             >
                                 Descargar Copia PDF
                             </Button>
