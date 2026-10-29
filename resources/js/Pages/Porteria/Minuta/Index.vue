@@ -263,14 +263,14 @@ const formatHash = (hash?: string) => {
         <!-- Modal Registrar Minuta Forense -->
         <Modal :show="isModalOpen" @close="isModalOpen = false" max-width="lg">
             <form @submit.prevent="submitMinuta" class="p-6 md:p-8 space-y-6">
-                <div>
+                <div class="pr-10">
                     <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-black uppercase tracking-[0.25em] text-primary">Sello Inalterable</span>
-                        <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                        <span class="text-[10px] font-black uppercase tracking-[0.25em] text-blue-600 dark:text-blue-400">Sello Inalterable</span>
+                        <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
                             SuperVigilancia
                         </span>
                     </div>
-                    <h3 class="text-xl font-black uppercase tracking-tight text-on-surface dark:text-white mt-1">
+                    <h3 class="text-xl font-black uppercase tracking-tight text-slate-900 dark:text-white mt-1">
                         Anotación en Minuta Forense
                     </h3>
                 </div>
@@ -278,8 +278,8 @@ const formatHash = (hash?: string) => {
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="space-y-1.5">
-                            <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Tipo de Evento *</label>
-                            <select v-model="form.tipo_evento" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-primary focus:outline-none">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Tipo de Evento *</label>
+                            <select v-model="form.tipo_evento" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none">
                                 <option value="cambio_turno">Cambio de Turno / Relevo</option>
                                 <option value="novedad">Novedad General</option>
                                 <option value="ronda">Ronda Perimetral</option>
@@ -289,8 +289,8 @@ const formatHash = (hash?: string) => {
                         </div>
 
                         <div class="space-y-1.5">
-                            <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Nivel de Prioridad *</label>
-                            <select v-model="form.prioridad" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-primary focus:outline-none">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Nivel de Prioridad *</label>
+                            <select v-model="form.prioridad" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none">
                                 <option value="informativo">Informativo (Ronda normal)</option>
                                 <option value="advertencia">Advertencia / Daño menor</option>
                                 <option value="urgente">Urgente (Siniestro o intrusión)</option>
@@ -299,19 +299,19 @@ const formatHash = (hash?: string) => {
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Descripción Detallada del Hecho *</label>
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Descripción Detallada del Hecho *</label>
                         <textarea 
                             v-model="form.descripcion" 
                             required 
                             rows="4" 
                             placeholder="Describa de forma precisa la novedad, nombres de personas involucradas, daños observados o acciones ejecutadas." 
-                            class="w-full p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
+                            class="w-full p-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none"
                         ></textarea>
                     </div>
 
                     <!-- Adjuntar Evidencia Fotográfica -->
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                             Evidencia Fotográfica de Garita (Opcional)
                         </label>
                         <div class="flex items-center gap-3">
@@ -325,7 +325,7 @@ const formatHash = (hash?: string) => {
                             />
                             <label 
                                 for="foto-evidencia-input"
-                                class="min-h-[48px] px-4 py-2.5 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-primary text-xs font-bold text-on-surface cursor-pointer flex items-center gap-2 transition-all active:scale-95"
+                                class="min-h-[48px] px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 text-xs font-bold cursor-pointer flex items-center gap-2 transition-all active:scale-95"
                             >
                                 <span class="material-symbols-rounded text-lg text-primary">add_a_photo</span>
                                 <span>{{ form.evidencia_foto ? 'Cambiar Foto' : 'Tomar / Cargar Foto' }}</span>
@@ -341,25 +341,25 @@ const formatHash = (hash?: string) => {
                             </button>
                         </div>
 
-                        <div v-if="previewFoto" class="mt-2 p-2 rounded-xl bg-surface-container border border-outline-variant/20 inline-block">
+                        <div v-if="previewFoto" class="mt-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 inline-block">
                             <img :src="previewFoto" alt="Vista previa de evidencia" class="w-36 h-24 object-cover rounded-lg" />
                         </div>
                     </div>
 
                     <!-- Aviso de Inmutabilidad Legal -->
-                    <div class="p-3.5 rounded-xl bg-primary/5 border border-primary/20 text-[11px] font-medium text-on-surface flex items-start gap-2.5">
-                        <span class="material-symbols-rounded text-primary text-lg shrink-0 mt-0.5">verified</span>
+                    <div class="p-3.5 rounded-xl bg-blue-50/90 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/70 text-[11px] font-medium text-blue-950 dark:text-blue-200 flex items-start gap-2.5">
+                        <span class="material-symbols-rounded text-blue-600 dark:text-blue-400 text-lg shrink-0 mt-0.5">verified</span>
                         <p class="leading-relaxed">
-                            <strong>Aviso Legal Forense:</strong> Al confirmar, esta anotación será sellada con hash criptográfico SHA-256 encadenado y no podrá ser modificada ni eliminada, sirviendo como prueba legal ante autoridades competentes.
+                            <strong class="text-blue-900 dark:text-blue-100 font-black">Aviso Legal Forense:</strong> Al confirmar, esta anotación será sellada con hash criptográfico SHA-256 encadenado y no podrá ser modificada ni eliminada, sirviendo como prueba legal ante autoridades competentes.
                         </p>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-2">
-                    <button @click="isModalOpen = false" type="button" class="min-h-[48px] px-4 rounded-xl text-xs font-black uppercase tracking-wider text-on-surface-variant hover:bg-surface-container">
+                    <button @click="isModalOpen = false" type="button" class="min-h-[48px] px-4 rounded-xl text-xs font-black uppercase tracking-wider text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors">
                         Cancelar
                     </button>
-                    <button :disabled="form.processing" type="submit" class="min-h-[48px] px-6 rounded-xl bg-primary text-white text-xs font-black uppercase tracking-wider shadow-md hover:scale-[1.02] active:scale-95 disabled:opacity-50 flex items-center gap-2">
+                    <button :disabled="form.processing" type="submit" class="min-h-[48px] px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider shadow-md hover:scale-[1.02] active:scale-95 disabled:opacity-50 flex items-center gap-2">
                         <span class="material-symbols-rounded text-lg">enhanced_encryption</span>
                         Firmar y Registrar Novedad
                     </button>

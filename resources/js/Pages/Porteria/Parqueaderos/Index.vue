@@ -195,27 +195,27 @@ const salidaCortesiaDirecta = () => {
         <!-- Modal Ingreso Vehículo -->
         <Modal :show="isModalOpen" @close="isModalOpen = false" max-width="sm">
             <form @submit.prevent="submitIngresoVehiculo" class="p-6 md:p-8 space-y-6">
-                <div>
-                    <span class="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-500">Control Vehicular</span>
-                    <h3 class="text-xl font-black uppercase tracking-tight text-on-surface dark:text-white mt-1">
+                <div class="pr-10">
+                    <span class="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-400">Control Vehicular</span>
+                    <h3 class="text-xl font-black uppercase tracking-tight text-slate-900 dark:text-white mt-1">
                         Ingreso de Vehículo
                     </h3>
                 </div>
 
                 <div class="space-y-4">
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Placa del Vehículo *</label>
-                        <input v-model="form.placa_vehiculo" type="text" required placeholder="Ej: ABC-123" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-sm font-mono font-black text-on-surface focus:ring-2 focus:ring-emerald-500 focus:outline-none uppercase" />
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Placa del Vehículo *</label>
+                        <input v-model="form.placa_vehiculo" type="text" required placeholder="Ej: ABC-123" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-sm font-mono font-black text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none uppercase" />
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Número de Bahía Asignada</label>
-                        <input v-model="form.numero_bahia" type="text" placeholder="Ej: V-04" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-emerald-500 focus:outline-none uppercase" />
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Número de Bahía Asignada</label>
+                        <input v-model="form.numero_bahia" type="text" placeholder="Ej: V-04" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none uppercase" />
                     </div>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-2">
-                    <button @click="isModalOpen = false" type="button" class="min-h-[44px] px-4 rounded-xl text-xs font-black uppercase tracking-wider text-on-surface-variant hover:bg-surface-container">
+                    <button @click="isModalOpen = false" type="button" class="min-h-[44px] px-4 rounded-xl text-xs font-black uppercase tracking-wider text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors">
                         Cancelar
                     </button>
                     <button :disabled="form.processing" type="submit" class="min-h-[44px] px-6 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-black uppercase tracking-wider shadow-md disabled:opacity-50">
@@ -228,30 +228,25 @@ const salidaCortesiaDirecta = () => {
         <!-- Modal Liquidación y Checkout Fintech de Parqueadero -->
         <Modal :show="isLiquidacionModalOpen" @close="isLiquidacionModalOpen = false" max-width="md">
             <div class="p-6 md:p-8 space-y-6">
-                <div class="flex items-center justify-between border-b border-outline-variant/10 pb-4">
-                    <div>
-                        <span class="text-[10px] font-black uppercase tracking-[0.25em] text-primary">Liquidación de Parqueadero</span>
-                        <h3 class="text-xl font-black uppercase tracking-tight text-on-surface dark:text-white mt-0.5">
-                            Salida Vehículo {{ selectedRegistro?.placa_vehiculo }}
-                        </h3>
-                    </div>
-                    <button @click="isLiquidacionModalOpen = false" type="button" class="p-2 text-on-surface-variant hover:text-on-surface">
-                        <span class="material-symbols-rounded">close</span>
-                    </button>
+                <div class="border-b border-slate-200/80 dark:border-slate-800/80 pb-4 pr-10">
+                    <span class="text-[10px] font-black uppercase tracking-[0.25em] text-blue-600 dark:text-blue-400">Liquidación de Parqueadero</span>
+                    <h3 class="text-xl font-black uppercase tracking-tight text-slate-900 dark:text-white mt-0.5">
+                        Salida Vehículo {{ selectedRegistro?.placa_vehiculo }}
+                    </h3>
                 </div>
 
                 <!-- Detalle de Tarificación -->
                 <div v-if="liquidacionData" class="space-y-4">
                     <div class="grid grid-cols-2 gap-3 text-xs">
-                        <div class="p-3.5 rounded-2xl bg-surface-container border border-outline-variant/15">
-                            <span class="text-[10px] font-bold text-on-surface-variant uppercase">Permanencia Total</span>
-                            <p class="text-base font-black text-on-surface dark:text-white mt-0.5">
+                        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#030712] border border-slate-200 dark:border-slate-800">
+                            <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase">Permanencia Total</span>
+                            <p class="text-base font-black text-slate-900 dark:text-white mt-0.5">
                                 {{ liquidacionData.minutos_permanencia }} minutos
                             </p>
                         </div>
-                        <div class="p-3.5 rounded-2xl bg-surface-container border border-outline-variant/15">
-                            <span class="text-[10px] font-bold text-on-surface-variant uppercase">Horas Cobrables</span>
-                            <p class="text-base font-black text-on-surface dark:text-white mt-0.5">
+                        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#030712] border border-slate-200 dark:border-slate-800">
+                            <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase">Horas Cobrables</span>
+                            <p class="text-base font-black text-slate-900 dark:text-white mt-0.5">
                                 {{ liquidacionData.horas_cobrables }} h
                             </p>
                         </div>
@@ -260,15 +255,15 @@ const salidaCortesiaDirecta = () => {
                     <!-- Total a Pagar -->
                     <div 
                         class="p-5 rounded-2xl border text-center space-y-1"
-                        :class="liquidacionData.es_cortesia ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-primary/10 border-primary/30'"
+                        :class="liquidacionData.es_cortesia ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800' : 'bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-800'"
                     >
-                        <span class="text-[10px] font-black uppercase tracking-widest" :class="liquidacionData.es_cortesia ? 'text-emerald-500' : 'text-primary'">
+                        <span class="text-[10px] font-black uppercase tracking-widest" :class="liquidacionData.es_cortesia ? 'text-emerald-700 dark:text-emerald-400' : 'text-blue-700 dark:text-blue-400'">
                             {{ liquidacionData.es_cortesia ? 'Tiempo de Cortesía Gratuito' : 'Total a Liquidar' }}
                         </span>
-                        <p class="text-3xl font-black tracking-tight" :class="liquidacionData.es_cortesia ? 'text-emerald-500' : 'text-primary'">
+                        <p class="text-3xl font-black tracking-tight" :class="liquidacionData.es_cortesia ? 'text-emerald-700 dark:text-emerald-400' : 'text-blue-700 dark:text-blue-400'">
                             $ {{ Number(liquidacionData.valor_liquidado).toLocaleString('es-CO') }} COP
                         </p>
-                        <p v-if="liquidacionData.referencia_pago" class="text-[11px] font-mono text-on-surface-variant font-bold mt-1">
+                        <p v-if="liquidacionData.referencia_pago" class="text-[11px] font-mono text-slate-600 dark:text-slate-400 font-bold mt-1">
                             Ref: {{ liquidacionData.referencia_pago }}
                         </p>
                     </div>
@@ -292,7 +287,7 @@ const salidaCortesiaDirecta = () => {
                             @click="confirmarPagoYSalida('wompi_pse')"
                             type="button"
                             :disabled="isProcessing"
-                            class="w-full min-h-[52px] px-6 py-3.5 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 active:scale-95"
+                            class="w-full min-h-[52px] px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-600/25 transition-all flex items-center justify-center gap-2 active:scale-95"
                         >
                             <span class="material-symbols-rounded text-xl">qr_code_2</span>
                             Cobrar con Wompi / PSE (QR Digital)
@@ -303,7 +298,7 @@ const salidaCortesiaDirecta = () => {
                             @click="confirmarPagoYSalida('efectivo')"
                             type="button"
                             :disabled="isProcessing"
-                            class="w-full min-h-[48px] px-6 py-3 rounded-2xl bg-surface-container-high hover:bg-surface-container text-on-surface font-black text-xs uppercase tracking-wider border border-outline-variant/20 transition-all flex items-center justify-center gap-2"
+                            class="w-full min-h-[48px] px-6 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-black text-xs uppercase tracking-wider border border-slate-300 dark:border-slate-700 transition-all flex items-center justify-center gap-2"
                         >
                             <span class="material-symbols-rounded text-lg">payments</span>
                             Registrar Pago en Efectivo
@@ -311,11 +306,11 @@ const salidaCortesiaDirecta = () => {
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end pt-2 border-t border-outline-variant/10">
+                <div class="flex items-center justify-end pt-2 border-t border-slate-200/80 dark:border-slate-800/80">
                     <button
                         @click="isLiquidacionModalOpen = false"
                         type="button"
-                        class="min-h-[44px] px-5 rounded-xl text-xs font-black uppercase tracking-wider text-on-surface-variant hover:bg-surface-container"
+                        class="min-h-[44px] px-5 rounded-xl text-xs font-black uppercase tracking-wider text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
                     >
                         Cerrar
                     </button>

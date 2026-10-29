@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUnmounted, watch, ref } from 'vue';
+import { onUnmounted, watch } from 'vue';
 import CloseButton from './CloseButton.vue';
 
 interface Props {
@@ -37,15 +37,19 @@ const maxWidthClasses = {
 
 // Evitar scroll del body cuando el modal está abierto
 watch(() => props.show, (value) => {
-    if (value) {
-        document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = '';
+    if (typeof document !== 'undefined') {
+        if (value) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
     }
 }, { immediate: true });
 
 onUnmounted(() => {
-    document.body.style.overflow = '';
+    if (typeof document !== 'undefined') {
+        document.body.style.overflow = '';
+    }
 });
 
 const handleKeydown = (e: KeyboardEvent) => {
@@ -54,8 +58,10 @@ const handleKeydown = (e: KeyboardEvent) => {
     }
 };
 
-window.addEventListener('keydown', handleKeydown);
-onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
+if (typeof window !== 'undefined') {
+    window.addEventListener('keydown', handleKeydown);
+    onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
+}
 </script>
 
 <template>
@@ -71,7 +77,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
                 leave-to-class="opacity-0"
                 appear
             >
-                <div v-if="show" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" @click="close" />
+                <div v-if="show" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity" @click="close" />
             </Transition>
 
             <!-- Modal Panel -->
@@ -86,29 +92,34 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
             >
                 <div 
                     v-if="show"
-                    class="relative w-full transform overflow-hidden bg-white text-left transition-all 
-                           rounded-t-[3rem] sm:rounded-[3rem] shadow-2xl sm:mx-auto
-                           max-h-[90vh] sm:max-h-[85vh] flex flex-col"
+                    class="relative w-full transform overflow-hidden bg-white dark:bg-[#0B132B] border border-slate-200/90 dark:border-slate-800/80 text-left transition-all 
+                           rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl sm:mx-auto
+                           max-h-[90vh] sm:max-h-[85vh] flex flex-col text-slate-900 dark:text-slate-100"
                     :class="[maxWidthClasses[maxWidth]]"
                 >
                     <!-- Handle for mobile bottom sheet -->
-                    <div class="sm:hidden w-12 h-1 bg-slate-200 rounded-full mx-auto mt-4 shrink-0" />
+                    <div class="sm:hidden w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mt-3 shrink-0" />
 
-                    <!-- Header -->
-                    <div v-if="title || showClose" class="px-6 sm:px-12 pt-6 sm:pt-12 pb-2 flex items-center justify-between shrink-0">
+                    <!-- Header with Title -->
+                    <div v-if="title" class="px-6 sm:px-10 pt-6 sm:pt-8 pb-3 flex items-center justify-between shrink-0 border-b border-slate-200/80 dark:border-slate-800/80">
                         <div class="flex-1">
-                            <h3 v-if="title" class="text-2xl sm:text-3xl font-black text-on-surface uppercase tracking-tighter leading-tight">
+                            <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight">
                                 {{ title }}
                             </h3>
-                            <div class="w-12 h-1.5 bg-primary mt-2 rounded-full hidden sm:block"></div>
+                            <div class="w-12 h-1 bg-primary mt-2 rounded-full hidden sm:block"></div>
                         </div>
                         <div class="ml-4">
-                            <CloseButton v-if="showClose" @click="close" class="!bg-surface-container-high hover:!bg-error/10 hover:!text-error" />
+                            <CloseButton v-if="showClose" @click="close" class="bg-slate-100 dark:bg-slate-800 hover:bg-red-500/10 hover:text-red-500 dark:hover:bg-red-500/20 dark:hover:text-red-400 text-slate-600 dark:text-slate-300" />
                         </div>
                     </div>
 
+                    <!-- Single Absolute Close Button when no title is provided -->
+                    <div v-else-if="showClose" class="absolute top-4 right-4 z-20">
+                        <CloseButton @click="close" class="bg-slate-100/90 dark:bg-slate-800/90 hover:bg-red-500/10 hover:text-red-500 dark:hover:bg-red-500/20 dark:hover:text-red-400 text-slate-600 dark:text-slate-300" />
+                    </div>
+
                     <!-- Content (Scrollable) -->
-                    <div class="px-6 sm:px-12 pb-10 sm:pb-12 pt-4 overflow-y-auto custom-scrollbar flex-1">
+                    <div class="overflow-y-auto custom-scrollbar flex-1" :class="title ? 'px-6 sm:px-10 py-6' : 'p-0'">
                         <slot />
                     </div>
                 </div>
@@ -119,24 +130,22 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
 
 <style scoped>
 .custom-scrollbar::-webkit-scrollbar {
-    width: 5px;
+    width: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #e2e8f0;
+    background: #cbd5e1;
     border-radius: 10px;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #cbd5e1;
+:global(.dark) .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #334155;
 }
-
-/* Glassmorphism subtle effect for premium feel */
-@supports (backdrop-filter: blur(20px)) {
-    .bg-white {
-        background-color: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-    }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+:global(.dark) .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #475569;
 }
 </style>

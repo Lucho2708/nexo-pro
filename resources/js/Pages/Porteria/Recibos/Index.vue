@@ -119,27 +119,22 @@ const submitRecibo = () => {
         <!-- Modal Radicar Recibo -->
         <Modal :show="isModalOpen" @close="isModalOpen = false" max-width="md">
             <form @submit.prevent="submitRecibo" class="p-6 md:p-8 space-y-6">
-                <div class="flex items-center justify-between border-b border-outline-variant/10 pb-4">
-                    <div>
-                        <span class="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-500">Radicación en Casillero</span>
-                        <h3 class="text-xl font-black uppercase tracking-tight text-on-surface dark:text-white">
-                            Llegada de Recibo Público
-                        </h3>
-                    </div>
-                    <button @click="isModalOpen = false" type="button" class="p-2 text-on-surface-variant hover:text-on-surface">
-                        <span class="material-symbols-rounded">close</span>
-                    </button>
+                <div class="border-b border-slate-200/80 dark:border-slate-800/80 pb-4 pr-10">
+                    <span class="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-600 dark:text-indigo-400">Radicación en Casillero</span>
+                    <h3 class="text-xl font-black uppercase tracking-tight text-slate-900 dark:text-white mt-0.5">
+                        Llegada de Recibo Público
+                    </h3>
                 </div>
 
                 <div class="space-y-4">
-                    <div v-if="!unidades || unidades.length === 0" class="p-3.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-bold flex items-center gap-2">
+                    <div v-if="!unidades || unidades.length === 0" class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200 text-xs font-bold flex items-center gap-2">
                         <span class="material-symbols-rounded text-base notranslate" translate="no">warning</span>
                         <span>Aún no hay unidades registradas en el conjunto. Radicación deshabilitada.</span>
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Apartamento / Unidad *</label>
-                        <select v-model="form.unidad_id" required :disabled="!unidades || unidades.length === 0" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-indigo-500 focus:outline-none disabled:opacity-50">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Apartamento / Unidad *</label>
+                        <select v-model="form.unidad_id" required :disabled="!unidades || unidades.length === 0" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none disabled:opacity-50">
                             <option value="" disabled>{{ (!unidades || unidades.length === 0) ? 'No hay unidades registradas en el conjunto' : 'Seleccione unidad...' }}</option>
                             <option v-for="u in unidades" :key="u.id" :value="u.id">
                                 {{ u.nombre }} {{ (u.torre || u.bloque) ? `(${u.torre || u.bloque})` : '' }}
@@ -148,8 +143,8 @@ const submitRecibo = () => {
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Tipo de Servicio *</label>
-                        <select v-model="form.tipo_servicio" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Tipo de Servicio *</label>
+                        <select v-model="form.tipo_servicio" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none">
                             <option value="acueducto">Acueducto & Alcantarillado</option>
                             <option value="energia">Energía Eléctrica</option>
                             <option value="gas">Gas Natural</option>
@@ -159,18 +154,18 @@ const submitRecibo = () => {
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Empresa Emisora</label>
-                        <input v-model="form.empresa_emisora" type="text" placeholder="Ej: Enel Codensa / Acueducto" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Empresa Emisora</label>
+                        <input v-model="form.empresa_emisora" type="text" placeholder="Ej: Enel Codensa / Acueducto" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none" />
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Periodo Facturado</label>
-                        <input v-model="form.periodo_facturado" type="text" placeholder="Ej: Octubre 2026" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Periodo Facturado</label>
+                        <input v-model="form.periodo_facturado" type="text" placeholder="Ej: Octubre 2026" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none" />
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-outline-variant/10">
-                    <button @click="isModalOpen = false" type="button" class="min-h-[48px] px-5 rounded-xl text-xs font-black uppercase tracking-wider text-on-surface-variant hover:bg-surface-container">
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200/80 dark:border-slate-800/80">
+                    <button @click="isModalOpen = false" type="button" class="min-h-[48px] px-5 rounded-xl text-xs font-black uppercase tracking-wider text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors">
                         Cancelar
                     </button>
                     <button :disabled="form.processing || !unidades || unidades.length === 0" type="submit" class="min-h-[48px] px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black uppercase tracking-wider shadow-md disabled:opacity-50">

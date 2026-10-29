@@ -248,26 +248,21 @@ const marcarSalida = (visitaId: string) => {
         <!-- Modal Registro Rápido de Visita -->
         <Modal :show="isModalOpen" @close="isModalOpen = false" max-width="lg">
             <form @submit.prevent="submitIngreso" class="p-6 md:p-8 space-y-6">
-                <div class="flex items-center justify-between border-b border-outline-variant/10 pb-4">
-                    <div>
-                        <span class="text-[10px] font-black uppercase tracking-[0.25em] text-primary">Ingreso en Garita</span>
-                        <h3 class="text-xl font-black uppercase tracking-tight text-on-surface dark:text-white">
-                            Registrar Visitante
-                        </h3>
-                    </div>
-                    <button @click="isModalOpen = false" type="button" class="p-2 text-on-surface-variant hover:text-on-surface">
-                        <span class="material-symbols-rounded">close</span>
-                    </button>
+                <div class="border-b border-slate-200/80 dark:border-slate-800/80 pb-4 pr-10">
+                    <span class="text-[10px] font-black uppercase tracking-[0.25em] text-blue-600 dark:text-blue-400">Ingreso en Garita</span>
+                    <h3 class="text-xl font-black uppercase tracking-tight text-slate-900 dark:text-white mt-0.5">
+                        Registrar Visitante
+                    </h3>
                 </div>
 
                 <!-- Lector Rápido de Cédula PDF417 -->
-                <div class="p-4 rounded-2xl bg-primary/10 border border-primary/25 space-y-2">
+                <div class="p-4 rounded-2xl bg-blue-50/90 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 space-y-2">
                     <div class="flex items-center justify-between">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-primary flex items-center gap-1.5">
+                        <label class="text-[10px] font-black uppercase tracking-wider text-blue-900 dark:text-blue-200 flex items-center gap-1.5">
                             <span class="material-symbols-rounded text-base">barcode_scanner</span>
                             Lector Rápido de Cédula (Pistola USB / Código PDF417)
                         </label>
-                        <span v-if="scanFeedback" class="text-[10px] font-black text-emerald-500 animate-in fade-in flex items-center gap-1">
+                        <span v-if="scanFeedback" class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 animate-in fade-in flex items-center gap-1">
                             <span class="material-symbols-rounded text-sm">check_circle</span>
                             {{ scanFeedback }}
                         </span>
@@ -277,19 +272,19 @@ const marcarSalida = (visitaId: string) => {
                         @input="handleBarcodeScan" 
                         type="text" 
                         placeholder="Dispara con la pistola lectora o pega el código de barras..."
-                        class="w-full min-h-[44px] px-3.5 rounded-xl bg-surface dark:bg-[#06080D] border border-primary/30 text-xs font-mono text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
+                        class="w-full min-h-[44px] px-3.5 rounded-xl bg-white dark:bg-[#030712] border border-blue-300 dark:border-blue-700 text-xs font-mono text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none"
                     />
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div v-if="!unidades || unidades.length === 0" class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs font-bold flex items-center gap-2 md:col-span-2">
+                    <div v-if="!unidades || unidades.length === 0" class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200 text-xs font-bold flex items-center gap-2 md:col-span-2">
                         <span class="material-symbols-rounded text-base notranslate" translate="no">warning</span>
                         <span>Aún no hay unidades registradas en el conjunto. Ingreso manual deshabilitado.</span>
                     </div>
 
                     <div class="space-y-1.5 md:col-span-2">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Apartamento / Unidad Destino *</label>
-                        <select v-model="form.unidad_id" required :disabled="!unidades || unidades.length === 0" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-primary focus:outline-none disabled:opacity-50">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Apartamento / Unidad Destino *</label>
+                        <select v-model="form.unidad_id" required :disabled="!unidades || unidades.length === 0" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none disabled:opacity-50">
                             <option value="" disabled>{{ (!unidades || unidades.length === 0) ? 'No hay unidades registradas en el conjunto' : 'Seleccione unidad...' }}</option>
                             <option v-for="u in unidades" :key="u.id" :value="u.id">
                                 {{ u.nombre }} {{ (u.torre || u.bloque) ? `(${u.torre || u.bloque})` : '' }}
@@ -298,18 +293,18 @@ const marcarSalida = (visitaId: string) => {
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Nombre Completo *</label>
-                        <input v-model="form.visitante_nombre" type="text" required placeholder="Ej: Pedro Martinez" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" />
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Nombre Completo *</label>
+                        <input v-model="form.visitante_nombre" type="text" required placeholder="Ej: Pedro Martinez" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none" />
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Cédula / Documento *</label>
-                        <input v-model="form.visitante_documento" type="text" required placeholder="Ej: 1020304050" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" />
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Cédula / Documento *</label>
+                        <input v-model="form.visitante_documento" type="text" required placeholder="Ej: 1020304050" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none" />
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Tipo de Visita</label>
-                        <select v-model="form.tipo_visita" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-primary focus:outline-none">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Tipo de Visita</label>
+                        <select v-model="form.tipo_visita" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none">
                             <option value="personal">Visita Personal</option>
                             <option value="domicilio">Servicio a Domicilio</option>
                             <option value="contratista">Contratista / Mantenimiento</option>
@@ -318,26 +313,26 @@ const marcarSalida = (visitaId: string) => {
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Placa Vehicular (Opcional)</label>
-                        <input v-model="form.placa_vehiculo" type="text" placeholder="Ej: ABC-123" class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-primary focus:outline-none uppercase" />
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Placa Vehicular (Opcional)</label>
+                        <input v-model="form.placa_vehiculo" type="text" placeholder="Ej: ABC-123" class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none uppercase" />
                     </div>
 
                     <div class="space-y-1.5 md:col-span-2">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Observaciones</label>
-                        <input v-model="form.observaciones" type="text" placeholder="Notas adicionales de garita..." class="w-full min-h-[48px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" />
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Observaciones</label>
+                        <input v-model="form.observaciones" type="text" placeholder="Notas adicionales de garita..." class="w-full min-h-[48px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none" />
                     </div>
 
                     <!-- Citofonía Virtual Interactiva WhatsApp -->
-                    <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 md:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 md:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
-                            <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1">
+                            <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-1">
                                 <span class="material-symbols-rounded text-sm">phone_in_talk</span>
                                 Citofonía Virtual • Reemplazo Físico
                             </span>
-                            <p class="text-xs font-bold text-on-surface dark:text-white mt-0.5">
+                            <p class="text-xs font-bold text-slate-900 dark:text-white mt-0.5">
                                 ¿Requiere autorización del residente?
                             </p>
-                            <p class="text-[11px] text-on-surface-variant font-medium">
+                            <p class="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                                 Envía mensaje interactivo con botón autorizar a su WhatsApp.
                             </p>
                         </div>
@@ -354,11 +349,11 @@ const marcarSalida = (visitaId: string) => {
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-outline-variant/10">
-                    <button @click="isModalOpen = false" type="button" class="min-h-[48px] px-5 rounded-xl text-xs font-black uppercase tracking-wider text-on-surface-variant hover:bg-surface-container">
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200/80 dark:border-slate-800/80">
+                    <button @click="isModalOpen = false" type="button" class="min-h-[48px] px-5 rounded-xl text-xs font-black uppercase tracking-wider text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors">
                         Cancelar
                     </button>
-                    <button :disabled="form.processing || !unidades || unidades.length === 0" type="submit" class="min-h-[48px] px-6 rounded-xl bg-primary text-white text-xs font-black uppercase tracking-wider shadow-md hover:bg-primary/90 disabled:opacity-50">
+                    <button :disabled="form.processing || !unidades || unidades.length === 0" type="submit" class="min-h-[48px] px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider shadow-md disabled:opacity-50">
                         Confirmar Ingreso
                     </button>
                 </div>
@@ -368,21 +363,16 @@ const marcarSalida = (visitaId: string) => {
         <!-- Modal Canje Rápido de Pase QR / PIN -->
         <Modal :show="isPaseModalOpen" @close="isPaseModalOpen = false" max-width="md">
             <form @submit.prevent="submitPase" class="p-6 md:p-8 space-y-6">
-                <div class="flex items-center justify-between border-b border-outline-variant/10 pb-4">
-                    <div>
-                        <span class="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-500">Acceso Pre-autorizado</span>
-                        <h3 class="text-xl font-black uppercase tracking-tight text-on-surface dark:text-white">
-                            Validar Pase QR / PIN
-                        </h3>
-                    </div>
-                    <button @click="isPaseModalOpen = false" type="button" class="p-2 text-on-surface-variant hover:text-on-surface">
-                        <span class="material-symbols-rounded">close</span>
-                    </button>
+                <div class="border-b border-slate-200/80 dark:border-slate-800/80 pb-4 pr-10">
+                    <span class="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-600 dark:text-indigo-400">Acceso Pre-autorizado</span>
+                    <h3 class="text-xl font-black uppercase tracking-tight text-slate-900 dark:text-white mt-0.5">
+                        Validar Pase QR / PIN
+                    </h3>
                 </div>
 
                 <div class="space-y-4">
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-indigo-500">
+                        <label class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
                             Escanear Código QR o Ingresar PIN de 6 Caracteres *
                         </label>
                         <input 
@@ -391,7 +381,7 @@ const marcarSalida = (visitaId: string) => {
                             required 
                             autofocus 
                             placeholder="Pega el token QR o ingresa PIN (Ej: 9X4K2A)..."
-                            class="w-full min-h-[52px] px-4 rounded-xl bg-surface-container-low border border-indigo-500/30 text-center font-mono text-base font-black uppercase text-on-surface focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                            class="w-full min-h-[52px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-indigo-300 dark:border-indigo-700 text-center font-mono text-base font-black uppercase text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none"
                         />
                         <p v-if="paseForm.errors.token_o_pin" class="text-xs font-bold text-rose-500 animate-in shake">
                             {{ paseForm.errors.token_o_pin }}
@@ -399,18 +389,18 @@ const marcarSalida = (visitaId: string) => {
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Nombre del Visitante (Opcional si viene en pase)</label>
-                        <input v-model="paseForm.visitante_nombre" type="text" placeholder="Ej: Diana Mendoza" class="w-full min-h-[44px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Nombre del Visitante (Opcional si viene en pase)</label>
+                        <input v-model="paseForm.visitante_nombre" type="text" placeholder="Ej: Diana Mendoza" class="w-full min-h-[44px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none" />
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[10px] font-black uppercase tracking-wider text-on-surface-variant">Placa Vehicular (Opcional)</label>
-                        <input v-model="paseForm.placa_vehiculo" type="text" placeholder="Ej: XYZ-789" class="w-full min-h-[44px] px-4 rounded-xl bg-surface-container-low border border-outline-variant/20 text-xs font-bold text-on-surface focus:ring-2 focus:ring-indigo-500 focus:outline-none uppercase" />
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Placa Vehicular (Opcional)</label>
+                        <input v-model="paseForm.placa_vehiculo" type="text" placeholder="Ej: XYZ-789" class="w-full min-h-[44px] px-4 rounded-xl bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none uppercase" />
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-outline-variant/10">
-                    <button @click="isPaseModalOpen = false" type="button" class="min-h-[48px] px-5 rounded-xl text-xs font-black uppercase tracking-wider text-on-surface-variant hover:bg-surface-container">
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200/80 dark:border-slate-800/80">
+                    <button @click="isPaseModalOpen = false" type="button" class="min-h-[48px] px-5 rounded-xl text-xs font-black uppercase tracking-wider text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors">
                         Cancelar
                     </button>
                     <button :disabled="paseForm.processing" type="submit" class="min-h-[48px] px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black uppercase tracking-wider shadow-md disabled:opacity-50 flex items-center gap-2">

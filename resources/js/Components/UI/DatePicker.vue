@@ -138,7 +138,7 @@ onUnmounted(() => {
 
 <template>
     <div class="space-y-1.5 w-full relative">
-        <label v-if="label" class="text-[10px] font-black text-on-surface-variant/60 uppercase tracking-widest pl-1">
+        <label v-if="label" class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider pl-1">
             {{ label }}
         </label>
         
@@ -147,21 +147,21 @@ onUnmounted(() => {
                 type="button"
                 @click.stop="toggle"
                 :disabled="disabled"
-                class="w-full bg-surface-container-low border-2 rounded-2xl p-4 text-sm font-medium transition-all outline-none flex items-center justify-between group"
+                class="w-full bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 rounded-2xl p-4 text-sm font-medium transition-all outline-none flex items-center justify-between group focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-primary/20"
                 :class="[
-                    error ? 'border-error/50' : 'border-outline-variant/10 focus:ring-4 focus:ring-primary/10',
+                    error ? 'border-error/50' : 'border-slate-300 dark:border-slate-700 focus:ring-4 focus:ring-primary/10',
                     disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-primary/30'
                 ]"
             >
                 <div class="flex items-center gap-3 pointer-events-none">
-                    <span class="material-symbols-outlined text-on-surface-variant/40 group-hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 group-hover:text-primary transition-colors">
                         {{ icon }}
                     </span>
-                    <span :class="localValue ? 'text-on-surface' : 'text-on-surface-variant/40'">
+                    <span :class="localValue ? 'text-slate-900 dark:text-white font-bold' : 'text-slate-400 dark:text-slate-500'">
                         {{ formatDateDisplay(localValue) }}
                     </span>
                 </div>
-                <span class="material-symbols-outlined text-on-surface-variant/40 transition-transform duration-300 pointer-events-none" :class="{'rotate-180 text-primary': isOpen}">
+                <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 transition-transform duration-300 pointer-events-none" :class="{'rotate-180 text-primary': isOpen}">
                     calendar_month
                 </span>
             </button>
@@ -181,23 +181,23 @@ onUnmounted(() => {
                     ref="calendarRef"
                     :style="dropdownStyle"
                     @mousedown.stop
-                    class="fixed z-[9999] bg-surface border border-outline-variant/20 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden p-5 select-none no-scrollbar"
+                    class="fixed z-[9999] bg-white dark:bg-[#0B132B] border border-slate-200 dark:border-slate-800 rounded-[2rem] shadow-2xl overflow-hidden p-5 select-none no-scrollbar"
                 >
                     <div class="flex items-center justify-between mb-6">
-                        <button type="button" @click="viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1)" class="w-10 h-10 rounded-xl hover:bg-surface-container-low flex items-center justify-center text-on-surface-variant transition-colors">
+                        <button type="button" @click="viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1)" class="w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors">
                             <span class="material-symbols-outlined">chevron_left</span>
                         </button>
                         <div class="text-center">
                             <p class="text-xs font-black text-primary uppercase tracking-widest">{{ months[viewDate.getMonth()] }}</p>
-                            <p class="text-[10px] font-bold text-on-surface-variant/40">{{ viewDate.getFullYear() }}</p>
+                            <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400">{{ viewDate.getFullYear() }}</p>
                         </div>
-                        <button type="button" @click="viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1)" class="w-10 h-10 rounded-xl hover:bg-surface-container-low flex items-center justify-center text-on-surface-variant transition-colors">
+                        <button type="button" @click="viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1)" class="w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors">
                             <span class="material-symbols-outlined">chevron_right</span>
                         </button>
                     </div>
 
                     <div class="grid grid-cols-7 gap-1 mb-2">
-                        <div v-for="day in days" :key="day" class="text-[9px] font-black text-center text-on-surface-variant/30 uppercase py-2">{{ day }}</div>
+                        <div v-for="day in days" :key="day" class="text-[9px] font-black text-center text-slate-500 dark:text-slate-400 uppercase py-2">{{ day }}</div>
                     </div>
                     
                     <div class="grid grid-cols-7 gap-1">
@@ -208,8 +208,8 @@ onUnmounted(() => {
                             @click.stop="selectDate(dateObj.date)"
                             class="aspect-square rounded-xl flex items-center justify-center text-xs font-bold transition-all relative"
                             :class="[
-                                !dateObj.current ? 'text-on-surface-variant/20 opacity-50' : 'text-on-surface',
-                                isSelected(dateObj.date) ? 'bg-primary text-on-primary shadow-lg scale-110 z-10' : 'hover:bg-primary/10 hover:text-primary',
+                                !dateObj.current ? 'text-slate-400/40 dark:text-slate-600 opacity-50' : 'text-slate-900 dark:text-slate-100',
+                                isSelected(dateObj.date) ? 'bg-primary text-white shadow-lg scale-110 z-10' : 'hover:bg-primary/10 hover:text-primary',
                                 isToday(dateObj.date) && !isSelected(dateObj.date) ? 'text-secondary' : ''
                             ]"
                         >

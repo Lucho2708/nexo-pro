@@ -127,7 +127,7 @@ onUnmounted(() => {
 
 <template>
     <div class="space-y-1.5 w-full relative">
-        <label v-if="label" class="text-[10px] font-black text-on-surface-variant/60 uppercase tracking-widest pl-1">
+        <label v-if="label" class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider pl-1">
             {{ label }}
         </label>
         
@@ -136,21 +136,21 @@ onUnmounted(() => {
                 type="button"
                 @click.stop="toggle"
                 :disabled="disabled"
-                class="w-full bg-surface-container-low border-2 rounded-2xl p-4 text-sm font-medium transition-all outline-none flex items-center justify-between group"
+                class="w-full bg-slate-50 dark:bg-[#030712] border border-slate-300 dark:border-slate-700 rounded-2xl p-4 text-sm font-medium transition-all outline-none flex items-center justify-between group focus:bg-white dark:focus:bg-[#030712] focus:ring-2 focus:ring-primary/20"
                 :class="[
                     stateConfig[currentState],
-                    disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                    disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-primary/30'
                 ]"
             >
                 <div class="flex items-center gap-3 pointer-events-none">
-                    <span v-if="icon" class="material-symbols-outlined text-on-surface-variant/40 group-hover:text-primary transition-colors">
+                    <span v-if="icon" class="material-symbols-outlined text-slate-400 dark:text-slate-500 group-hover:text-primary transition-colors">
                         {{ icon }}
                     </span>
-                    <span :class="[selectedOption ? 'text-on-surface' : 'text-on-surface-variant/40', 'whitespace-nowrap truncate max-w-[180px] sm:max-w-none']">
+                    <span :class="[selectedOption ? 'text-slate-900 dark:text-white font-bold' : 'text-slate-400 dark:text-slate-500', 'whitespace-nowrap truncate max-w-[180px] sm:max-w-none']">
                         {{ selectedOption ? selectedOption.label : placeholder }}
                     </span>
                 </div>
-                <span class="material-symbols-outlined text-on-surface-variant/40 transition-transform duration-300 pointer-events-none" :class="{'rotate-180 text-primary': isOpen}">
+                <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 transition-transform duration-300 pointer-events-none" :class="{'rotate-180 text-primary': isOpen}">
                     expand_more
                 </span>
             </button>
@@ -170,17 +170,17 @@ onUnmounted(() => {
                     ref="menuRef"
                     :style="dropdownStyle"
                     @mousedown.stop
-                    class="fixed z-[9999] bg-surface border border-outline-variant/20 rounded-2xl shadow-2xl overflow-hidden py-1.5 max-h-64 flex flex-col no-scrollbar"
+                    class="fixed z-[9999] bg-white dark:bg-[#0B132B] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden py-1.5 max-h-64 flex flex-col no-scrollbar"
                 >
                     <!-- Quick search input if many options or searchable -->
-                    <div v-if="searchable || options.length > 8" class="p-2 border-b border-outline-variant/10 sticky top-0 bg-surface z-10">
+                    <div v-if="searchable || options.length > 8" class="p-2 border-b border-slate-200 dark:border-slate-800 sticky top-0 bg-white dark:bg-[#0B132B] z-10">
                         <div class="relative">
-                            <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant/40 pointer-events-none">search</span>
+                            <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-slate-400 dark:text-slate-500 pointer-events-none">search</span>
                             <input
                                 v-model="searchQuery"
                                 type="text"
                                 placeholder="Buscar..."
-                                class="w-full pl-8 pr-3 py-1.5 text-xs bg-surface-container-low rounded-xl border border-outline-variant/15 text-on-surface focus:outline-none focus:border-primary/50"
+                                class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-[#030712] rounded-xl border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:border-primary/50"
                                 @click.stop
                             />
                         </div>
@@ -194,13 +194,13 @@ onUnmounted(() => {
                             class="px-5 py-3 text-sm font-bold cursor-pointer transition-colors"
                             :class="[
                                 localValue === option.value 
-                                    ? 'bg-primary/10 text-primary' 
-                                    : 'text-on-surface-variant hover:bg-surface-container-low'
+                                    ? 'bg-primary/10 text-primary font-black' 
+                                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
                             ]"
                         >
                             {{ option.label }}
                         </div>
-                        <div v-if="displayOptions.length === 0" class="px-5 py-3 text-xs text-on-surface-variant/40 text-center italic">
+                        <div v-if="displayOptions.length === 0" class="px-5 py-3 text-xs text-slate-500 dark:text-slate-400 text-center italic">
                             No se encontraron opciones
                         </div>
                     </div>
