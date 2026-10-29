@@ -126,8 +126,8 @@ if [ "$RUN_MIGRATIONS" = "true" ] || [ -z "$RUN_MIGRATIONS" ]; then
     fi
 fi
 
-# Ejecutar semilleros si está habilitado
-if [ "$RUN_SEEDERS" = "true" ]; then
+# Ejecutar semilleros si está habilitado explícitamente o por defecto en entornos QA/staging
+if [ "$RUN_SEEDERS" = "true" ] || [ "$APP_ENV" = "staging" ] || [ "$APP_ENV" = "qa" ]; then
     echo "🌱 Ejecutando seeders paramétricos y del sistema..."
     php /var/www/html/artisan db:seed --force || echo "⚠️ Seeders omitidos o ya ejecutados."
 fi
