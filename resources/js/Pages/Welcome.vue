@@ -50,14 +50,14 @@ onMounted(() => {
     <Head title="Bienvenido" />
     
     <GuestLayout>
-        <!-- Background Tactical Infrastructure -->
-        <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <!-- Background Tactical Infrastructure (Acelerado por GPU para 60/120 FPS Móvil) -->
+        <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" style="contain: strict; will-change: transform;">
             <!-- Tactical Grid -->
             <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] dark:opacity-[0.05]"></div>
             
-            <!-- Orbital Particles -->
-            <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full animate-float pointer-events-none"></div>
-            <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/5 blur-[100px] rounded-full animate-float-delayed pointer-events-none"></div>
+            <!-- Orbital Particles Optimizado con Aceleración por Capas -->
+            <div class="absolute top-1/4 left-1/4 w-[320px] md:w-[500px] h-[320px] md:h-[500px] bg-primary/5 blur-[60px] md:blur-[120px] rounded-full animate-float pointer-events-none transform-gpu" style="will-change: transform;"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-[280px] md:w-[400px] h-[280px] md:h-[400px] bg-secondary/5 blur-[50px] md:blur-[100px] rounded-full animate-float-delayed pointer-events-none transform-gpu" style="will-change: transform;"></div>
         </div>
 
         <div class="relative z-10">
